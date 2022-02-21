@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "fitness-tracker-app-4e775": {
+      "hosting": {
+        "my-fitnes-planner-app": [
+          "fitness-tracker-app-4e775"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "fitness-tracker-app-4e775"
+  }
+}
