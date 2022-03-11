@@ -1,7 +1,13 @@
 <div class="container-fluid">
-  <form [formGroup]="trainingForm" (ngSubmit)="addTraining(trainingForm.value)">
-    <div class="row">
-      <div class="col-md-6">
+  <button class="my-button btn-primary" (click)="login()">Login</button>
+  {{ form.getRawValue() | json }}
+  <form
+    class="row g-3"
+    [formGroup]="trainingForm"
+    (ngSubmit)="saveTraining(trainingForm.value)"
+  >
+    <div class="form-row">
+      <div class="form-group col-md-6 date-padding">
         <mat-form-field appearance="fill">
           <mat-label>Choose a date</mat-label>
           <input
@@ -16,55 +22,146 @@
           <mat-datepicker #picker></mat-datepicker>
         </mat-form-field>
       </div>
-      <div class="col-md-6">
-        <mat-form-field appearance="fill">
-          <mat-label>Select type of training</mat-label>
-          <mat-select formControlName="typeOfTraining">
-            <mat-option value="TrainingA">Training A</mat-option>
-            <mat-option value="TrainingB">Training B</mat-option>
-            <mat-option value="two">Push</mat-option>
-            <mat-option value="two">Pull</mat-option>
-            <mat-option value="two">Legs</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-6">
-        <mat-form-field appearance="fill">
-          <mat-label>Select a exercise</mat-label>
-          <mat-select formControlName="exerciseName">
-            <mat-option value="one">First </mat-option>
-            <mat-option value="two">Second </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <div class="col-md-6">
-        <mat-form-field appearance="fill" floatLabel="always">
-          <mat-label>Weight</mat-label>
-          <input
-            matInput
-            type="number"
-            class="example-right-align"
-            placeholder="0"
-            formControlName="weight"
-          />
-          <span matSuffix>kg</span>
-        </mat-form-field>
+      <div class="form-group col-md-6">
+        <label for="inputType" class="form-label">Tip treninga</label>
+        <select
+          id="inputType"
+          class="form-select"
+          formControlName="typeOfTraining"
+          (change)="onChangeTypeOfTraining($event)"
+        >
+          <option selected value="">Choose...</option>
+          <option *ngFor="let type of typesOfTraining" value="{{ type }}">
+            {{ type }}
+          </option>
+        </select>
       </div>
     </div>
 
-    <div class="example-button-row">
-      <button mat-button class="my-button primary" type="submit">Add</button>
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label for="inputSerie" class="form-label">Broj vezbi</label>
+        <select
+          id="inputSerie"
+          class="form-select"
+          (change)="onChangeExercise($event)"
+        >
+          <option selected value="">Choose...</option>
+          <option *ngFor="let i of [1, 2, 3, 4, 5]">{{ i }}</option>
+        </select>
+      </div>
     </div>
+    <div formArrayName="exercises">
+      <div
+        class="form-row"
+        *ngFor="let exercise of exercisesControls; let exeIndex = index"
+      >
+        <!-- [formGroupName]="i" required for defining nested exercise form group for each row -->
+        <div [formGroupName]="exeIndex" class="exercises-input-form-wrapper">
+          <div class="form-row">
+            <div class="form-group col-md-10">
+              <label for="inputExercise" class="form-label">Vezba</label>
+              <select
+                id="inputExercise"
+                class="form-select"
+                formControlName="exerciseName"
+              >
+                <!-- formControlName="exercise.testControl" -->
+                <option selected value="">Choose...</option>
+                <option
+                  *ngFor="let exercise of selectedExercises"
+                  value="{{ exercise }}"
+                >
+                  {{ exercise }}
+                </option>
+              </select>
+              <div class="col-md-2 btn-wrapper">
+                <button class="btn-primary" (click)="removeExercise(exeIndex)">
+                  Brisi
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-12">
+              <label for="inputSerie" class="form-label">Broj serija</label>
+              <select
+                id="inputSerie"
+                class="form-select"
+                (change)="onChangeSeries($event, exeIndex)"
+              >
+                <option selected value="">Choose...</option>
+                <option *ngFor="let i of [1, 2, 3, 4, 5]">{{ i }}</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- ExerciseFormArray.SerieFormArray -->
+          <div formArrayName="series">
+            <div
+              class="form-row"
+              *ngFor="
+                let serie of exerciseSeriesArray(exeIndex).controls;
+                let serieIndex = index
+              "
+            >
+              <div [formGroupName]="serieIndex">
+                <div class="form-group col-md-6">
+                  <label for="inputReps" class="form-label"
+                    >Broj ponavljanja</label
+                  >
+                  <select
+                    id="inputReps"
+                    class="form-select"
+                    formControlName="repsNum"
+                  >
+                    <option selected>Choose...</option>
+                    <option
+                      *ngFor="let i of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]"
+                    >
+                      {{ i }}
+                    </option>
+                  </select>
+                </div>
+                <div class="form-group col-md-6 weight-input">
+                  <mat-form-field
+                    appearance="fill"
+                    floatLabel="always"
+                    class="mat-form-field"
+                  >
+                    <mat-label>Weight</mat-label>
+                    <input
+                      matInput
+                      type="number"
+                      class="example-right-align"
+                      placeholder="0"
+                      formControlName="weight"
+                    />
+                    <span matSuffix>kg</span>
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ************************************************* -->
+        </div>
+      </div>
+    </div>
+    <div class="col-md-2 btn-wrapper">
+      <button mat-button class="my-button btn-primary" type="submit">
+        Sacuvaj
+      </button>
+    </div>
+    <!-- exerciseSeriesFormGroups : {{ exerciseSeriesFormGroups | json }} -->
+    <!-- exerciseFormArray  -->
   </form>
   <div class="row">
     <div class="col-md-12">
-      <app-training-list></app-training-list>
+      <app-training-list
+        [eventsUserId]="eventsSubject.asObservable()"
+        (editTrainingEvent)="editTraining($event)"
+      ></app-training-list>
     </div>
   </div>
 </div>
-
-<!-- Copyright 2022 Google LLC. All Rights Reserved.
-    Use of this source code is governed by an MIT-style license that
-    can be found in the LICENSE file at https://angular.io/license -->

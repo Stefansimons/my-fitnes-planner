@@ -4,9 +4,10 @@ import { CommonModule } from '@angular/common';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { MainContentComponent } from './components/main-content/main-content.component';
+import { LoginComponent } from './components/login/login.component';
 
 @NgModule({
-  declarations: [HeaderComponent, FooterComponent, MainContentComponent],
+  declarations: [HeaderComponent, FooterComponent, MainContentComponent, LoginComponent],
   imports: [CommonModule, RouterModule],
   exports: [HeaderComponent, FooterComponent, MainContentComponent],
 })

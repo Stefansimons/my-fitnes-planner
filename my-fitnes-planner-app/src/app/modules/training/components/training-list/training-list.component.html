@@ -1,39 +1,45 @@
-<mat-form-field appearance="standard">
+<!-- <mat-form-field appearance="standard">
   <mat-label>Filter</mat-label>
   <input matInput (keyup)="applyFilter($event)" placeholder="Ex. ium" #input />
 </mat-form-field>
-<table mat-table [dataSource]="getDataSource()">
-  <!-- Position Column -->
-  <ng-container matColumnDef="index">
+<table mat-table [dataSource]="dataSource">
+  <!-- Position Column
+  <ng-container matColumnDef="id">
     <th mat-header-cell *matHeaderCellDef>No.</th>
-    <td mat-cell *matCellDef="let element">{{ element.index }}</td>
+    <td mat-cell *matCellDef="let element">{{ element.id }}</td>
   </ng-container>
 
-  <!-- Name Column -->
+  <!-- Name Column
   <ng-container matColumnDef="trainingDate">
     <th mat-header-cell *matHeaderCellDef>Date</th>
     <td mat-cell *matCellDef="let element">{{ element.trainingDate }}</td>
   </ng-container>
-  <!-- Symbol Column -->
+  <!-- Symbol Column
   <ng-container matColumnDef="typeOfTraining">
     <th mat-header-cell *matHeaderCellDef>type</th>
     <td mat-cell *matCellDef="let element">{{ element.typeOfTraining }}</td>
   </ng-container>
-  <!-- Symbol Column -->
+  <!-- Symbol Column
   <ng-container matColumnDef="exerciseName">
     <th mat-header-cell *matHeaderCellDef>Exercise</th>
     <td mat-cell *matCellDef="let element">{{ element.exerciseName }}</td>
   </ng-container>
-  <!-- Weight Column -->
+  <!-- Weight Column
   <ng-container matColumnDef="weight">
     <th mat-header-cell *matHeaderCellDef>Weight</th>
     <td mat-cell *matCellDef="let element">{{ element.weight }}</td>
   </ng-container>
-  <!-- Weight Column -->
+  <!-- Weight Column
   <ng-container matColumnDef="update">
     <th mat-header-cell *matHeaderCellDef></th>
     <td mat-cell *matCellDef="let element">
-      <button mat-button class="my-button primary">Update</button>
+      <button
+        mat-button
+        class="my-button primary"
+        (click)="editTraining(element)"
+      >
+        Update
+      </button>
     </td>
   </ng-container>
 
@@ -47,4 +53,71 @@
 >
 </mat-paginator>
 
-training value : {{ training | json }}
+training value : {{ training | json }} -->
+
+<button mat-button class="my-button primary" (click)="getTrainings()">
+  get items
+</button>
+<!-- <button mat-button class="my-button primary" (click)="getTraining()">
+  Update
+</button> -->
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+<div class="table-responsive">
+  <table class="table" data-search="true">
+    <thead>
+      <tr>
+        <th data-field="state" data-checkbox="true">#</th>
+        <th>Datum</th>
+        <th>Tip</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let training of trainingsDataSource">
+        <!-- trackBy: trackTraining -->
+        <td>{{ training.id }}</td>
+        <td>{{ training.trainingDate }}</td>
+        <td>{{ training.typeOfTraining }}</td>
+        <td>
+          <tr>
+            <td>
+              <table class="table mb-0">
+                <thead>
+                  <tr>
+                    <th>Vezba</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let exercise of training.exercises">
+                    <td>{{ exercise.name }}</td>
+                    <td>
+                      <table class="table mb-0">
+                        <thead>
+                          <tr>
+                            <th>Serija#</th>
+                            <th>Broj ponavljanja</th>
+                            <th>Kilaza</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr
+                            *ngFor="let serie of exercise.series; let i = index"
+                          >
+                            <td>{{ i + 1 }}</td>
+                            <td>{{ serie.repetitionNumber }}</td>
+                            <td>{{ serie.weight }}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

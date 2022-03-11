@@ -1,1 +1,1 @@
-export { Training } from './training.model';
+export { Training, Exercise, Series } from './training.model';

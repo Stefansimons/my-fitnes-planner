@@ -1,7 +1,16 @@
 export interface Training {
-  index: number;
-  trainingDate: Date | string;
-  exerciseName: string;
-  weight: number;
+  id?: string;
+  trainingDate: string;
+  exercises?: Exercise[];
   typeOfTraining: string;
+}
+export interface Exercise {
+  id?: string;
+  name: string;
+  series?: Series[];
+}
+export interface Series {
+  id?: string;
+  repetitionNumber: number;
+  weight: number;
 }
