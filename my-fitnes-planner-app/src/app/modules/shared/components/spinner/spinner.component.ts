@@ -58,8 +58,6 @@ export class SpinnerComponent implements OnInit {
     );
   }
   ngDoCheck() {
-    console.log('ngDoCheck=>progressSpinnerRef=>', this.progressSpinnerRef);
-
     // Based on status of displayProgressSpinner attach/detach overlay to progress spinner template
     if (this.displayProgressSpinner && !this.overlayRef.hasAttached()) {
       this.overlayService.attachTemplatePortal(
@@ -72,8 +70,6 @@ export class SpinnerComponent implements OnInit {
     }
   }
   ngOnDestroy(): void {
-    console.log('ngOnDestroy');
-
     // this.ss.getIsDisplay().unsubscribe();
   }
 }

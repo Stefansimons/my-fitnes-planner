@@ -102,11 +102,9 @@ export class FirestoreService {
       user.trainings.forEach((training) => {
         training.id = this.fs.createId();
       });
-      console.log('save =>user=>', user);
       return this.itemsCollection.add({ user });
     } else {
       // EDIT ITEM
-      console.log('update =>user =>', user);
       return this.fs.doc(`users/${user.id}`).update(user);
     }
   }

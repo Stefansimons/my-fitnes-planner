@@ -12,22 +12,10 @@ export class SpinnerService {
   constructor() {}
 
   show() {
-    console.log('show=>');
     this._loading.next(true);
   }
 
   hide() {
-    console.log('hide=>');
     this._loading.next(false);
   }
-
-  // setIsDisplay(isDisplay: boolean) {
-  //   console.log('setIsDisplay=>', isDisplay);
-
-  //   this.isDisplaySubject.next(isDisplay);
-
-  // }
-  // getIsDisplay() {
-  //   return this.isDisplaySubject;
-  // }
 }

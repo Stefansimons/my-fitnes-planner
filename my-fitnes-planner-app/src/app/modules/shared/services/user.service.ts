@@ -36,7 +36,6 @@ export class UserService {
       .then((data) => {
         userTempData.id = data.id;
         this.userId = data.id;
-        console.log('then =>  this.userId =>', this.userId);
         this.setLocalStorageUserData(userTempData);
       })
       .catch((error) => {
@@ -48,8 +47,6 @@ export class UserService {
       }); // const docSnap = await getDoc(docRef);;
   }
   getLoggedUserId(): string {
-    console.log('getLoggedUserId =>userId:', this.userId);
-
     return this.userId;
   }
   setLocalStorageUserData(data: User) {

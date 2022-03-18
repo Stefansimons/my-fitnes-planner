@@ -1,88 +1,25 @@
-<div>
-  ---------------------------------------------------------------<span
-    style="align-items: flex-end"
-  >
-    loading$:{{ loading$ | async }}</span
-  >
+<div
+  id="overlay"
+  [ngClass]="{ show: loading$ | async, hide: !(loading$ | async) }"
+>
+  <div class="my-loader">
+    <div class="spinner-border" role="status"></div>
+    <div class="text">Loading…</div>
+  </div>
+</div>
 
-  <div
-    id="overlay"
-    [ngClass]="{ show: loading$ | async, hide: !(loading$ | async) }"
-  >
-    <div class="my-loader">
-      <div class="spinner-border" role="status"></div>
-      <div class="text">Loading…</div>
+<div class="container-lg">
+  <div class="row">
+    <div class="col-md-12">
+      <app-header></app-header>
     </div>
   </div>
-
-  <div class="container-lg">
-    <!-- Progress mat spinner example -->
-    <section class="example-section">
-      <button mat-raised-button color="primary" (click)="showProgressSpinner()">
-        Spinner With Backdrop
-      </button>
-      <button
-        mat-raised-button
-        color="accent"
-        (click)="showSpinnerWithoutBackdrop()"
-      >
-        Spinner Without Backdrop
-      </button>
-    </section>
-    <!-- <app-spinner
-      class="example-margin"
-      color="color"
-      mode="indeterminate"
-      [value]="value"
-      [backdropEnabled]="true"
-      [positionGloballyCenter]="true"
-      [displayProgressSpinner]="displayProgressSpinner"
-    >
-    </app-spinner> -->
-    <!-- <app-spinner
-      class="example-margin"
-      [color]="color"
-      [value]="value"
-      [backdropEnabled]="false"
-      [displayProgressSpinner]="spinnerWithoutBackdrop"
-    >
-    </app-spinner> -->
-    <div class="row">
-      <div class="col-md-12" style="border: 2px solid black">
-        <app-header></app-header>
-      </div>
+  <div class="row">
+    <router-outlet> </router-outlet>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <app-footer></app-footer>
     </div>
-    <div class="row" style="border: 2px solid black">
-      <router-outlet> </router-outlet>
-      <!-- <app-main-content></app-main-content> -->
-    </div>
-    <div class="row">
-      <div class="col-md-12" style="border: 2px solid black">
-        <app-footer></app-footer>
-      </div>
-    </div>
-    <!-- <button class="btn btn-primary" (click)="testSpinner()">Spinner</button> -->
-    <!-- Spinner End  -->
-    <!-- Firebase login
-    <button class="btn btn-primary" (click)="login()">Login</button> Firebase
-    Logout
-    <button class="btn btn-primary" (click)="logout()">Logout</button>
-    ***************************************************************************************
-    <button class="btn btn-primary" (click)="testSpinner()">Spinner</button>
-    isLoaded:{{ isLoaded }} -->
-    <!-- <app-spinner [display]="isDisplay" *ngIf="isDisplay"></app-spinner>
-    <div class="row">
-      <div class="col"><app-header></app-header></div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <app-main-content></app-main-content>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <app-footer></app-footer>
-      </div>
-    </div> -->
   </div>
 </div>

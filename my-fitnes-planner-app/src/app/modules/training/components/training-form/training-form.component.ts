@@ -115,51 +115,11 @@ export class TrainingFormComponent implements OnInit {
   ngOnInit(): void {
     // TODO:  THIS RETRIEVE OBJECT LITERAL TEMPUSERDATA
     this.userModel = this.us.getLoggedUserData();
-    // console.log('form');
-    // TODO: UNCOMMENT THIS WHEN USER LOGI IS COMPLETE
-    // NOTE: UNCOMMENT THIS WHEN USER LOGI IS COMPLETE
-
-    //  this.eventsSubject = new BehaviorSubject<string>(this.userModel.id);
-
-    // this.eventsSubject = new BehaviorSubject<string>('');
-
-    // Hard code
-    // this.exercises.push(
-    //   this.fb.group({
-    //     exerciseName: [''],
-    //     series: this.fb.array([
-    //       this.fb.group({
-    //         repsNum: [1],
-    //         weight: [1],
-    //       }),
-    //     ]),
-    //   })
-    // );
-    //   //  HERE IS CAST VALUE AND HARD CODED VALUE FROM ABOVE
-    //   'posle this.exercises.controls:',
-    //   <FormArray>(
-    //     (<FormGroup>(
-    //       (<FormArray>this.trainingForm.controls.exercises).controls[0]
-    //     )).controls.series
-    //   )
-    // );
-    // this.exercisesControls.forEach((item) => {
-    // }); //as FormArray; // controls[index] is needed!
   }
   selectToday() {
-    //this.trainingForm.controls['trainingDate'].setValue(this.cal.getToday());
-    // console.log(
-    //   `this.trainingForm.controls['trainingDate']=>`,
-    //   this.trainingForm.controls['trainingDate'].value
-    // );
     this.trainingForm.controls['trainingDate'].setValue(
       this.format(this.trainingForm.controls['trainingDate'].value)
     );
-    console.log(
-      `this.trainingForm.controls['trainingDate']=>`,
-      this.trainingForm.controls['trainingDate'].value
-    );
-    // console.log('date=>', this.date);
   }
   /**
    *
@@ -229,10 +189,7 @@ export class TrainingFormComponent implements OnInit {
    */
   onChangeTypeOfTraining(e: any) {
     const type = String(e.target.value);
-    console.log(`type: ${type}`);
     for (const [id, items] of Object.entries(this.exercises)) {
-      console.log('id:', id);
-      console.log('items:', items);
       if (id === type) {
         this.selectedExercises = items;
         return;
@@ -295,19 +252,10 @@ export class TrainingFormComponent implements OnInit {
    * @param training
    */
   saveTraining(training: Training) {
-    // format training date From date model: {
-    //   "year": 2022,
-    //   "month": 3,
-    //   "day": 23
-    // } to date mode day/month/year
     training.trainingDate = this.format(
       this.trainingForm.controls['trainingDate'].value
     );
-
-    console.log('save => training=>', training);
     this.userModel.trainings.push(training);
-    console.log('save=>user data =>', this.userModel);
-
     // new save event happened
     //this.newItemEvent.emit(true);
 

@@ -37,15 +37,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   ) {
     this.loading$ = this.ss.loading$;
   }
-  ngAfterViewInit(): void {
-    // this.loading$.subscribe((data) => {
-    //   this.displayProgressSpinner = data;
-    //   console.log(
-    //     'subscribe=>this.displayProgressSpinner=>',
-    //     this.displayProgressSpinner
-    //   );
-    // });
-  }
+  ngAfterViewInit(): void {}
 
   ngOnInit(): void {
     if (!this.us.getData()) {
@@ -53,27 +45,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     } else {
       this.us.loadUserData();
     }
-    // this.loading$.pipe(debounceTime(1000)).subscribe((data) => {
-    //   this.showProgressSpinner();
-    //   // this.displayProgressSpinner = data;
-    //   console.log('subscribe=>data=>', data);
-    // });
-    // Show/Hide spinner subject
-    // this.ss.getIsDisplay().subscribe((data) => {
-    //   this.displayProgressSpinner = data;
-    // });
-    //console.log('fs:', this.fs);
-    // const courses = this.fs
-    //   .collection('courses')
-    //   .add({ name: 'course 1' })
-    //   .then((data) => {
-    //     console.log('courses:', courses);
-    //     return data;
-    //   });
   }
   ngOnDestroy(): void {
-    console.log('clear local storage');
-
     this.us.clearUserData();
   }
   public add() {
@@ -81,7 +54,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       name: 'todo1',
     };
     //    this.store.collection('todo').add(todo);
-    console.log('pozvana add');
   }
   login() {
     this.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
@@ -89,28 +61,4 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   logout() {
     this.auth.signOut();
   }
-
-  /**
-   * ************************************************** Mat progress spinner test **********************************
-   */
-
-  /**
-   * Display progress spinner with backdrop for 3 secs on click of button  // NOTE: DELETE THIS AFTER IMPLEMENTAION LOADING WITH OBSERVABLE
-   */
-  showProgressSpinner = () => {
-    this.displayProgressSpinner = true;
-    // this.ss.show();
-    // setTimeout(() => {
-    // this.ss.hide();
-    // }, 3000);
-  };
-  /**
-   * Display progress spinner without backdrop for 3 secs on click of button
-   */
-  showSpinnerWithoutBackdrop = () => {
-    this.spinnerWithoutBackdrop = true;
-    setTimeout(() => {
-      this.spinnerWithoutBackdrop = false;
-    }, 3000);
-  };
 }

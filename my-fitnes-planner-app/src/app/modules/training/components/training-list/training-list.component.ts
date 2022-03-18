@@ -43,8 +43,6 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
   total$: Observable<number>;
   trainings$: Observable<Training[]>;
 
-  // @ViewChildren(NgbdSortableHeader) headers: QueryList<NgbdSortableHeader>;
-
   selectedTraining: Training;
   trainingsDataSource: Training[];
   userID: string;
@@ -91,9 +89,7 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
   /**
    * // NOTE:test Observables With SwitchMap
    */
-  testObservablesWithSwitchMap() {
-    console.log('list=>isNew=>', this.isNew);
-  }
+  testObservablesWithSwitchMap() {}
   /**
    * Unsubscribe when the component dies
    */
@@ -139,23 +135,6 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
    *
    */
   trackTraining(index: number, training: any) {
-    console.log(training);
     return training;
   }
-  // Table filter , pagination
-  /**
-   * // TODO: SORT
-   * *
-   */
-  //  onSort({column, direction}: SortEvent) {
-  //   // resetting other headers
-  //   this.headers.forEach(header => {
-  //     if (header.sortable !== column) {
-  //       header.direction = '';
-  //     }
-  //   });
-
-  //   this.service.sortColumn = column;
-  //   this.service.sortDirection = direction;
-  // }
 }

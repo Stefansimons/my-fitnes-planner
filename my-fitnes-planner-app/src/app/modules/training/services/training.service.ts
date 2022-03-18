@@ -40,47 +40,19 @@ function sort(
   direction: string
 ): Training[] {
   return trainings;
-  // if (direction === '' || column === '') {
-  //   return trainings;
-  // } else {
-  //   return [...trainings].sort((a, b) => {
-  //     const res = compare(a[column], b[column]);
-  //     return direction === 'asc' ? res : -res;
-  //   });
-  // }
 }
-// TODO: Resolve this!
 function matches(training: Training, term: string) {
-  // console.log('matches=>training=>', training);
-  // console.log('term=>', term);
-  // const test = 'Barbel inclane benc';
-  // const isIncludes = test.includes('Bar');
-  // console.log('isIncludes=>', isIncludes);
-
-  // const items = training.exercises?.some((item) => {
-  //   return item.exerciseName?.includes(term);
-  // });
-  //  .includes(
-  //   term.toLowerCase()
-  // );
-  //  ?.map((item) => item.exerciseName)
-  // .filter((item) => item ? item.search(term) : '');
-  // console.log('items=>', items);
-  // console.log('-------------------------------------------------------------');
-
   return (
     training.exercises?.some((item) => {
       return item.exerciseName?.toLowerCase().includes(term.toLowerCase());
     }) || training.typeOfTraining.toLowerCase().includes(term.toLowerCase())
   );
-  // || pipe.transform(training.population).includes(term);
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class TrainingService {
-  // private _newTrainingEvent : Observable<string>; // Emit next userId
   private _newTrainingEvent = new BehaviorSubject<boolean>(false); // Emit next new training value event, false is default value
   private loggedUser: User;
   // Table filter and pagination
