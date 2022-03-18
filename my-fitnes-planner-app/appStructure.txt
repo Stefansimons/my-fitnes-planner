@@ -1,0 +1,1 @@
+ compodoc komanda: npm run compodoc . package.json => "compodoc": "npx compodoc -p tsconfig.doc.json"

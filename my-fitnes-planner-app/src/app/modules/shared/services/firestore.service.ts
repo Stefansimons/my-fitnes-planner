@@ -1,3 +1,4 @@
+import { SpinnerService } from './spinner.service';
 import { user } from 'rxfire/auth';
 import {
   Exercise,
@@ -7,7 +8,7 @@ import {
 import { User } from './../models/user.model';
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 
 import {
   AngularFirestore,
@@ -78,7 +79,7 @@ export class FirestoreService {
   userItemsobs: Observable<User[]>;
   items: User;
   userItems: User[];
-  constructor(private fs: AngularFirestore) {
+  constructor(private fs: AngularFirestore, private ss: SpinnerService) {
     //  this.itemsCollection = fs.collection<User>('users/t58eflvZawe59plcNDuh/trainings');
     this.itemsCollection = fs.collection<User>('users/');
 
@@ -96,32 +97,17 @@ export class FirestoreService {
     // Radim save pa kad dobije id onda radim update objekta. Nizovi su opcionalni parametri.
     if (!user.id) {
       // SAVE ITEM
-      console.log('temp user data=>', user);
-
       // Persist a document id
+
       user.trainings.forEach((training) => {
         training.id = this.fs.createId();
       });
-      this.itemsCollection
-        .add({ user })
-        .then((data) => {
-          console.log('then => data=>', data);
-        })
-        .catch((error) => {
-          console.error(`${error.message} 💥`), alert('Something went wrong!');
-        }); // const docSnap = await getDoc(docRef);
+      console.log('save =>user=>', user);
+      return this.itemsCollection.add({ user });
     } else {
       // EDIT ITEM
-      this.fs
-        .doc(`users/${user.id}`)
-        .update(user)
-        .then((data) => {
-          console.log('update data=>', data);
-          alert('successfully');
-        })
-        .catch((error) => {
-          console.error(`${error.message} 💥`), alert('Something went wrong!');
-        });
+      console.log('update =>user =>', user);
+      return this.fs.doc(`users/${user.id}`).update(user);
     }
   }
   /**
@@ -138,25 +124,18 @@ export class FirestoreService {
     //     .collection<User>('users') // TIP KOLEKCIJE <>
     //     .snapshotChanges();
     // } else {
-    console.log('userId=>', userId);
 
     return this.itemsCollection
       .doc(userId) // ID kolekcije
       .snapshotChanges()
       .pipe(
+        // tap(() => this._loading$.next(true)), // NOTE: consider this if is it a good way for spinner loader, tap operator
         map((actions) => {
           const data = actions.payload.data();
           const id = actions.payload.id;
-          return { ...data.user.trainings } as Training[];
+          return { ...data.trainings } as Training[];
         })
       );
-    // }
-  }
-  // GET DOCUMENTS,NOT COLLECTIONS!!
-  // WORKS
-  getDocuments(collection: string, id: string): Observable<User | undefined> {
-    this.itemDoc = this.fs.doc<User>(`${collection}/${id}`);
-    return this.itemDoc.valueChanges();
   }
   /**
    *

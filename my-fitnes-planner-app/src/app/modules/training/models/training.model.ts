@@ -6,11 +6,11 @@ export interface Training {
 }
 export interface Exercise {
   id?: string;
-  name: string;
+  exerciseName: string;
   series?: Series[];
 }
 export interface Series {
   id?: string;
-  repetitionNumber: number;
+  repsNum: number;
   weight: number;
 }

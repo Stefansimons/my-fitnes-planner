@@ -10,7 +10,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule, MatRippleModule } from '@angular/material/core';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
-
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 @NgModule({
   imports: [],
   exports: [
@@ -22,6 +22,7 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
     MatPaginatorModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatProgressSpinnerModule,
   ],
   providers: [{ provide: MAT_DATE_LOCALE, useValue: 'en-GB' }],
 })

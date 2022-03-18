@@ -9,13 +9,15 @@ import {
   AngularFirestore,
   AngularFirestoreDocument,
 } from '@angular/fire/compat/firestore';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Validators } from '@angular/forms';
 import { Training } from '../../models/index';
 import { map } from 'rxjs/operators';
 import {} from './../../../shared/';
 import { BehaviorSubject, Subject } from 'rxjs';
+import { NgbDateStruct, NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
+
 @Component({
   selector: 'app-training-form',
   templateUrl: './training-form.component.html',
@@ -23,13 +25,17 @@ import { BehaviorSubject, Subject } from 'rxjs';
 })
 export class TrainingFormComponent implements OnInit {
   //eventsSubject: Subject<string> = new Subject<string>(); // There is not default value! so...
-  eventsSubject: BehaviorSubject<string>;
   clicked = false;
   userModel: User;
 
+  readonly DELIMITER = '/';
+  model1: string;
+  // date: { year: number; month: number };
   trainingForm: FormGroup = this.fb.group({
-    trainingDate: new FormControl(new Date()),
+    trainingDate: new FormControl(),
     typeOfTraining: [''],
+    exerciseNum: [''],
+    serieNum: [''],
     // repsNum: [''],
     exercises: this.fb.array([]),
     // series: new FormArray([]), // ? exercises.series
@@ -102,16 +108,20 @@ export class TrainingFormComponent implements OnInit {
     private fb: FormBuilder,
     private dts: TrainingService,
     private fss: FirestoreService,
-    private us: UserService
+    private us: UserService,
+    private cal: NgbCalendar
   ) {}
 
   ngOnInit(): void {
+    // TODO:  THIS RETRIEVE OBJECT LITERAL TEMPUSERDATA
     this.userModel = this.us.getLoggedUserData();
-    console.log('form');
+    // console.log('form');
     // TODO: UNCOMMENT THIS WHEN USER LOGI IS COMPLETE
+    // NOTE: UNCOMMENT THIS WHEN USER LOGI IS COMPLETE
+
     //  this.eventsSubject = new BehaviorSubject<string>(this.userModel.id);
 
-    this.eventsSubject = new BehaviorSubject<string>('');
+    // this.eventsSubject = new BehaviorSubject<string>('');
 
     // Hard code
     // this.exercises.push(
@@ -136,7 +146,31 @@ export class TrainingFormComponent implements OnInit {
     // this.exercisesControls.forEach((item) => {
     // }); //as FormArray; // controls[index] is needed!
   }
-
+  selectToday() {
+    //this.trainingForm.controls['trainingDate'].setValue(this.cal.getToday());
+    // console.log(
+    //   `this.trainingForm.controls['trainingDate']=>`,
+    //   this.trainingForm.controls['trainingDate'].value
+    // );
+    this.trainingForm.controls['trainingDate'].setValue(
+      this.format(this.trainingForm.controls['trainingDate'].value)
+    );
+    console.log(
+      `this.trainingForm.controls['trainingDate']=>`,
+      this.trainingForm.controls['trainingDate'].value
+    );
+    // console.log('date=>', this.date);
+  }
+  /**
+   *
+   * @param date
+   * @returns
+   */
+  format(date: NgbDateStruct | null): string {
+    return date
+      ? date.day + this.DELIMITER + date.month + this.DELIMITER + date.year
+      : '';
+  }
   onSubmit() {
     // this.trainingForm.get('exercises').controls[1].controls.series;
     // TODO: Use EventEmitter with form value
@@ -175,6 +209,7 @@ export class TrainingFormComponent implements OnInit {
         this.exercisesArray.push(
           this.fb.group({
             exerciseName: [''],
+            serieNum: [''],
             series: this.fb.array([]),
           })
         );
@@ -182,6 +217,8 @@ export class TrainingFormComponent implements OnInit {
     } else {
       for (let i = this.exercisesArray.length; i >= numberOfExercises; i--) {
         this.exercisesArray.removeAt(i);
+
+        // this.getFormControl('exerciseNum').setValue(this.exercisesArray.length);
       }
     }
   }
@@ -239,10 +276,18 @@ export class TrainingFormComponent implements OnInit {
   }
   /**
    *
+   * @param controlPath
+   */
+  setFormControlValue(controlPath: string, value: string) {
+    this.form.get(controlPath)?.setValue(value);
+  }
+  /**
+   *
    * @param empIndex
    */
   removeExercise(empIndex: number) {
     this.exercisesArray.removeAt(empIndex);
+    this.setFormControlValue('exerciseNum', String(this.exercisesArray.length));
   }
 
   /**
@@ -250,35 +295,49 @@ export class TrainingFormComponent implements OnInit {
    * @param training
    */
   saveTraining(training: Training) {
+    // format training date From date model: {
+    //   "year": 2022,
+    //   "month": 3,
+    //   "day": 23
+    // } to date mode day/month/year
+    training.trainingDate = this.format(
+      this.trainingForm.controls['trainingDate'].value
+    );
+
     console.log('save => training=>', training);
     this.userModel.trainings.push(training);
     console.log('save=>user data =>', this.userModel);
 
-    this.dts.saveTraining(this.userModel);
-    // // Emit next value to child component
-    this.eventsSubject.next(this.userModel.id);
-  }
-  /**
-   *
-   * @param training
-   */
-  editTraining(training: Training) {
-    this.trainingForm.setValue({
-      id: training.id,
-      trainingDate: new Date(training.trainingDate),
+    // new save event happened
+    //this.newItemEvent.emit(true);
 
-      typeOfTraining: training.typeOfTraining,
-    });
+    this.dts
+      .saveUser(this.userModel)
+      .then((res) => {
+        alert(`Successfull insert!`);
+        this.us.updateLocalStorageUserData(this.userModel);
+      })
+      .catch((error) => alert(`Something went wrong => ${error.message}`));
+    // // Emit next value to child component
+    //   this.eventsSubject.next(this.userModel.id);
+  }
+
+  /**
+   * Test Everything new features
+   */
+  testNewAll() {
+    // this.testEmiter = !this.testEmiter;
+    // this.dts.setNewTrainingEvent(true);
   }
   /**
    * -----------------------------------------------Login Component --------------------------------------------
    *
    */
 
-  login() {
-    this.us.saveUser();
-    this.eventsSubject.next(this.userModel.id); // TODO: COMMENT THIS
-  }
+  // login() {
+  //   this.us.saveUser();
+  //   this.eventsSubject.next(this.userModel.id); // TODO: COMMENT THIS
+  // }
   /**
    * -----------------------------------------------Login end
    */
@@ -289,7 +348,7 @@ export class TrainingFormComponent implements OnInit {
    *
    */
   ngOnDestroy() {
-    this.eventsSubject.unsubscribe();
+    //  this.eventsSubject.unsubscribe();
     // needed if child gets re-created (eg on some model changes)
     // note that subsequent subscriptions on the same subject will fail
     // so the parent has to re-create parentSubject on changes

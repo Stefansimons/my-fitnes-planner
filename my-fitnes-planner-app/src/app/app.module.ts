@@ -1,3 +1,4 @@
+import { SpinnerComponent } from './modules/shared/components/spinner/spinner.component';
 import { RouterModule } from '@angular/router';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore/';
 import { NgModule } from '@angular/core';
@@ -15,13 +16,15 @@ import { ReactiveFormsModule } from '@angular/forms';
 
 // My material module
 import { MaterialModule } from './material/material.module';
+import { AppOverlayModule } from './material/overlay/appOverlay.module';
 
 // Modules
 import { SharedModule } from './modules/shared/shared.module';
 import { NutritionModule } from './modules/nutrition/nutrition.module';
 import { TrainingModule } from './modules/training/training.module';
+
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent], // TODO: SpinnerComponent Mast have?
   imports: [
     BrowserModule,
     AngularFireModule.initializeApp(environment.firebase),
@@ -32,6 +35,8 @@ import { TrainingModule } from './modules/training/training.module';
     TrainingModule,
     NutritionModule,
     SharedModule,
+    AppOverlayModule,
+
     // provideFirebaseApp(() => initializeApp(environment.firebase)),
     // provideAnalytics(() => getAnalytics()),
     // provideAuth(() => getAuth()),
@@ -43,6 +48,7 @@ import { TrainingModule } from './modules/training/training.module';
     // provideStorage(() => getStorage()),
     // provideFirestore(() => getFirestore()),
   ],
+  entryComponents: [AppComponent, SpinnerComponent], // TODO: entryComponents ?!?
   exports: [RouterModule],
   providers: [
     AngularFirestoreModule,
