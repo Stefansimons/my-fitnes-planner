@@ -1,8 +1,13 @@
+import {
+  NgbSortableTableDirective,
+  SortEvent,
+} from './../../directives/ngb-sortable-table.directive';
+import { User } from './../../../shared/models/user.model';
 import { trainings } from './../../../shared/services/firestore.service';
 import { SpinnerService } from './../../../shared/services/spinner.service';
 import { UserService } from './../../../shared/services/user.service';
 import { Observable, Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 
 import { Training, Exercise } from './../../models/training.model';
 import { TrainingService } from '../../services/training.service';
@@ -13,6 +18,7 @@ import {
   Input,
   OnInit,
   Output,
+  QueryList,
   ViewChild,
   ViewChildren,
 } from '@angular/core';
@@ -34,6 +40,10 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
   @Input() training: Training;
   @Output() editTrainingEvent = new EventEmitter<Training>();
 
+  // Directive for sorting table
+  @ViewChildren(NgbSortableTableDirective)
+  headers: QueryList<NgbSortableTableDirective>;
+
   // listen to parent event in child
   @Input() eventsUserId: Observable<string>;
 
@@ -44,7 +54,7 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
   trainings$: Observable<Training[]>;
 
   selectedTraining: Training;
-  trainingsDataSource: Training[];
+  //  trainingsDataSource: Training[];
   userID: string;
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -65,26 +75,38 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     // Local storage user data
-    const user = this.us.getLoggedUserData();
-    this.userID = user.id;
-    this.trainingsDataSource = user.trainings.reverse();
+    const userObs = this.us.getLoggedUser$
+      .pipe(tap(() => this.ss.show()))
+      .subscribe((user) => {
+        this.userID = user.id;
+
+        this.dts.setTrainings$(user.trainings);
+
+        this.onSort({ column: 'trainingDate', direction: 'desc' });
+
+        this.ss.hide();
+      });
 
     // Emited new training
     const newItemEvent = this.dts
       .getNewTrainingEvent()
+      .pipe(tap(() => this.ss.show()))
       .subscribe((isNewEvent) => {
         if (isNewEvent) {
-          this.ss.show();
           this.dts.getTrainings(this.userID).subscribe((data: Training[]) => {
-            // this.trainingsDataSource = Object.values(data).reverse();
+            this.dts.setTrainings$(data);
+
+            this.onSort({ column: 'trainingDate', direction: 'desc' });
+
             this.dts.trainings(data);
+
             this.ss.hide();
           });
         }
       });
 
     // Add observables in subsink array
-    this.subs.add(newItemEvent);
+    this.subs.add(newItemEvent, userObs);
   }
   /**
    * // NOTE:test Observables With SwitchMap
@@ -104,16 +126,15 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
   getTrainingsByUserId(userId: string) {
     this.ss.show();
     this.dts.getTrainings(userId).subscribe((data: Training[]) => {
-      this.trainingsDataSource = [];
+      // this.trainingsDataSource = [];
       // TREBA DA KREIRAM TAKAV NIZ DA SE PRIKAZU SVE VEZBE ! ILI DA UBACIM DRUGU TABELU PA SA INNER TABLE
       // Looping Object
       for (const [id, training] of Object.entries(data)) {
         // Destructuring
         // console.log('training:', training);
         // console.log('id:', id); // 0 , 1 ...
-
         // let tempItem = { ...training }; -- DESTRUCTURING
-        this.trainingsDataSource.push({ ...training });
+        // this.trainingsDataSource.push({ ...training });
       }
       this.ss.hide();
     });
@@ -129,6 +150,8 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
    * @param value
    */
   editTraining(value: Training) {
+    console.log('value=>', value);
+
     this.editTrainingEvent.emit(value);
   }
   /**
@@ -136,5 +159,17 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
    */
   trackTraining(index: number, training: any) {
     return training;
+  }
+  // Directives event
+  onSort({ column, direction }: SortEvent) {
+    // resetting other headers
+    this.headers.forEach((header) => {
+      if (header.sortable !== column) {
+        header.direction = '';
+      }
+    });
+
+    this.dts.sortColumn = column;
+    this.dts.sortDirection = direction;
   }
 }

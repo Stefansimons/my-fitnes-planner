@@ -1,98 +1,133 @@
 <!-- <button mat-button class="my-button primary" (click)="getTraining()">
   Update
 </button> -->
-<div class="table-responsive">
-  <!-- Filter field -->
-  <div class="mb-3 row">
-    <label
-      for="table-complete-search"
-      class="col-xs-3 col-sm-auto col-form-label"
-      >Full text search:</label
-    >
-    <div class="col-xs-3 col-sm-auto">
-      <input
-        id="table-complete-search"
-        type="text"
-        class="form-control"
-        name="searchTerm"
-        [(ngModel)]="dts.searchTerm"
-      />
+<div class="training-list-wrapper">
+  <div class="table-responsive">
+    <!-- Filter field -->
+    <div class="mb-3 row">
+      <label
+        for="table-complete-search"
+        class="col-xs-3 col-sm-auto col-form-label"
+        >Full text search:</label
+      >
+      <div class="col-xs-3 col-sm-auto">
+        <input
+          id="table-complete-search"
+          type="text"
+          class="form-control"
+          name="searchTerm"
+          [(ngModel)]="dts.searchTerm"
+        />
+      </div>
     </div>
-  </div>
-  <table class="table table-striped" data-search="true">
-    <thead>
-      <tr>
-        <th data-field="state" data-checkbox="true">#</th>
-        <th>Datum</th>
-        <th>Tip</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let training of trainings$ | async">
-        <!-- trackBy: trackTraining -->
-        <td>{{ training.id }}</td>
-        <td>{{ training.trainingDate }}</td>
-        <td>{{ training.typeOfTraining }}</td>
-        <td>
-          <tr>
-            <td>
-              <table class="table mb-0">
-                <thead>
-                  <tr>
-                    <th>Vezba</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let exercise of training.exercises">
-                    <td>{{ exercise.exerciseName }}</td>
-                    <td>
-                      <table class="table mb-0">
-                        <thead>
-                          <tr>
-                            <th>Serija#</th>
-                            <th>Broj ponavljanja</th>
-                            <th>Kilaza [kg]</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr
-                            *ngFor="let serie of exercise.series; let i = index"
-                          >
-                            <td>{{ i + 1 }}</td>
-                            <td>{{ serie.repsNum }}</td>
-                            <td>{{ serie.weight }}</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </td>
-          </tr>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  <div class="d-flex justify-content-between p-2">
-    <ngb-pagination
-      [collectionSize]="(total$ | async)!"
-      [(page)]="dts.page"
-      [pageSize]="dts.pageSize"
-    >
-    </ngb-pagination>
+    <table class="my-table table table-striped" data-search="true">
+      <thead>
+        <tr>
+          <th
+            class="id-table"
+            data-field="state"
+            appNgbSortableTable
+            sortable="id"
+            (sort)="onSort($event)"
+          >
+            #
+          </th>
+          <th
+            appNgbSortableTable
+            sortable="trainingDate"
+            (sort)="onSort($event)"
+          >
+            Datum
+          </th>
+          <th
+            appNgbSortableTable
+            sortable="typeOfTraining"
+            (sort)="onSort($event)"
+          >
+            Tip
+          </th>
+          <th></th>
+          <th>Akcija</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let training of trainings$ | async">
+          <!-- trackBy: trackTraining -->
+          <td>{{ training.id }}</td>
+          <td>{{ training.trainingDate }}</td>
+          <td>{{ training.typeOfTraining }}</td>
+          <td>
+            <tr>
+              <td>
+                <table class="table mb-0">
+                  <thead>
+                    <tr>
+                      <th>Vezba</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let exercise of training.exercises">
+                      <td>{{ exercise.exerciseName }}</td>
+                      <td>
+                        <table class="table mb-0">
+                          <thead>
+                            <tr>
+                              <th>Serija#</th>
+                              <th>Broj ponavljanja</th>
+                              <th>Kilaza [kg]</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr
+                              *ngFor="
+                                let serie of exercise.series;
+                                let i = index
+                              "
+                            >
+                              <td>{{ i + 1 }}</td>
+                              <td>{{ serie.repsNum }}</td>
+                              <td>{{ serie.weight }}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+          </td>
+          <td>
+            <button
+              type="button"
+              class="btn btn-primary"
+              (click)="editTraining(training)"
+            >
+              Edit
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="d-flex justify-content-between p-2">
+      <ngb-pagination
+        [collectionSize]="(total$ | async)!"
+        [(page)]="dts.page"
+        [pageSize]="dts.pageSize"
+      >
+      </ngb-pagination>
 
-    <select
-      class="form-select"
-      style="width: auto"
-      name="pageSize"
-      [(ngModel)]="dts.pageSize"
-    >
-      <option [ngValue]="2">2 items per page</option>
-      <option [ngValue]="4">4 items per page</option>
-      <option [ngValue]="6">6 items per page</option>
-    </select>
+      <select
+        class="form-select"
+        style="width: auto"
+        name="pageSize"
+        [(ngModel)]="dts.pageSize"
+      >
+        <option [ngValue]="2">2 items per page</option>
+        <option [ngValue]="4">4 items per page</option>
+        <option [ngValue]="6">6 items per page</option>
+      </select>
+    </div>
   </div>
 </div>

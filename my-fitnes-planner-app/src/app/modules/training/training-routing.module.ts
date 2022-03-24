@@ -1,3 +1,4 @@
+import { StatisticsComponent } from './components/statistics/statistics.component';
 import { TrainingComponent } from './components/training/training.component';
 import { TrainingListComponent } from './components/training-list/training-list.component';
 import { TrainingFormComponent } from './components/training-form/training-form.component';
@@ -9,6 +10,10 @@ const routes: Routes = [
   {
     path: 'list',
     component: TrainingListComponent,
+  },
+  {
+    path: 'statistics',
+    component: StatisticsComponent,
   },
 ];
 

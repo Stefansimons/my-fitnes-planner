@@ -39,13 +39,49 @@ function sort(
   column: SortColumn,
   direction: string
 ): Training[] {
-  return trainings;
+  // ONLY SORT PER TRAINING DATE COLUMN
+  if (direction === '' || column === '') {
+    return trainings;
+  } else {
+    return [...trainings].sort((a, b) => {
+      let res;
+      switch (column) {
+        case 'id': {
+          res = compare(a.id || 1, b.id || 1);
+          return direction === 'asc' ? res : -res;
+        }
+        case 'trainingDate': {
+          res = compare(a.trainingDate, b.trainingDate);
+          return direction === 'asc' ? res : -res;
+        }
+        case 'typeOfTraining': {
+          res = compare(a.typeOfTraining, b.typeOfTraining);
+          return direction === 'asc' ? res : -res;
+        }
+        default: {
+          res = compare(a.id || 1, b.id || 1);
+          return direction === 'asc' ? res : -res;
+        }
+      }
+    });
+  }
 }
+// function sort(countries: Country[], column: SortColumn, direction: string): Country[] {
+//   if (direction === '' || column === '') {
+//     return countries;
+//   } else {
+//     return [...countries].sort((a, b) => {
+//       const res = compare(a[column], b[column]);
+//       return direction === 'asc' ? res : -res;
+//     });
+//   }
+// }
+
 function matches(training: Training, term: string) {
   return (
     training.exercises?.some((item) => {
       return item.exerciseName?.toLowerCase().includes(term.toLowerCase());
-    }) || training.typeOfTraining.toLowerCase().includes(term.toLowerCase())
+    }) || training?.typeOfTraining?.toLowerCase().includes(term.toLowerCase())
   );
 }
 
@@ -55,12 +91,14 @@ function matches(training: Training, term: string) {
 export class TrainingService {
   private _newTrainingEvent = new BehaviorSubject<boolean>(false); // Emit next new training value event, false is default value
   private loggedUser: User;
+
+  private _editTrainingSubject$ = new Subject<Training>();
   // Table filter and pagination
   // private _loading$ = new BehaviorSubject<boolean>(true);
   private _search$ = new Subject<void>();
   private _trainings$ = new BehaviorSubject<Training[]>([]);
   private _total$ = new BehaviorSubject<number>(0);
-
+  private _trainings: Training[];
   private _state: State = {
     page: 1,
     pageSize: 4,
@@ -74,6 +112,9 @@ export class TrainingService {
     private us: UserService,
     private ss: SpinnerService
   ) {
+    console.log('tr constr');
+
+    // TODO: get logged user trainings ??
     this._search$
       .pipe(
         tap(() => {
@@ -87,19 +128,50 @@ export class TrainingService {
         tap(() => this.ss.hide())
       )
       .subscribe((result) => {
+        console.log('result');
+
         this._trainings$.next(result.trainings);
         this._total$.next(result.total);
       });
-
     this._search$.next();
-    this.loggedUser = this.us.getLoggedUserData();
   }
-  saveUser(user: User) {
-    // commonly something like:
-    // return this.httpClient.get('https://example.org/rest-api/items/');
-    return this.fs.saveItem(user);
+  saveTraining(training: Training) {
+    console.log('save training=>', training);
+    const tempUserData = this.us.getLoggedUserData();
 
-    // this.updateTable();
+    if (training.id) {
+      console.log('update:');
+
+      // Update training in array
+      const updatedArray = tempUserData.trainings.map((item) =>
+        item.id === training.id ? training : item
+      );
+
+      console.log('updatedArray', updatedArray);
+      // tempUserData.trainings = updatedArray;
+    } else {
+      console.log('insert:');
+      // Add training in array
+      tempUserData.trainings.push(training);
+    }
+
+    // Setting ids of training and exericises per object ids
+    tempUserData.trainings.forEach((training, id) => {
+      if (!training.id) {
+        training.id = id + 1;
+        console.log('u ifu sam,id = id +1', training.id);
+        training.exercises.forEach((item, id) => {
+          item.id = !item.id ? id + 1 : item.id;
+          return item;
+        });
+      }
+      return training;
+    });
+
+    this.us.updateLocalStorageUserData(tempUserData);
+
+    //...AND FORWARD USER FOR UPDATE...
+    return this.fs.updateItem(tempUserData);
   }
   getNewTrainingEvent() {
     return this._newTrainingEvent;
@@ -112,6 +184,25 @@ export class TrainingService {
     return this.fs.getItems(userId);
   }
 
+  /**
+   * get training as observable
+   */
+  get getTraining$() {
+    return this._editTrainingSubject$.asObservable();
+  }
+
+  setTrainings$(trainings: Training[]) {
+    this._trainings$.next(trainings);
+  }
+  /**
+   *
+   */
+  editTraining(training: Training) {
+    this._editTrainingSubject$.next(training);
+  }
+  /**
+   *  get trainings as observable
+   */
   // Table
   get trainings$() {
     return this._trainings$.asObservable();
@@ -162,11 +253,19 @@ export class TrainingService {
    * @returns
    */
   private _search(): Observable<SearchResult> {
+    console.log('_search=>arrayTrainings=>', this.us.arrayTrainings);
+
     const { sortColumn, sortDirection, pageSize, page, searchTerm } =
       this._state;
+    console.log(
+      'sort column=>',
+      sortColumn,
+      '... sort direction=>',
+      sortDirection
+    );
 
     //  TODO: sort
-    let trainings = sort(this.loggedUser.trainings, sortColumn, sortDirection);
+    let trainings = sort(this.us.arrayTrainings, sortColumn, sortDirection);
 
     // let trainings = sort(trainings, sortColumn, sortDirection);
 

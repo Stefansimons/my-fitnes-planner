@@ -1,3 +1,5 @@
+import { map } from 'rxjs/operators';
+import { TrainingService } from './../../services/training.service';
 import { Training } from './../../models/training.model';
 import { Component, OnInit } from '@angular/core';
 
@@ -8,19 +10,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TrainingComponent implements OnInit {
   isNewItem: boolean = false;
-  constructor() {}
+  constructor(private ts: TrainingService) {}
 
   ngOnInit(): void {}
   /**
-   *
+   *  NOTE: SETTER SET VALUE
    * @param training
    */
   editTraining(training: Training) {
-    // this.trainingForm.setValue({
-    //   id: training.id,
-    //   trainingDate: new Date(training.trainingDate),
-    //   typeOfTraining: training.typeOfTraining,
-    // });
+    this.ts.editTraining(training);
   }
   /**
    * Child (@OUTPUT) - Parent - Child(@INPUT)

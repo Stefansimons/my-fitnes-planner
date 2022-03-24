@@ -1,25 +1,31 @@
-<div
-  id="overlay"
-  [ngClass]="{ show: loading$ | async, hide: !(loading$ | async) }"
->
-  <div class="my-loader">
-    <div class="spinner-border" role="status"></div>
-    <div class="text">Loading…</div>
-  </div>
-</div>
-
-<div class="container-lg">
-  <div class="row">
-    <div class="col-md-12">
-      <app-header></app-header>
+<div class="entire-wrapper">
+  <!-- OVERLAY LOADER (SPINNER) START -->
+  <div
+    id="overlay"
+    [ngClass]="{ show: loading$ | async, hide: !(loading$ | async) }"
+  >
+    <div class="my-loader">
+      <div class="spinner-border" role="status"></div>
+      <div class="text">Loading…</div>
     </div>
   </div>
-  <div class="row">
-    <router-outlet> </router-outlet>
-  </div>
-  <div class="row">
-    <div class="col-md-12">
-      <app-footer></app-footer>
+  <!-- END -->
+  <!--  TODO: Resolve in line css -->
+  <div class="container-lg app-wrapper">
+    <div class="row header-wrapper">
+      <div class="col-md-12">
+        <app-header></app-header>
+      </div>
+    </div>
+    <div class="row main-content">
+      <div class="col-md-12">
+        <router-outlet> </router-outlet>
+      </div>
+    </div>
+    <div class="row" style="background-color: grey">
+      <div class="col-md-12 footer-wrapper">
+        <app-footer></app-footer>
+      </div>
     </div>
   </div>
 </div>

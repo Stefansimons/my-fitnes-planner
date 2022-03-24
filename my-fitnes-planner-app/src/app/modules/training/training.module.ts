@@ -9,6 +9,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
 import { TrainingComponent } from './components/training/training.component';
 import { NgbSortableTableDirective } from './directives/ngb-sortable-table.directive';
+import { StatisticsComponent } from './components/statistics/statistics.component';
 
 @NgModule({
   declarations: [
@@ -16,6 +17,7 @@ import { NgbSortableTableDirective } from './directives/ngb-sortable-table.direc
     TrainingFormComponent,
     TrainingComponent,
     NgbSortableTableDirective,
+    StatisticsComponent,
   ],
   imports: [
     CommonModule,

@@ -15,7 +15,7 @@ export interface SortEvent {
 }
 
 @Directive({
-  selector: '[appNgbSortableTable]',
+  selector: 'th[appNgbSortableTable]',
   host: {
     '[class.asc]': 'direction === "asc"',
     '[class.desc]': 'direction === "desc"',
@@ -29,7 +29,10 @@ export class NgbSortableTableDirective {
 
   rotate() {
     this.direction = rotate[this.direction];
-    this.sort.emit({ column: this.sortable, direction: this.direction });
+    this.sort.emit({
+      column: this.sortable,
+      direction: this.direction,
+    });
   }
   constructor() {}
 }

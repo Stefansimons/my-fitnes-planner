@@ -36,10 +36,13 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     private ss: SpinnerService
   ) {
     this.loading$ = this.ss.loading$;
+  //  this.loading$
   }
   ngAfterViewInit(): void {}
 
   ngOnInit(): void {
+    console.log('app on init');
+
     if (!this.us.getData()) {
       this.us.saveUser();
     } else {

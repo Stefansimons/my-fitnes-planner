@@ -1,13 +1,14 @@
 export interface Training {
-  id?: string;
+  id?: number;
   trainingDate: string;
-  exercises?: Exercise[];
+  exercises: Exercise[];
   typeOfTraining: string;
 }
 export interface Exercise {
-  id?: string;
+  id?: number;
   exerciseName: string;
   series?: Series[];
+  serieNum?: number;
 }
 export interface Series {
   id?: string;

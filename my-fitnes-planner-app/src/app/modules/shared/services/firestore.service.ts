@@ -1,5 +1,4 @@
 import { SpinnerService } from './spinner.service';
-import { user } from 'rxfire/auth';
 import {
   Exercise,
   Training,
@@ -79,7 +78,7 @@ export class FirestoreService {
   userItemsobs: Observable<User[]>;
   items: User;
   userItems: User[];
-  constructor(private fs: AngularFirestore, private ss: SpinnerService) {
+  constructor(public fs: AngularFirestore, private ss: SpinnerService) {
     //  this.itemsCollection = fs.collection<User>('users/t58eflvZawe59plcNDuh/trainings');
     this.itemsCollection = fs.collection<User>('users/');
 
@@ -91,22 +90,27 @@ export class FirestoreService {
     // a lot of information about "what happened" with each change. If you want to
     // get the data and the id use the map operator.
   }
-
+  /**
+   *
+   * @param user
+   * @returns
+   */
   saveItem(user: User) {
     // url path  /users/t58eflvZawe59plcNDuh/trainings/FZVTzTVHPJJo4bRd9Wtp/exercises
-    // Radim save pa kad dobije id onda radim update objekta. Nizovi su opcionalni parametri.
-    if (!user.id) {
-      // SAVE ITEM
-      // Persist a document id
+    // SAVE ITEM
+    // Persist a document id'
 
-      user.trainings.forEach((training) => {
-        training.id = this.fs.createId();
-      });
-      return this.itemsCollection.add({ user });
-    } else {
-      // EDIT ITEM
-      return this.fs.doc(`users/${user.id}`).update(user);
-    }
+    console.log('save user');
+
+    return this.itemsCollection.add({ user });
+  }
+  /**
+   *
+   * @param user
+   * @returns
+   */
+  updateItem(user: User) {
+    return this.fs.doc(`users/${user.id}`).update(user);
   }
   /**
    *
