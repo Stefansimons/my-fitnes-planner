@@ -1,3 +1,4 @@
+import { HomeComponent } from './modules/core/components/home/home.component';
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
@@ -9,9 +10,10 @@ const routes: Routes = [
         (m) => m.TrainingModule
       ),
   },
+  { path: 'home', component: HomeComponent },
   {
     path: '',
-    redirectTo: '',
+    redirectTo: 'home',
     pathMatch: 'full',
   },
 ];

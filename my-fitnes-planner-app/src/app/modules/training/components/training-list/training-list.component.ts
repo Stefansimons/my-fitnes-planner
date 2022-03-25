@@ -131,7 +131,6 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
       // Looping Object
       for (const [id, training] of Object.entries(data)) {
         // Destructuring
-        // console.log('training:', training);
         // console.log('id:', id); // 0 , 1 ...
         // let tempItem = { ...training }; -- DESTRUCTURING
         // this.trainingsDataSource.push({ ...training });
@@ -150,8 +149,6 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
    * @param value
    */
   editTraining(value: Training) {
-    console.log('value=>', value);
-
     this.editTrainingEvent.emit(value);
   }
   /**

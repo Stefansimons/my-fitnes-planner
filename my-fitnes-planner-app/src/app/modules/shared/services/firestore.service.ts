@@ -99,9 +99,6 @@ export class FirestoreService {
     // url path  /users/t58eflvZawe59plcNDuh/trainings/FZVTzTVHPJJo4bRd9Wtp/exercises
     // SAVE ITEM
     // Persist a document id'
-
-    console.log('save user');
-
     return this.itemsCollection.add({ user });
   }
   /**

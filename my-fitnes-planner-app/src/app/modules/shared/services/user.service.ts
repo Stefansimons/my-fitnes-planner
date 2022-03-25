@@ -33,8 +33,6 @@ export class UserService {
     return this.loggedUser$;
   }
   get getTrainings() {
-    console.log('getter trainings.');
-
     return this.trainings$;
   }
   /**
@@ -56,11 +54,9 @@ export class UserService {
       .then((data) => {
         userTempData.id = data.id;
         this.userId = data.id;
-
         this._loggedUserSource.next(userTempData);
-        console.log('_loggedUser saved');
-
         this.setLocalStorageUserData(userTempData);
+        this.loadUserData();
       })
       .catch((error) => {
         console.error(`${error.message} 💥`), alert('Something went wrong!');
@@ -90,6 +86,9 @@ export class UserService {
   get arrayTrainings() {
     return this._arrayTrainings;
   }
+  fillSearchArrayTrainings(trainings: Training[]) {
+    this._arrayTrainings = trainings;
+  }
   /**
    *
    */
@@ -105,8 +104,6 @@ export class UserService {
         item.id = id + 1;
       });
     });
-    console.log('loaduserdata =>this._loggedUserData=> ', this._loggedUserData);
-
     this.userId = this._loggedUserData.id;
 
     // Emit new user value
@@ -121,6 +118,7 @@ export class UserService {
   clearUserData() {
     localStorage.removeItem('userData');
   }
+
   updateLocalStorageUserData(user: User) {
     this.clearUserData();
     this.setLocalStorageUserData(user);

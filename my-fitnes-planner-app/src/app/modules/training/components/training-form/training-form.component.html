@@ -35,7 +35,7 @@
           *ngIf="
             (getFormControl('typeOfTraining')?.invalid &&
               getFormControl('typeOfTraining')?.touched) ||
-            changedNumberExercises
+            emptyTypeOfTraining
           "
           class="alert alert-danger"
         >

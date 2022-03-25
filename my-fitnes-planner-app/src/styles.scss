@@ -8,6 +8,13 @@ body {
   height: 100%;
 }
 
+/************* Common styles *******/
+.bg-responsive {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+/************************************/
 .basic-container {
   padding: 5px;
 }
@@ -179,7 +186,7 @@ th[appNgbSortableTable].desc:after {
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.5); /* Black background with opacity */
-  z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+  z-index: 10000; /* Specify a stack order in case you're using a different order for other elements, think obout value because popup modal showing spinner */
   cursor: pointer; /* Add a pointer on hover */
   display: block;
 }
@@ -197,7 +204,7 @@ th[appNgbSortableTable].desc:after {
   top: 50%;
   left: 50%;
   text-align: center;
-
+  z-index: 100;
   .spinner-border {
     border: 0.25em solid blue;
     border-right-color: transparent;
@@ -208,15 +215,22 @@ th[appNgbSortableTable].desc:after {
 }
 /******************************************** App layout *****************/
 .entire-wrapper {
+  height: 100%;
+  width: 100%;
+  background-color: bisque;
+  background-image: url("./assets/images/fitness-wallpaper.jpg");
+}
+.app-wrapper {
+  height: 100%;
+}
+
+/*************Training module *************************/
+.training-wrapper {
+  // padding: 10px;
   background-image: url("./assets/images/imageshome.jpg");
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-size: cover;
-  border: 2px solid black;
-  height: 100%;
-  width: 100%;
-}
-.app-wrapper {
   height: 100%;
 }
 .my-table table > :not(caption) > * > * {
@@ -226,15 +240,16 @@ th[appNgbSortableTable].desc:after {
   background-color: burlywood;
 }
 .training-form-wrapper {
-  background-color: burlywood;
 }
 /************************ Header *****************************************/
 // TODO: Resolve
 .header-wrapper {
   height: 10%;
   text-align: center;
-  padding: 20px;
   background-color: #444;
+  .navbar {
+    height: 100%;
+  }
 }
 
 /************************ The navbar container */
@@ -260,48 +275,35 @@ th[appNgbSortableTable].desc:after {
 // }
 
 /************************Main content,column *********************/
-/* Create three equal columns that float next to each other */
-.column {
-  float: left;
-  width: 33.33%;
-}
-
-/* Clear floats after the columns */
-.row:after {
-  content: "";
-  display: table;
-  clear: both;
-}
-
-/*************************Footer *************************************/
-.footer-wrapper {
-  height: 10%;
-  font-size: 25px;
-  padding: 10px;
-  width: 100%;
-  background: #444;
-  color: #fff;
-  text-align: center;
-}
 .main-content {
   height: 80%;
-  padding: 2em;
   overflow-y: scroll;
   background-color: goldenrod;
 }
+
+.home-page-wrapper {
+  background-image: url("./assets/images/imageshome.jpg");
+  height: 100%;
+}
+/*************************Footer *************************************/
 .footer-wrapper {
-  font-family: "Rubik", sans-serif;
-  height: 100;
-  background-color: #444;
+  display: flex;
+  height: 10%;
+  font-size: 25px;
+  // width: 100%;
+  background-color: #263238;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  // height: 100%;
+  .heading-text {
+    color: white;
+  }
 }
 .col_white_amrc {
   color: #fff;
 }
-footer {
-  width: 100%;
-  background-color: #263238;
-  min-height: 250px;
-  padding: 10px 0px 25px 0px;
+.footer {
 }
 .pt2 {
   padding-top: 40px;
@@ -396,13 +398,7 @@ footer p {
   height: 20px;
   text-align: center;
 }
-/***********************Training module wrapper**********/
-.training-wrapper {
-  background-image: url("./assets/images/imageshome.jpg");
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-size: cover;
-}
+
 /******************Media queries***********/
 /* Responsive layout - makes the three columns stack on top of each other instead of next to each other on smaller screens (600px wide or less) */
 @media screen and (max-width: 600px) {

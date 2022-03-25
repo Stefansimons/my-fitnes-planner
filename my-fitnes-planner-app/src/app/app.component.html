@@ -1,4 +1,4 @@
-<div class="entire-wrapper">
+<div class="entire-wrapper bg-responsive">
   <!-- OVERLAY LOADER (SPINNER) START -->
   <div
     id="overlay"
@@ -12,20 +12,27 @@
   <!-- END -->
   <!--  TODO: Resolve in line css -->
   <div class="container-lg app-wrapper">
+    <!-- Header -->
     <div class="row header-wrapper">
-      <div class="col-md-12">
+      <div class="col-md-12 g-0">
         <app-header></app-header>
       </div>
     </div>
+    <!-- Main content -->
     <div class="row main-content">
-      <div class="col-md-12">
+      <div class="col-md-12" style="padding: 0">
         <router-outlet> </router-outlet>
       </div>
     </div>
-    <div class="row" style="background-color: grey">
-      <div class="col-md-12 footer-wrapper">
+    <!-- Footer -->
+    <div class="row footer-wrapper">
+      <div class="col-md-12 g-0">
         <app-footer></app-footer>
       </div>
     </div>
   </div>
 </div>
+
+<!-- Header -> nav bar -->
+<!-- Main content -->
+<!-- Footer -->

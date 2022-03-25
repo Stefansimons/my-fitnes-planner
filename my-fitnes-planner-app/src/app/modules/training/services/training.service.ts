@@ -91,8 +91,8 @@ function matches(training: Training, term: string) {
 export class TrainingService {
   private _newTrainingEvent = new BehaviorSubject<boolean>(false); // Emit next new training value event, false is default value
   private loggedUser: User;
-
-  private _editTrainingSubject$ = new Subject<Training>();
+  // public editTrainingEvent = new Subject<boolean>();
+  public _editTrainingSubject$ = new Subject<Training>();
   // Table filter and pagination
   // private _loading$ = new BehaviorSubject<boolean>(true);
   private _search$ = new Subject<void>();
@@ -112,8 +112,6 @@ export class TrainingService {
     private us: UserService,
     private ss: SpinnerService
   ) {
-    console.log('tr constr');
-
     // TODO: get logged user trainings ??
     this._search$
       .pipe(
@@ -128,47 +126,37 @@ export class TrainingService {
         tap(() => this.ss.hide())
       )
       .subscribe((result) => {
-        console.log('result');
-
         this._trainings$.next(result.trainings);
         this._total$.next(result.total);
       });
     this._search$.next();
   }
   saveTraining(training: Training) {
-    console.log('save training=>', training);
     const tempUserData = this.us.getLoggedUserData();
 
     if (training.id) {
-      console.log('update:');
-
       // Update training in array
       const updatedArray = tempUserData.trainings.map((item) =>
         item.id === training.id ? training : item
       );
 
-      console.log('updatedArray', updatedArray);
-      // tempUserData.trainings = updatedArray;
+      tempUserData.trainings = [...updatedArray];
     } else {
-      console.log('insert:');
       // Add training in array
       tempUserData.trainings.push(training);
     }
 
     // Setting ids of training and exericises per object ids
     tempUserData.trainings.forEach((training, id) => {
-      if (!training.id) {
-        training.id = id + 1;
-        console.log('u ifu sam,id = id +1', training.id);
-        training.exercises.forEach((item, id) => {
-          item.id = !item.id ? id + 1 : item.id;
-          return item;
-        });
-      }
-      return training;
+      training.id ??= id + 1; // NOTE: Nullish coalesc operator
+      training.exercises.forEach((item, id) => {
+        item.id = !item.id ? id + 1 : item.id;
+      });
     });
-
     this.us.updateLocalStorageUserData(tempUserData);
+
+    // Update trainings array for filtering table
+    this.us.fillSearchArrayTrainings(tempUserData.trainings);
 
     //...AND FORWARD USER FOR UPDATE...
     return this.fs.updateItem(tempUserData);
@@ -253,16 +241,8 @@ export class TrainingService {
    * @returns
    */
   private _search(): Observable<SearchResult> {
-    console.log('_search=>arrayTrainings=>', this.us.arrayTrainings);
-
     const { sortColumn, sortDirection, pageSize, page, searchTerm } =
       this._state;
-    console.log(
-      'sort column=>',
-      sortColumn,
-      '... sort direction=>',
-      sortDirection
-    );
 
     //  TODO: sort
     let trainings = sort(this.us.arrayTrainings, sortColumn, sortDirection);

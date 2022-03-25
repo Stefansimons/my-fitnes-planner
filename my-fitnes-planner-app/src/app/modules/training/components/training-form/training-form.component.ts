@@ -11,7 +11,13 @@ import {
   AngularFirestore,
   AngularFirestoreDocument,
 } from '@angular/fire/compat/firestore';
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Output,
+  EventEmitter,
+  AfterViewInit,
+} from '@angular/core';
 import {
   AbstractControl,
   FormArray,
@@ -23,7 +29,7 @@ import {
 } from '@angular/forms';
 import { Validators } from '@angular/forms';
 import { Training } from '../../models/index';
-import { map, tap } from 'rxjs/operators';
+import { map, skip, tap } from 'rxjs/operators';
 import {} from './../../../shared/';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { NgbDateStruct, NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
@@ -35,12 +41,13 @@ import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
   templateUrl: './training-form.component.html',
   styleUrls: ['./training-form.component.css'],
 })
-export class TrainingFormComponent implements OnInit {
+export class TrainingFormComponent implements OnInit, AfterViewInit {
+  @Output() save = new EventEmitter<boolean>();
   //eventsSubject: Subject<string> = new Subject<string>(); // There is not default value! so...
   clicked = false;
   userModel: User;
-  editTraining: Training;
-  changedNumberExercises: boolean = false;
+  editTraining: Training | undefined;
+  emptyTypeOfTraining: boolean = false;
   readonly DELIMITER = '/';
   model1: string;
   // date: { year: number; month: number };
@@ -108,7 +115,6 @@ export class TrainingFormComponent implements OnInit {
     ],
     Drugo: [''],
   };
-  modelTrainingDate: NgbDateStruct;
 
   private subsink: SubSink = new SubSink();
   constructor(
@@ -120,32 +126,34 @@ export class TrainingFormComponent implements OnInit {
     private cal: NgbCalendar,
     private ss: SpinnerService
   ) {}
+  ngAfterViewInit(): void {}
 
   ngOnInit(): void {
-    const editTrainingData = this.dts.getTraining$.subscribe((training) => {
-      console.log('edit form subscribe =>training data=>', training);
-      this.editTraining = training;
-
-      this.setFormValue(training);
-    });
-    this.subsink.add(editTrainingData);
-
-    this.modelTrainingDate = {
-      day: new Date().getDate(),
-      month: new Date().getMonth() + 1,
-      year: new Date().getFullYear(),
-    };
-
+    // Initialization of training form for preventing error getting value of getters
     this.trainingForm = this.fb.group({
       id: [null],
-      trainingDate: new FormControl(this.modelTrainingDate),
+      trainingDate: new FormControl({
+        day: new Date().getDate(),
+        month: new Date().getMonth() + 1,
+        year: new Date().getFullYear(),
+      }),
       typeOfTraining: ['', Validators.required],
       exerciseNum: [0, [Validators.required, this.numberZeroToNullValidator()]],
       // repsNum: [''],
       exercises: this.fb.array([]),
       // series: new FormArray([]), // ? exercises.series
     });
+
+    const editTrainingData = this.dts.getTraining$.subscribe((training) => {
+      this.editTraining = training;
+      if (this.editTraining) this.setFormValue(this.editTraining);
+    });
+
+    this.subsink.add(editTrainingData);
   }
+  /**
+   *
+   */
   selectToday() {
     this.trainingForm.controls['trainingDate'].setValue(
       this.format(this.trainingForm.controls['trainingDate'].value)
@@ -157,22 +165,22 @@ export class TrainingFormComponent implements OnInit {
    * @returns
    */
   setFormValue(training: Training) {
-    console.log('set form value =>training=>', training);
-    training.exercises.forEach((item) => {
-      // item.serieNum = item.series?.length;
-      item.serieNum = 2;
-    });
+    const dateSplited = training.trainingDate.split('/');
     const tempTraining = {
       id: training.id,
       exerciseNum: training.exercises?.length,
       exercises: training.exercises,
-      trainingDate: training.trainingDate,
+      trainingDate: {
+        day: +dateSplited[0],
+        month: +dateSplited[1],
+        year: +dateSplited[2],
+      },
       typeOfTraining: training.typeOfTraining,
     };
-    console.log('tempTraining=>', tempTraining);
     //const tempExercisesFormArray = this.getFormControlArrayValue('exercises');
 
     // Create form controls, arrays controls.  start ********************************
+
     this.createExercisesFormControls(0, tempTraining?.exercises?.length);
     // NOTE:Gets or sets the length of the array.
     // NOTE: This is a number one higher than the highest index in the array.Object is po
@@ -198,9 +206,6 @@ export class TrainingFormComponent implements OnInit {
     //     series: [],
     //   });
     // });
-
-    console.log('form=>', this.form);
-
     //    this.form.patchValue(tempTraining);
   }
   /**
@@ -211,7 +216,7 @@ export class TrainingFormComponent implements OnInit {
   numberZeroToNullValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const controlValue = control.value;
-      return controlValue == 0 ? { nullValue: null } : controlValue;
+      return controlValue == 0 ? { nullValue: null } : null;
     };
   }
   /**
@@ -227,7 +232,6 @@ export class TrainingFormComponent implements OnInit {
   onSubmit() {
     // this.trainingForm.get('exercises').controls[1].controls.series;
     // TODO: Use EventEmitter with form value
-    // console.warn(this.trainingForm.value);
   }
   /**
    *  convenience getters for easy access to form fields , Angular 8
@@ -266,22 +270,15 @@ export class TrainingFormComponent implements OnInit {
    * @param e
    */
   onChangeExercise(e: any) {
-    this.changedNumberExercises = true;
+    if (!this.getFormControl('typeOfTraining')?.value)
+      this.emptyTypeOfTraining = true;
+
     const numberOfExercises = e.target.value || 0;
     if (this.exercisesArray.length < numberOfExercises) {
       this.createExercisesFormControls(
         this.exercisesArray.length,
         numberOfExercises
       );
-      // for (let i = this.exercisesArray.length; i < numberOfExercises; i++) {
-      //   this.exercisesArray.push(
-      //     this.fb.group({
-      //       exerciseName: [''],
-      //       serieNum: [''],
-      //       series: this.fb.array([]),
-      //     })
-      //   );
-      // }
     } else {
       for (let i = this.exercisesArray.length; i >= numberOfExercises; i--) {
         this.exercisesArray.removeAt(i);
@@ -296,7 +293,7 @@ export class TrainingFormComponent implements OnInit {
    * @returns
    */
   onChangeTypeOfTraining(e: any) {
-    this.changedNumberExercises = false;
+    this.emptyTypeOfTraining = false;
     const type = String(e.target.value);
     this.setCertainExercises(type);
   }
@@ -380,6 +377,8 @@ export class TrainingFormComponent implements OnInit {
    * @param empIndex
    */
   removeExercise(empIndex: number) {
+    console.log('form=>', this.form);
+
     this.exercisesArray.removeAt(empIndex);
     this.setFormControlValue('exerciseNum', String(this.exercisesArray.length));
   }
@@ -423,20 +422,17 @@ export class TrainingFormComponent implements OnInit {
    * @param training
    */
   saveTraining(training: Training) {
-    console.log('form valid=>', this.form);
     if (!this.form.valid) return;
+
     training.trainingDate = this.format(
       this.trainingForm.controls['trainingDate'].value
     );
-    // this.userModel.trainings.push(training);
-    // new save event happened
-    //this.newItemEvent.emit(true);
-
     this.dts
       .saveTraining(training)
       .then((res) => {
         this.form.reset();
-        alert(`Successfully insert! ${res}`);
+        this.save.emit(true);
+        alert(`Successfully insert!`);
       })
       .catch((error) => alert(`Something went wrong => ${error.message}`));
     // // Emit next value to child component
