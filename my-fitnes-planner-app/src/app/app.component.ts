@@ -36,7 +36,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     private ss: SpinnerService
   ) {
     this.loading$ = this.ss.loading$;
-  //  this.loading$
+    //  this.loading$
   }
   ngAfterViewInit(): void {}
 

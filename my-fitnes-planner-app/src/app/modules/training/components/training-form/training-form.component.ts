@@ -1,3 +1,4 @@
+import { ToastService } from './../../../shared/services/toast.service';
 import { SpinnerService } from './../../../shared/services/spinner.service';
 import { Exercise, Series } from './../../models/training.model';
 import {
@@ -124,7 +125,8 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
     private fss: FirestoreService,
     private us: UserService,
     private cal: NgbCalendar,
-    private ss: SpinnerService
+    private ss: SpinnerService,
+    private ts: ToastService
   ) {}
   ngAfterViewInit(): void {}
 
@@ -139,7 +141,6 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
       }),
       typeOfTraining: ['', Validators.required],
       exerciseNum: [0, [Validators.required, this.numberZeroToNullValidator()]],
-      // repsNum: [''],
       exercises: this.fb.array([]),
       // series: new FormArray([]), // ? exercises.series
     });
@@ -377,8 +378,6 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
    * @param empIndex
    */
   removeExercise(empIndex: number) {
-    console.log('form=>', this.form);
-
     this.exercisesArray.removeAt(empIndex);
     this.setFormControlValue('exerciseNum', String(this.exercisesArray.length));
   }
@@ -432,9 +431,9 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
       .then((res) => {
         this.form.reset();
         this.save.emit(true);
-        alert(`Successfully insert!`);
+        this.ts.show('Success', 'Successful insert');
       })
-      .catch((error) => alert(`Something went wrong => ${error.message}`));
+      .catch((error) => this.ts.show('Error', `${error.message}`));
     // // Emit next value to child component
     //   this.eventsSubject.next(this.userModel.id);
   }

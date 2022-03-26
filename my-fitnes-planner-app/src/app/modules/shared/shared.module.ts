@@ -8,6 +8,7 @@ import { FooterComponent } from './components/footer/footer.component';
 import { LoginComponent } from './components/login/login.component';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ToastComponent } from './components/toast/toast.component';
 
 @NgModule({
   declarations: [
@@ -15,6 +16,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     FooterComponent,
     LoginComponent,
     SpinnerComponent,
+    ToastComponent,
   ],
   imports: [
     CommonModule,
@@ -23,7 +25,13 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     OverlayModule,
     NgbModule,
   ],
-  exports: [HeaderComponent, FooterComponent, SpinnerComponent, NgbModule],
+  exports: [
+    HeaderComponent,
+    FooterComponent,
+    SpinnerComponent,
+    NgbModule,
+    ToastComponent,
+  ],
   entryComponents: [SpinnerComponent],
 })
 export class SharedModule {}

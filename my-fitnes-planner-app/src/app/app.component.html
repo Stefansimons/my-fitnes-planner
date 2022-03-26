@@ -1,9 +1,18 @@
 <div class="entire-wrapper bg-responsive">
+  <!-- Toastr notification -->
+  <div class="toast-wrapper">
+    <app-toast></app-toast>
+  </div>
   <!-- OVERLAY LOADER (SPINNER) START -->
   <div
     id="overlay"
-    [ngClass]="{ show: loading$ | async, hide: !(loading$ | async) }"
+    [ngClass]="{
+      showSpinner: loading$ | async,
+      hideSpinner: !(loading$ | async)
+    }"
   >
+    <app-toast></app-toast>
+
     <div class="my-loader">
       <div class="spinner-border" role="status"></div>
       <div class="text">Loading…</div>
