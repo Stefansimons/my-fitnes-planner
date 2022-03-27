@@ -1,10 +1,10 @@
-import { Observable, Subject, BehaviorSubject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { Training } from './../../training/models/training.model';
 import { SpinnerService } from './spinner.service';
 import { FirestoreService, trainings } from './firestore.service';
-import { User } from './../models/user.model';
+import { User, IToken } from './../models/user.model';
 import { Injectable } from '@angular/core';
-import { user } from 'rxfire/auth';
+import { tap } from 'rxjs/operators';
 
 export const userTempData = {
   code: 'Code 123',
@@ -42,6 +42,25 @@ export class UserService {
     return this._loggedUserData;
   }
 
+  /**
+   *
+   * @param userId
+   */
+  getFirebaseUser(userId: string) {
+    this.fs
+      .getUser('9cQyfjp2zLt1pkK5IUtF')
+      .pipe(
+        tap((data) => {
+          this.ss.show();
+          return data;
+        })
+      )
+      .subscribe((data) => {
+        console.log('user fb data=>', data);
+        // TODO: Map data to defined user data
+        this.ss.hide();
+      });
+  }
   saveUser() {
     userTempData.trainings = [];
     // TODO : IF USER HAS ID THEN UPDATE USER, FOR NOW ONLY SAVE HARD CODED USER AND SAVED IN LOCAL STORAGE FOR LOADING
@@ -89,6 +108,7 @@ export class UserService {
   fillSearchArrayTrainings(trainings: Training[]) {
     this._arrayTrainings = trainings;
   }
+  /*********************************Local storage******************************************/
   /**
    *
    */
@@ -119,9 +139,14 @@ export class UserService {
     localStorage.removeItem('userData');
   }
 
+  /**
+   *
+   * @param user
+   */
   updateLocalStorageUserData(user: User) {
     this.clearUserData();
     this.setLocalStorageUserData(user);
     this._loggedUserSource.next(user);
+    this._loggedUserData = user;
   }
 }

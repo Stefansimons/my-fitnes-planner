@@ -7,4 +7,10 @@ export interface User {
   password: string;
   code: string;
   trainings: Training[];
+  token?: IToken;
+}
+export interface IToken {
+  accessToken: string;
+  expirationTime: number;
+  refreshToken: string;
 }

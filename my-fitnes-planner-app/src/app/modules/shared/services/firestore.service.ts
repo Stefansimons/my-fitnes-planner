@@ -138,6 +138,33 @@ export class FirestoreService {
   }
   /**
    *
+   * @param userId
+   * @returns Observable
+   */
+  getUser(userId: string): Observable<User> {
+    // if (!userId) {
+    //   // .snapshotChanges() returns a DocumentChangeAction[], which contains
+    //   // a lot of information about "what happened" with each change. If you want to
+    //   // get the data and the id use the map operator.
+    //   return this.fs
+    //     .collection<User>('users') // TIP KOLEKCIJE <>
+    //     .snapshotChanges();
+    // } else {
+
+    return this.itemsCollection
+      .doc(userId) // ID kolekcije
+      .snapshotChanges()
+      .pipe(
+        map((actions) => {
+          const data = actions.payload.data();
+          console.log('data=>', data);
+
+          return data as User;
+        })
+      );
+  }
+  /**
+   *
    */
   saveUser(user: User) {
     return this.itemsCollection.add({ user });

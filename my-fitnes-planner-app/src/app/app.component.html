@@ -1,4 +1,17 @@
 <div class="entire-wrapper bg-responsive">
+  <!-- Firebase auth -->
+  <button
+    type="button"
+    class="btn btn-primary"
+    (click)="login()"
+    style="padding-right: 10px"
+  >
+    login
+  </button>
+  <button type="button" class="btn btn-primary" (click)="logout()">
+    logout
+  </button>
+
   <!-- Toastr notification -->
   <div class="toast-wrapper">
     <app-toast></app-toast>

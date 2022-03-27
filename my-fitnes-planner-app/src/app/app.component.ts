@@ -1,14 +1,11 @@
-import { tap, debounceTime } from 'rxjs/operators';
-import { ProgressSpinnerMode } from '@angular/material/progress-spinner';
+import { ToastService } from './modules/shared/services/toast.service';
+import { IToken, User } from './modules/shared/models/user.model';
+import { AuthenticationService } from './modules/core/auth/authentication.service';
 import { SpinnerService } from './modules/shared/services/spinner.service';
 import { UserService } from './modules/shared/services/user.service';
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Observable } from 'rxjs';
-import firebase from 'firebase/compat/app';
-
-// Firebase user authentification
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { IProvaderData } from './modules/shared/models/firebaseUser.model';
 
 interface Item {
   name: string;
@@ -26,14 +23,14 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   value = 50;
   displayProgressSpinner = false;
   spinnerWithoutBackdrop = false;
-
+  user: User;
   loading$: Observable<boolean>; // SPINNER LOADING
 
   constructor(
-    private fs: AngularFirestore,
-    public auth: AngularFireAuth,
     private us: UserService,
-    private ss: SpinnerService
+    private ss: SpinnerService,
+    private auth: AuthenticationService,
+    private ts: ToastService
   ) {
     this.loading$ = this.ss.loading$;
     //  this.loading$
@@ -43,10 +40,12 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit(): void {
     console.log('app on init');
 
+    // TODO this.us.getFirebaseUser('9cQyfjp2zLt1pkK5IUtF');
     if (!this.us.getData()) {
       this.us.saveUser();
     } else {
       this.us.loadUserData();
+      this.user = this.us.getLoggedUserData(); // In order to  assigning token to logged user later
     }
   }
   ngOnDestroy(): void {
@@ -59,9 +58,35 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     //    this.store.collection('todo').add(todo);
   }
   login() {
-    this.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+    this.ss.show();
+    this.auth
+      .login('stefanfb123@gmail.com', 'fanstefb321')
+      .then((res) => {
+        return res.user.toJSON();
+        // const tempTokenData:IToken ={...res._t
+        // }
+      })
+      .then((data: any) => {
+        const token: IToken = data.stsTokenManager;
+
+        this.user.token = token;
+        // Update local storage with user data
+        this.us.updateLocalStorageUserData(this.user);
+        // Hide spinner
+        this.ss.hide();
+        // Show toast
+        this.ts.show('Success', 'Successful login');
+      })
+      .catch((error) => {
+        this.ts.show('Error', `Something went wrong => msg:${error.message}`);
+      });
   }
   logout() {
-    this.auth.signOut();
+    this.auth.logout();
+    this.ts.show('Success', 'Successful logout');
+    const user = this.us.getLoggedUserData();
+    // Remove token
+    user.token = undefined;
+    this.us.updateLocalStorageUserData(user);
   }
 }
