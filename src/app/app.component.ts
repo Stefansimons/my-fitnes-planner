@@ -57,6 +57,9 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     };
     //    this.store.collection('todo').add(todo);
   }
+  /**
+   * 
+   */
   login() {
     this.ss.show();
     this.auth

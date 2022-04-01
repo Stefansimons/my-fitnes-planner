@@ -56,9 +56,13 @@ export class UserService {
         })
       )
       .subscribe((data) => {
-        console.log('user fb data=>', data);
+        console.log('sacuvan user fb data=>', data);
         // TODO: Map data to defined user data
-        this.ss.hide();
+
+        // this.setLocalStorageUserData(data);
+
+        // // load user data
+        // this.loadUserData();
       });
   }
   saveUser() {
@@ -88,6 +92,11 @@ export class UserService {
   getLoggedUserId(): string {
     return this.userId;
   }
+
+  /**
+   *
+   * @param data
+   */
   setLocalStorageUserData(data: User) {
     const jsonData = JSON.stringify(data);
     localStorage.setItem('userData', jsonData);

@@ -33,7 +33,6 @@ interface State {
 const compare = (v1: string | number, v2: string | number) =>
   v1 < v2 ? -1 : v1 > v2 ? 1 : 0;
 
-// TODO: Resolve this!
 function sort(
   trainings: Training[],
   column: SortColumn,
@@ -244,12 +243,9 @@ export class TrainingService {
     const { sortColumn, sortDirection, pageSize, page, searchTerm } =
       this._state;
 
-    //  TODO: sort
     let trainings = sort(this.us.arrayTrainings, sortColumn, sortDirection);
 
     // let trainings = sort(trainings, sortColumn, sortDirection);
-
-    // TODO: 2. filter
 
     trainings = trainings.filter((training) => matches(training, searchTerm)); // matches for every entry
     const total = trainings.length;
