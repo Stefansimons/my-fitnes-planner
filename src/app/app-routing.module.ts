@@ -10,6 +10,13 @@ const routes: Routes = [
         (m) => m.TrainingModule
       ),
   },
+  {
+    path: 'nutrition',
+    loadChildren: () =>
+      import('./modules/nutrition/nutrition.module').then(
+        (m) => m.NutritionModule
+      ),
+  },
   { path: 'home', component: HomeComponent },
   {
     path: '',
@@ -19,9 +26,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules }),
-  ],
+  imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}

@@ -27,7 +27,11 @@ import { StatisticsComponent } from './components/statistics/statistics.componen
     FormsModule,
     SharedModule,
   ],
-  exports: [TrainingListComponent, TrainingFormComponent],
+  exports: [],
   providers: [DecimalPipe],
 })
-export class TrainingModule {}
+export class TrainingModule {
+  constructor() {
+    console.log('training module cons');
+  }
+}

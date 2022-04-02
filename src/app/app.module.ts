@@ -20,8 +20,10 @@ import { AppOverlayModule } from './material/overlay/appOverlay.module';
 
 // Modules
 import { SharedModule } from './modules/shared/shared.module';
-import { NutritionModule } from './modules/nutrition/nutrition.module';
-import { TrainingModule } from './modules/training/training.module';
+
+// NOTE: Lazy loaded moduls do not need here in app.modules
+// import { NutritionModule } from './modules/nutrition/nutrition.module';
+// import { TrainingModule } from './modules/training/training.module';
 
 @NgModule({
   declarations: [AppComponent], // TODO: SpinnerComponent Mast have?
@@ -32,8 +34,6 @@ import { TrainingModule } from './modules/training/training.module';
     AppRoutingModule,
     ReactiveFormsModule,
     MaterialModule,
-    TrainingModule,
-    NutritionModule,
     SharedModule,
     AppOverlayModule,
 
