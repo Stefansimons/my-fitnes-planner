@@ -6,7 +6,6 @@ import { CommonModule, DecimalPipe } from '@angular/common';
 import { TrainingListComponent } from './components/training-list/training-list.component';
 import { TrainingFormComponent } from './components/training-form/training-form.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { FormsModule } from '@angular/forms';
 import { TrainingComponent } from './components/training/training.component';
 import { NgbSortableTableDirective } from './directives/ngb-sortable-table.directive';
 import { StatisticsComponent } from './components/statistics/statistics.component';
@@ -24,14 +23,11 @@ import { StatisticsComponent } from './components/statistics/statistics.componen
     MaterialModule,
     ReactiveFormsModule,
     TrainingRoutingModule,
-    FormsModule,
     SharedModule,
   ],
   exports: [],
   providers: [DecimalPipe],
 })
 export class TrainingModule {
-  constructor() {
-    console.log('training module cons');
-  }
+  constructor() {}
 }

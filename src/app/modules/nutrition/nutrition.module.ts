@@ -9,7 +9,5 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
   imports: [CommonModule, NutritionRoutingModule],
 })
 export class NutritionModule {
-  constructor() {
-    console.log('NutritionModule CONS');
-  }
+  constructor() {}
 }

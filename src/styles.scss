@@ -223,6 +223,7 @@ th[appNgbSortableTable].desc:after {
   background-color: white;
   width: 16rem;
   border-radius: 1.1rem;
+  display: none;
   .header {
     display: flex;
     align-items: center;
@@ -234,7 +235,7 @@ th[appNgbSortableTable].desc:after {
     border-top-right-radius: calc(0.25rem - 1px);
     justify-content: space-between;
   }
-  .handler {
+  .toast-type {
     border-radius: 1rem;
   }
   .body {
@@ -254,10 +255,9 @@ th[appNgbSortableTable].desc:after {
     justify-content: space-between;
   }
 }
-
-.toast-wrapper .handler:not(.show) {
+.toast-wrapper.show {
   // If there is not .show class toast wont be showed
-  display: none;
+  display: block;
 }
 /******************************************** App layout *****************/
 .entire-wrapper {
@@ -301,8 +301,56 @@ th[appNgbSortableTable].desc:after {
   .navbar {
     height: 100%;
   }
-}
+  .navbar .navbar-nav {
+    float: left;
+  }
+  .user-searchbox {
+    display: flex;
+    color: white;
+    justify-content: right;
 
+    .dropdown {
+      position: relative;
+      display: inline-block;
+      .remove-btn {
+        border: 0;
+        background-color: #212529;
+      }
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f9f9f9;
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+      padding: 12px 16px;
+      z-index: 1;
+    }
+
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+  }
+  .userbox {
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+    .name {
+      margin-right: 1rem;
+    }
+    .far {
+      font-size: 35px;
+      color: red;
+    }
+  }
+}
+.account-display-wrapper {
+  .padd {
+    padding-right: 10px;
+    margin: 10px;
+  }
+}
 /************************ The navbar container */
 // .topnav {
 //   overflow: hidden;

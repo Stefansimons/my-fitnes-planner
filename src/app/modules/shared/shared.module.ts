@@ -9,7 +9,8 @@ import { LoginComponent } from './components/login/login.component';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ToastComponent } from './components/toast/toast.component';
-
+import { RegisterComponent } from './components/register/register.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 @NgModule({
   declarations: [
     HeaderComponent,
@@ -17,6 +18,7 @@ import { ToastComponent } from './components/toast/toast.component';
     LoginComponent,
     SpinnerComponent,
     ToastComponent,
+    RegisterComponent,
   ],
   imports: [
     CommonModule,
@@ -24,6 +26,8 @@ import { ToastComponent } from './components/toast/toast.component';
     MaterialModule,
     OverlayModule,
     NgbModule,
+    FormsModule,
+    ReactiveFormsModule,
   ],
   exports: [
     HeaderComponent,
@@ -31,6 +35,8 @@ import { ToastComponent } from './components/toast/toast.component';
     SpinnerComponent,
     NgbModule,
     ToastComponent,
+    FormsModule,
+    ReactiveFormsModule,
   ],
   entryComponents: [SpinnerComponent],
 })

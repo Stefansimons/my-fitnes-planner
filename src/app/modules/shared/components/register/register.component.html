@@ -1,0 +1,82 @@
+<form [formGroup]="registerForm" (ngSubmit)="register(registerForm.value)">
+  <div class="form-group">
+    <label for="inputFirstName">Ime</label>
+    <input
+      type="text"
+      class="form-control"
+      id="inputFirstName"
+      formControlName="firstName"
+      placeholder="Unesi ime"
+    />
+  </div>
+  <div class="form-group">
+    <label for="inputLastName">Prezime</label>
+    <input
+      type="text"
+      class="form-control"
+      formControlName="lastName"
+      id="inputLastName"
+      placeholder="Unesi prezime"
+    />
+  </div>
+  <div class="form-group">
+    <label for="inputEmail">Email</label>
+    <input
+      type="email"
+      class="form-control"
+      id="inputEmail"
+      formControlName="email"
+      placeholder="Unesi email"
+    />
+  </div>
+  <!-- <div class="form-group">
+    <label for="exampleInputEmail1">Email address</label>
+    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+  </div>
+  <div class="form-group">
+    <label for="exampleInputEmail1">Email address</label>
+    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+  </div> -->
+  <div class="form-group">
+    <label for="inputPassword">Sifra</label>
+    <input
+      type="password"
+      class="form-control"
+      formControlName="password"
+      id="inputPassword"
+      placeholder="Sifra"
+    />
+  </div>
+  <div class="form-group">
+    <label for="inputPasswordRpt">Ponovi sifru</label>
+    <input
+      type="password"
+      class="form-control"
+      formControlName="passwordRpt"
+      id="inputPasswordRpt"
+      placeholder="Sifra"
+    />
+  </div>
+  <div class="form-check">
+    <input
+      type="checkbox"
+      class="form-check-input"
+      id="exampleCheck1"
+      formControlName="rememberMe"
+    />
+    <label class="form-check-label" for="exampleCheck1">
+      Automatic login?</label
+    >
+  </div>
+  <div class="clearfix">
+    <button
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="registerForm.invalid"
+    >
+      Sign up
+    </button>
+  </div>
+</form>

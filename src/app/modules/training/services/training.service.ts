@@ -111,7 +111,6 @@ export class TrainingService {
     private us: UserService,
     private ss: SpinnerService
   ) {
-    // TODO: get logged user trainings ??
     this._search$
       .pipe(
         tap(() => {
@@ -131,7 +130,8 @@ export class TrainingService {
     this._search$.next();
   }
   saveTraining(training: Training) {
-    const tempUserData = this.us.getLoggedUserData();
+    const tempUserData = this.us.getLoggedUserData;
+    tempUserData.updatedAt = new Date().getTime();
 
     if (training.id) {
       // Update training in array
@@ -243,7 +243,11 @@ export class TrainingService {
     const { sortColumn, sortDirection, pageSize, page, searchTerm } =
       this._state;
 
-    let trainings = sort(this.us.arrayTrainings, sortColumn, sortDirection);
+    let trainings = sort(
+      this.us.arrayTrainings || [],
+      sortColumn,
+      sortDirection
+    );
 
     // let trainings = sort(trainings, sortColumn, sortDirection);
 

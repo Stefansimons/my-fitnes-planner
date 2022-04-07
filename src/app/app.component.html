@@ -1,20 +1,18 @@
 <div class="entire-wrapper bg-responsive">
-  <!-- Firebase auth -->
-  <button
-    type="button"
-    class="btn btn-primary"
-    (click)="login()"
-    style="padding-right: 10px"
-  >
-    login
-  </button>
-  <button type="button" class="btn btn-primary" (click)="logout()">
-    logout
-  </button>
+  <!-- User Account wrapper -->
+  <div class="account-display-wrapper" *ngIf="!isLoggedUser">
+    <button type="button" routerLink="/login" class="btn btn-primary padd">
+      login
+    </button>
+    <button type="button" routerLink="/register" class="btn btn-primary">
+      Register
+    </button>
+    <!-- <button type="button" class="btn btn-primary" (click)="test()">test</button> -->
+  </div>
 
   <!-- Toastr notification -->
-  <div class="toast-wrapper">
-    <app-toast></app-toast>
+  <div class="toast-wrapper" [ngClass]="{ show: isShowToast }">
+    <app-toast [toast]="toastData" (closeToastEvent)="close()"></app-toast>
   </div>
   <!-- OVERLAY LOADER (SPINNER) START -->
   <div
@@ -24,8 +22,6 @@
       hideSpinner: !(loading$ | async)
     }"
   >
-    <app-toast></app-toast>
-
     <div class="my-loader">
       <div class="spinner-border" role="status"></div>
       <div class="text">Loading…</div>

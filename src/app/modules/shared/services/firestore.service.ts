@@ -15,6 +15,7 @@ import {
   AngularFirestoreDocument,
 } from '@angular/fire/compat/firestore';
 import { collection, query, getDocs } from 'firebase/firestore';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 
 export const trainings = [
   {
@@ -78,7 +79,11 @@ export class FirestoreService {
   userItemsobs: Observable<User[]>;
   items: User;
   userItems: User[];
-  constructor(public fs: AngularFirestore, private ss: SpinnerService) {
+  constructor(
+    public fs: AngularFirestore,
+    private ss: SpinnerService,
+    private afAuth: AngularFireAuth
+  ) {
     //  this.itemsCollection = fs.collection<User>('users/t58eflvZawe59plcNDuh/trainings');
     this.itemsCollection = fs.collection<User>('users/');
 
@@ -99,7 +104,7 @@ export class FirestoreService {
     // url path  /users/t58eflvZawe59plcNDuh/trainings/FZVTzTVHPJJo4bRd9Wtp/exercises
     // SAVE ITEM
     // Persist a document id'
-    return this.itemsCollection.add({ user });
+    return this.itemsCollection.doc(user.id).set(user);
   }
   /**
    *
@@ -141,32 +146,33 @@ export class FirestoreService {
    * @param userId
    * @returns Observable
    */
-  getUser(userId: string): Observable<User> {
-    // if (!userId) {
-    //   // .snapshotChanges() returns a DocumentChangeAction[], which contains
-    //   // a lot of information about "what happened" with each change. If you want to
-    //   // get the data and the id use the map operator.
-    //   return this.fs
-    //     .collection<User>('users') // TIP KOLEKCIJE <>
-    //     .snapshotChanges();
-    // } else {
-
+  getUser(userId: string) {
     return this.itemsCollection
       .doc(userId) // ID kolekcije
-      .snapshotChanges()
-      .pipe(
-        map((actions) => {
-          const data = actions.payload.data();
-          console.log('data=>', data);
-
-          return data as User;
-        })
-      );
+      .snapshotChanges();
   }
   /**
    *
    */
   saveUser(user: User) {
     return this.itemsCollection.add({ user });
+  }
+  logUserIn(email: string, password: string) {
+    return this.afAuth.signInWithEmailAndPassword(email, password);
+  }
+  /**
+   *
+   */
+  logout() {
+    return this.afAuth.signOut();
+  }
+  /**
+   * Registers user
+   * @param email
+   * @param password
+   * @returns
+   */
+  register(email: string, password: string) {
+    return this.afAuth.createUserWithEmailAndPassword(email, password);
   }
 }

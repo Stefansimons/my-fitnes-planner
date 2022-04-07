@@ -1,7 +1,4 @@
-<div
-  class="handler {{ toast?.title?.toLowerCase() }}"
-  [ngClass]="{ show: isShowToast }"
->
+<div class="toast-type {{ toast?.title?.toLowerCase() }}">
   <div class="header">
     <!-- <img src="..." class="rounded mr-2" alt="..." /> -->
     <strong class="mr-auto">{{ toast?.title }}</strong>

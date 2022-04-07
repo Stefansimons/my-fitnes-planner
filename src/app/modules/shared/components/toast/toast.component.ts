@@ -1,6 +1,13 @@
 import { ToastService } from './../../services/toast.service';
 import { Observable } from 'rxjs';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  Input,
+  Output,
+  EventEmitter,
+} from '@angular/core';
 import { SubSink } from 'subsink';
 
 export interface IToast {
@@ -13,32 +20,18 @@ export interface IToast {
   styleUrls: ['./toast.component.css'],
 })
 export class ToastComponent implements OnInit, OnDestroy {
-  toast: IToast;
-  isShowToast: boolean = false;
-  private _subsink = new SubSink();
+  @Output() closeToastEvent = new EventEmitter<boolean>();
+  @Input() toast: IToast;
   constructor(private ts: ToastService) {}
 
-  ngOnInit(): void {
-    const toastSub = this.ts.toastSourceSubject$.subscribe((data) => {
-      this.isShowToast = true;
-      this.toast = data;
+  ngOnInit(): void {}
 
-      // Close toast after 5 sec
-      setTimeout(() => {
-        this.isShowToast = false;
-      }, 5000);
-    });
+  ngOnDestroy(): void {}
 
-    this._subsink.add(toastSub);
-  }
   /**
-   *
+   * Close toast
    */
   close() {
-    this.isShowToast = false;
-  }
-
-  ngOnDestroy(): void {
-    this._subsink.unsubscribe();
+    this.closeToastEvent.emit(false);
   }
 }

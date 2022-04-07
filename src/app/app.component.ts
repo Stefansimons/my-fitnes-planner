@@ -1,3 +1,7 @@
+import { environment } from './../environments/environment';
+import { Router } from '@angular/router';
+import { HelperService } from './modules/shared/services/helper.service';
+import { IToast } from './modules/shared/components/toast/toast.component';
 import { ToastService } from './modules/shared/services/toast.service';
 import { IToken, User } from './modules/shared/models/user.model';
 import { AuthenticationService } from './modules/core/auth/authentication.service';
@@ -6,6 +10,7 @@ import { UserService } from './modules/shared/services/user.service';
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { IProvaderData } from './modules/shared/models/firebaseUser.model';
+import { SubSink } from 'subsink';
 
 interface Item {
   name: string;
@@ -26,11 +31,18 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   user: User;
   loading$: Observable<boolean>; // SPINNER LOADING
 
+  isShowToast: boolean = false; // TOAST
+  toastData: IToast;
+  private _subsink = new SubSink();
+  isLoggedUser: boolean = false;
+  loggedUserFirstName: string;
   constructor(
     private us: UserService,
     private ss: SpinnerService,
     private auth: AuthenticationService,
-    private ts: ToastService
+    private ts: ToastService,
+    private hs: HelperService,
+    private router: Router
   ) {
     this.loading$ = this.ss.loading$;
     //  this.loading$
@@ -38,17 +50,31 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit(): void {}
 
   ngOnInit(): void {
-    console.log('app on init');
-
-    // TODO this.us.getFirebaseUser('9cQyfjp2zLt1pkK5IUtF');
-    if (!this.us.getData()) {
-      this.us.saveUser();
-    } else {
-      this.us.loadUserData();
-      this.user = this.us.getLoggedUserData(); // In order to  assigning token to logged user later
+    // LOCAL STORAGE DATA
+    if (this.auth.isUserLoggedIn()) {
+      this.isLoggedUser = true;
     }
+
+    const userSub = this.auth.isLoggedUser.subscribe((data) => {
+      if (!environment.production) console.log(`user sub =>${data}`);
+
+      this.isLoggedUser = data;
+    });
+
+    const toastSub = this.ts.toastSourceSubject$.subscribe((data) => {
+      this.isShowToast = true;
+      this.toastData = data;
+      // Close toast after 5 sec
+      setTimeout(() => {
+        this.isShowToast = false;
+      }, 7000);
+    });
+
+    this._subsink.add(toastSub, userSub);
   }
+
   ngOnDestroy(): void {
+    this._subsink.unsubscribe();
     this.us.clearUserData();
   }
   public add() {
@@ -57,39 +83,17 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     };
     //    this.store.collection('todo').add(todo);
   }
-  /**
-   * 
-   */
-  login() {
-    this.ss.show();
-    this.auth
-      .login('stefanfb123@gmail.com', 'fanstefb321')
-      .then((res) => {
-        return res.user.toJSON();
-        // const tempTokenData:IToken ={...res._t
-        // }
-      })
-      .then((data: any) => {
-        const token: IToken = data.stsTokenManager;
 
-        this.user.token = token;
-        // Update local storage with user data
-        this.us.updateLocalStorageUserData(this.user);
-        // Hide spinner
-        this.ss.hide();
-        // Show toast
-        this.ts.show('Success', 'Successful login');
-      })
-      .catch((error) => {
-        this.ts.show('Error', `Something went wrong => msg:${error.message}`);
-      });
+  /**
+   * Close toast
+   */
+  close() {
+    this.isShowToast = false;
   }
-  logout() {
-    this.auth.logout();
-    this.ts.show('Success', 'Successful logout');
-    const user = this.us.getLoggedUserData();
-    // Remove token
-    user.token = undefined;
-    this.us.updateLocalStorageUserData(user);
+  /**
+   *
+   */
+  test() {
+    this.auth.login('', '');
   }
 }

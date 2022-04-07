@@ -11,7 +11,7 @@ export const environment = {
     messagingSenderId: '222625821027',
     measurementId: 'G-T6XN61VG35',
   },
-  production: false,
+  production: true,
 };
 
 // Your web app's Firebase configuration
