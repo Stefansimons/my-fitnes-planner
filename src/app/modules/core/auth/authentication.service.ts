@@ -84,11 +84,7 @@ export class AuthenticationService {
    *
    */
   logUserOut() {
-    this.fss
-      .logout()
-      .then(() =>
-        this.ts.show('Success', `GOODBYE ${this.loggedUser.firstName} 👋`)
-      );
+    this.fss.logout().then(() => this.ts.show('Success', `GOODBYE 👋`));
   }
   /**
    * Registers user

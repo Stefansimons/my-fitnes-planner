@@ -55,11 +55,8 @@ export class RegisterComponent implements OnInit {
    */
   register(formValue: any) {
     if (!this.form.valid) return;
-    console.log('register');
-    console.log('form value=>', formValue);
     this.auth.register(formValue.email, formValue.password).subscribe(
       (cred) => {
-        console.log('subscribe=>data', cred);
         // Create fb doc with with cred.user.id
         const basicUserData: User = {
           id: cred.user?.uid || '',
@@ -70,17 +67,31 @@ export class RegisterComponent implements OnInit {
           password: formValue.password,
           trainings: new Array(),
           code: '',
-          updatedAt: new Date().getTime(),
+          updatedAt: new Date(),
+          isActive: true,
         };
         // Set local user data
         this.us.saveUser(basicUserData);
 
         // if remember me == true logg user in
         if (formValue.rememberMe) {
-          this.auth.login(formValue.email, formValue.password);
+          this.auth.login(formValue.email, formValue.password).subscribe(
+            (response) => {
+              const tempUser = response as User;
+              //    Save user data in local storage
+              this.us.emitLoggedUserValue = tempUser;
+              this.us.setLocalStorageUserData(tempUser);
+              this.us.loadLocalStorageUserData();
+
+              this.auth.setIsLoggedUser = true;
+
+              this.ts.show('Success', `WELLCOME ${tempUser.firstName} 🏋️‍♂️💪`);
+              this.router.navigateByUrl('/home'); // if there is not some error
+            },
+            (error) => this.ts.show('error', `something went wrong ${error}`)
+          );
         }
         this.form.reset();
-        this.router.navigateByUrl('/home');
       },
       (error) =>
         this.ts.show(

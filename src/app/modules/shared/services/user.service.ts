@@ -1,3 +1,4 @@
+import { environment } from './../../../../environments/environment';
 import { ToastService } from './toast.service';
 import { Subject, Observable } from 'rxjs';
 import { Training } from './../../training/models/training.model';
@@ -65,37 +66,26 @@ export class UserService {
   getFirebaseUser(userId: string) {
     return this.fs.getUser(userId).pipe(
       map((actions) => {
-        const data = actions.payload.data();
-        return data as User;
+        const user: User = actions.payload.data();
+        user.trainings = user.trainings.filter((item) => item.isActive);
+        return user;
       })
     );
-
-    // .subscribe((userData) => {
-
-    //   this._loggedUserData = userData;
-
-    //   // Save user data in local storage
-    //   // this.emitLoggedUserValue = this._loggedUserData;
-    //   // this.setLocalStorageUserData(this._loggedUserData);
-    //   // this.loadLocalStorageUserData();
-    //   this.ts.show('success', 'Successful login');
-    //   this.ss.hide();
-    // });
   }
+
   /**
    * It saves fb user
    */
   saveUser(user: User) {
-    // TODO : IF USER HAS ID THEN UPDATE USER, FOR NOW ONLY SAVE HARD CODED USER AND SAVED IN LOCAL STORAGE FOR LOADING
     this.ss.show();
     this.fs
       .saveItem(user)
       .then((res) => {
         this.ss.hide();
-        this.ts.show('success', 'Successfull insert');
+        this.ts.show('Success', 'Successfull registration');
       })
       .catch((error) =>
-        this.ts.show('success', `Something went wrong error=>${error}`)
+        this.ts.show('Success', `Something went wrong error=>${error}`)
       );
   }
   getLoggedUserId(): string {
@@ -134,16 +124,21 @@ export class UserService {
 
     // Setting id for every training and every exercise in training
 
-    this._loggedUserData.trainings.map((item, id) => {
-      item.id = id + 1;
-      item.exercises.map((item, id) => {
+    const filtered = this._loggedUserData.trainings
+      .map((item, id) => {
         item.id = id + 1;
-      });
-    });
+        item.exercises.map((item, id) => {
+          item.id = id + 1;
+        });
+        return item;
+      })
+      .filter((item) => item.isActive);
+
     this.userId = this._loggedUserData.id;
+    this._loggedUserData.trainings = filtered;
 
     // Emit new user value
-    this._arrayTrainings = this._loggedUserData.trainings;
+    this._arrayTrainings = filtered;
     this._loggedUserSource.next(this._loggedUserData);
 
     // emit trainings new value
@@ -163,5 +158,6 @@ export class UserService {
   updateLocalStorageUserData(user: User) {
     this.clearUserData();
     this._loggedUserData = user;
+    this.setLocalStorageUserData(user);
   }
 }

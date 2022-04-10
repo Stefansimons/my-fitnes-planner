@@ -86,7 +86,6 @@ export class FirestoreService {
   ) {
     //  this.itemsCollection = fs.collection<User>('users/t58eflvZawe59plcNDuh/trainings');
     this.itemsCollection = fs.collection<User>('users/');
-
     // this.getDocumentstest('users', '1kEotoOypLVO4bHpO5WN');
     // Collection of user documents.
     // this.items = this.itemsCollection.valueChanges();

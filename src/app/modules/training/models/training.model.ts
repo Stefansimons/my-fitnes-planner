@@ -3,6 +3,8 @@ export interface Training {
   trainingDate: string;
   exercises: Exercise[];
   typeOfTraining: string;
+  isActive: boolean;
+  updatedAt: Date; // timestamp
 }
 export interface Exercise {
   id?: number;

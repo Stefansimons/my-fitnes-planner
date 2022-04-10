@@ -9,8 +9,9 @@ export interface User {
   code: string;
   trainings: Training[];
   token?: IToken;
-  updatedAt: number;
+  updatedAt: Date;
   role?: ROLE;
+  isActive: boolean;
 }
 export interface IToken {
   accessToken: string;

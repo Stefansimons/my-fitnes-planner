@@ -56,8 +56,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     const userSub = this.auth.isLoggedUser.subscribe((data) => {
-      if (!environment.production) console.log(`user sub =>${data}`);
-
       this.isLoggedUser = data;
     });
 

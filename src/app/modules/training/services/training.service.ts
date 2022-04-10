@@ -129,9 +129,18 @@ export class TrainingService {
       });
     this._search$.next();
   }
+  /**
+   *
+   * @param training
+   * @returns
+   */
   saveTraining(training: Training) {
-    const tempUserData = this.us.getLoggedUserData;
-    tempUserData.updatedAt = new Date().getTime();
+    const tempUserData = this.us.getLoggedUserData; // User data for local manipulation
+
+    const updateUser = tempUserData; // USer data for firebase storage, isActive param
+    let updateUserTrainings = updateUser.trainings; // Trainings for fb update
+
+    updateUser.updatedAt = tempUserData.updatedAt = new Date();
 
     if (training.id) {
       // Update training in array
@@ -139,34 +148,60 @@ export class TrainingService {
         item.id === training.id ? training : item
       );
 
-      tempUserData.trainings = [...updatedArray];
+      updateUserTrainings = [...updatedArray];
     } else {
       // Add training in array
-      tempUserData.trainings.push(training);
+      updateUserTrainings.push(training);
     }
 
     // Setting ids of training and exericises per object ids
-    tempUserData.trainings.forEach((training, id) => {
+    updateUserTrainings.forEach((training, id) => {
       training.id ??= id + 1; // NOTE: Nullish coalesc operator
       training.exercises.forEach((item, id) => {
         item.id = !item.id ? id + 1 : item.id;
       });
     });
+
+    // tempUserData.trainings = updateUserTrainings;
+
+    // Remove isActive = false training , for display
+    const filtered = updateUserTrainings.filter((item) => item.isActive);
+
+    tempUserData.trainings = filtered;
+
     this.us.updateLocalStorageUserData(tempUserData);
 
     // Update trainings array for filtering table
     this.us.fillSearchArrayTrainings(tempUserData.trainings);
 
-    //...AND FORWARD USER FOR UPDATE...
-    return this.fs.updateItem(tempUserData);
+    // Sort table by id and set the first page
+
+    this.page = 1;
+    this.sortColumn = 'id';
+    this.sortDirection = 'desc';
+    //...AND FORWARD USER FOR UPDATE, INSERT ISACTIVE = FALSE TOO...
+    updateUser.trainings = updateUserTrainings;
+    return this.fs.updateItem(updateUser);
   }
+  /**
+   *
+   * @returns
+   */
   getNewTrainingEvent() {
     return this._newTrainingEvent;
   }
+  /**
+   *
+   * @param isNewEvent
+   */
   setNewTrainingEvent(isNewEvent: boolean) {
     this._newTrainingEvent.next(isNewEvent);
   }
-
+  /**
+   *
+   * @param userId
+   * @returns
+   */
   getTrainings(userId: string) {
     return this.fs.getItems(userId);
   }
