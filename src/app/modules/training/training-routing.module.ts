@@ -1,3 +1,4 @@
+import { ResolveGuard } from './../core/auth/resolve.guard';
 import { StatisticsComponent } from './components/statistics/statistics.component';
 import { TrainingComponent } from './components/training/training.component';
 import { TrainingListComponent } from './components/training-list/training-list.component';
@@ -6,10 +7,16 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-  { path: '', component: TrainingComponent },
+  {
+    path: '',
+    component: TrainingComponent,
+  },
   {
     path: 'list',
     component: TrainingListComponent,
+    resolve: {
+      data: ResolveGuard,
+    },
   },
   {
     path: 'statistics',

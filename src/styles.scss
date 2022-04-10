@@ -6,6 +6,7 @@ body {
   font-family: Roboto, "Helvetica Neue", Arial, sans-serif;
   margin: 0;
   height: 100%;
+  overflow-x: hidden;
 }
 
 /************* Common styles *******/
@@ -13,6 +14,19 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
+}
+.my-button-wrapper {
+  padding: 0.25rem 0;
+}
+/*************Icons ********************************************/
+.user-circle-icon {
+  display: block;
+  width: 30px;
+  height: 30px;
+  background: url("./assets/images/person-circle.svg");
+  background-repeat: no-repeat;
+  background-size: 30px;
+  background-position: center;
 }
 /************************************/
 .basic-container {
@@ -168,7 +182,7 @@ th[appNgbSortableTable].desc:after {
   -ms-transform: rotate(180deg);
 }
 .table.table-striped .id-table {
-  width: 60px;
+  width: 90px;
 }
 .skroll {
   height: 400px;
@@ -279,10 +293,8 @@ th[appNgbSortableTable].desc:after {
   background-size: cover;
   height: 100%;
   padding: 0.5rem;
-  .my-button-wrapper {
-    padding: 1rem 0;
-  }
 }
+
 .my-table table > :not(caption) > * > * {
   border-bottom: 0;
 }
@@ -293,8 +305,9 @@ th[appNgbSortableTable].desc:after {
 .training-form-wrapper {
 }
 /************************ Header *****************************************/
-// TODO: Resolve
 .header-wrapper {
+  display: flex;
+  align-items: center;
   height: 10%;
   text-align: center;
   background-color: #444;
@@ -304,11 +317,20 @@ th[appNgbSortableTable].desc:after {
   .navbar .navbar-nav {
     float: left;
   }
-  .user-searchbox {
+  .userbox {
     display: flex;
     color: white;
-    justify-content: right;
-
+    align-items: center;
+    margin-right: 10px;
+    justify-content: end;
+    margin-top: 1rem;
+    .name {
+      margin-right: 1rem;
+    }
+    .far {
+      font-size: 35px;
+      color: red;
+    }
     .dropdown {
       position: relative;
       display: inline-block;
@@ -317,32 +339,21 @@ th[appNgbSortableTable].desc:after {
         background-color: #212529;
       }
     }
-
     .dropdown-content {
       display: none;
       position: absolute;
       background-color: #f9f9f9;
-      min-width: 160px;
       box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-      padding: 12px 16px;
       z-index: 1;
     }
 
     .dropdown:hover .dropdown-content {
+      cursor: pointer;
       display: block;
     }
   }
-  .userbox {
-    display: flex;
-    align-items: center;
-    margin-right: 10px;
-    .name {
-      margin-right: 1rem;
-    }
-    .far {
-      font-size: 35px;
-      color: red;
-    }
+  .column {
+    padding: 0;
   }
 }
 .account-display-wrapper {

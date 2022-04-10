@@ -1,6 +1,84 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<div class="container-lg container-md">
+  <div class="row g-0">
+    <div class="col col-md-8">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+          <button
+            #navbarToggler
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link" href="" [routerLinkActive]="['active']"
+                  >Home</a
+                >
+              </li>
+              <li class="nav-item">
+                <a
+                  class="nav-link"
+                  routerLink="/training"
+                  [routerLinkActive]="['active']"
+                  >Training</a
+                >
+              </li>
+              <li class="nav-item">
+                <a
+                  class="nav-link"
+                  routerLink="/nutrition"
+                  [routerLinkActive]="['active']"
+                  >Nutrition</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </div>
+    <div class="col col-md-4">
+      <div class="userbox" *ngIf="isLoggedUser">
+        <div class="dropdown">
+          <button type="button" class="remove-btn" data-toggle="dropdown">
+            <div class="user-circle-icon"></div>
+          </button>
+          <div class="dropdown-content">
+            <a class="dropdown-item" (click)="logout()">
+              <i class="fa fa-home"></i> LOGOUT
+            </a>
+          </div>
+        </div>
+        <span class="name">{{ loggedUserFirstName }}</span>
+      </div>
+      <!-- <form class="d-flex">
+        <input
+          class="form-control me-2"
+          type="search"
+          placeholder="Search"
+          aria-label="Search"
+        />
+        <button
+          class="btn btn-outline-success"
+          type="button"
+          (click)="showMessage()"
+        >
+          Search
+        </button>
+      </form> -->
+    </div>
+  </div>
+  <!-- <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
     <button
+      #navbarToggler
       class="navbar-toggler"
       type="button"
       data-bs-toggle="collapse"
@@ -15,73 +93,63 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="">Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/training">Training</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/nutrition">Nutrition</a>
-        </li>
-        <li class="nav-item dropdown">
           <a
-            class="nav-link dropdown-toggle"
-            href="#"
-            id="navbarDropdown"
-            role="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
+            class="nav-link active"
+            aria-current="page"
+            href=""
+            (click)="navbarToggler.click()"
+            >Home</a
           >
-            Dropdown
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="#">Action</a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
-            <li><hr class="dropdown-divider" /></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
-          </ul>
         </li>
         <li class="nav-item">
           <a
-            class="nav-link disabled"
-            href="#"
-            tabindex="-1"
-            aria-disabled="true"
-            >Disabled</a
+            class="nav-link"
+            routerLink="/training"
+            (click)="navbarToggler.click()"
+            >Training</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            routerLink="/nutrition"
+            (click)="navbarToggler.click()"
+            >Nutrition</a
           >
         </li>
       </ul>
-      <div class="user-searchbox">
-        <div class="userbox" *ngIf="isLoggedUser">
-          <span class="name">{{ loggedUserFirstName }}</span>
-          <div class="dropdown">
-            <button type="button" class="remove-btn" data-toggle="dropdown">
-              <i class="far fa-user-circle"></i>
-            </button>
-            <div class="dropdown-content">
-              <a class="dropdown-item" (click)="logout()">
-                <i class="fa fa-home"></i> LOGOUT
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <form class="d-flex">
-          <input
-            class="form-control me-2"
-            type="search"
-            placeholder="Search"
-            aria-label="Search"
-          />
-          <button
-            class="btn btn-outline-success"
-            type="button"
-            (click)="showMessage()"
-          >
-            Search
-          </button>
-        </form>
-      </div>
     </div>
   </div>
 </nav>
+<div class="user-searchbox">
+  <div class="userbox" *ngIf="isLoggedUser">
+    <div class="dropdown">
+      <button type="button" class="remove-btn" data-toggle="dropdown">
+        <div class="user-circle-icon"></div>
+      </button>
+      <div class="dropdown-content">
+        <a class="dropdown-item" (click)="logout()">
+          <i class="fa fa-home"></i> LOGOUT
+        </a>
+      </div>
+    </div>
+    <span class="name">SIMA{{ loggedUserFirstName }}</span>
+  </div>
+
+  <!-- <form class="d-flex">
+    <input
+      class="form-control me-2"
+      type="search"
+      placeholder="Search"
+      aria-label="Search"
+    />
+    <button
+      class="btn btn-outline-success"
+      type="button"
+      (click)="showMessage()"
+    >
+      Search
+    </button>
+  </form>
+</div> -->
+</div>

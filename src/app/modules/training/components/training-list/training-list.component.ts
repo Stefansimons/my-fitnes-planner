@@ -1,3 +1,6 @@
+import { environment } from 'src/environments/environment.prod';
+import { ToastService } from './../../../shared/services/toast.service';
+import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import {
   NgbSortableTableDirective,
   SortEvent,
@@ -19,6 +22,7 @@ import {
   OnInit,
   Output,
   QueryList,
+  TemplateRef,
   ViewChild,
   ViewChildren,
 } from '@angular/core';
@@ -39,6 +43,7 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
   @Input() isNew: boolean;
   @Input() training: Training;
   @Output() editTrainingEvent = new EventEmitter<Training>();
+  @ViewChild('modalcontent') moralref: TemplateRef<any>;
 
   // Directive for sorting table
   @ViewChildren(NgbSortableTableDirective)
@@ -56,14 +61,27 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
   selectedTraining: Training;
   //  trainingsDataSource: Training[];
   userID: string;
+
+  modalOptions: NgbModalOptions; // NGB POPUP MODAL OPTIONS
+
+  /**
+   *
+   * @param event
+   */
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
   }
   constructor(
     public dts: TrainingService, //NOTE: Public because assigning ngModel valu direct to service setters ?!?
     private us: UserService,
-    private ss: SpinnerService
+    private ss: SpinnerService,
+    private modals: NgbModal,
+    private ts: ToastService
   ) {
+    this.modalOptions = {
+      backdrop: 'static',
+      backdropClass: 'customBackdrop',
+    };
     // Table pagination
     this.trainings$ = dts.trainings$;
     this.total$ = dts.total$;
@@ -75,22 +93,18 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     // Local storage user data
-    const userObs = this.us.getLoggedUser$
-      .pipe(tap(() => this.ss.show()))
-      .subscribe((user) => {
-        this.userID = user.id;
+    const userObs = this.us.getLoggedUser$.subscribe((user) => {
+      this.userID = user.id;
+      this.dts.setTrainings$(user.trainings);
 
-        this.dts.setTrainings$(user.trainings);
+      this.onSort({ column: 'trainingDate', direction: 'desc' });
 
-        this.onSort({ column: 'trainingDate', direction: 'desc' });
-
-        this.ss.hide();
-      });
+      this.ss.hide();
+    });
 
     // Emited new training
     const newItemEvent = this.dts
       .getNewTrainingEvent()
-      .pipe(tap(() => this.ss.show()))
       .subscribe((isNewEvent) => {
         if (isNewEvent) {
           this.dts.getTrainings(this.userID).subscribe((data: Training[]) => {
@@ -104,7 +118,15 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
           });
         }
       });
+    // GET TRAININGS AFTER DELETING SOME TRAINING
+    // this.dts.getTrainings(this.userID).subscribe((data: Training[]) => {
+    //   this.dts.setTrainings$(data);
 
+    //   this.onSort({ column: 'trainingDate', direction: 'desc' });
+
+    //   this.dts.trainings(data);
+
+    // });
     // Add observables in subsink array
     this.subs.add(newItemEvent, userObs);
   }
@@ -149,14 +171,29 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
    * @param value
    */
   editTraining(value: Training) {
+    value.updatedAt = new Date(); // TODO delete when convert updatedAt from number to date
     this.editTrainingEvent.emit(value);
   }
   /**
    *
+   * @param modal
+   * @param training
    */
-  trackTraining(index: number, training: any) {
-    return training;
+  deleteTraining(modal: any, training: Training) {
+    // TODO :CALL MODAL...
+    this.modals.open(modal, this.modalOptions).result.then(
+      (result) => {
+        training.isActive = false;
+        this.dts.saveTraining(training);
+        this.ts.show('Success', 'Deleted training');
+        //   this.closeResult = `Closed with: ${result}`;
+      },
+      (reason) => {
+        // this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+      }
+    );
   }
+
   // Directives event
   onSort({ column, direction }: SortEvent) {
     // resetting other headers
@@ -168,5 +205,26 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
 
     this.dts.sortColumn = column;
     this.dts.sortDirection = direction;
+  }
+
+  /**
+   *
+   * @param content
+   */
+  open(content: any, isEdit: boolean) {
+    // this.title = isEdit
+    //   ? `Training: ${this.training.typeOfTraining}`
+    //   : 'Novi training';
+
+    this.modals.open(content, this.modalOptions).result.then(
+      (result) => {
+        this.ts.show('success', 'You deleted training');
+
+        // this.closeResult = `Closed with: ${result}`;
+      },
+      (reason) => {
+        // this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+      }
+    );
   }
 }

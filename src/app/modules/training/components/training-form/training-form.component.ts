@@ -139,6 +139,8 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
         month: new Date().getMonth() + 1,
         year: new Date().getFullYear(),
       }),
+      updatedAt: new Date(),
+      isActive: [],
       typeOfTraining: ['', Validators.required],
       exerciseNum: [0, [Validators.required, this.numberZeroToNullValidator()]],
       exercises: this.fb.array([]),
@@ -162,7 +164,7 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
   }
   /**
    *
-   * @param date
+   * @param training
    * @returns
    */
   setFormValue(training: Training) {
@@ -176,7 +178,9 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
         month: +dateSplited[1],
         year: +dateSplited[2],
       },
+      isActive: training.isActive,
       typeOfTraining: training.typeOfTraining,
+      updatedAt: training.updatedAt,
     };
     //const tempExercisesFormArray = this.getFormControlArrayValue('exercises');
 
@@ -232,7 +236,6 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
   }
   onSubmit() {
     // this.trainingForm.get('exercises').controls[1].controls.series;
-    // TODO: Use EventEmitter with form value
   }
   /**
    *  convenience getters for easy access to form fields , Angular 8
@@ -340,7 +343,6 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
    */
   onChangeSeries(e: any, exeIndex: number) {
     const numberOfSeries = e.target.value || 0;
-    // TODO: REDUDANT CODE
     if (this.exerciseSeriesArray(exeIndex).controls.length < numberOfSeries) {
       for (
         let i = this.exerciseSeriesArray(exeIndex).controls.length;
@@ -411,13 +413,6 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
 
   /**
    *
-   * @param training // TODO:Imlement this.
-   */
-  //  fillInnerArray(exeIndex){
-
-  //  }
-  /**
-   *
    * @param training
    */
   saveTraining(training: Training) {
@@ -426,6 +421,11 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
     training.trainingDate = this.format(
       this.trainingForm.controls['trainingDate'].value
     );
+
+    training.isActive = true;
+
+    training.updatedAt = new Date();
+
     this.dts
       .saveTraining(training)
       .then((res) => {
@@ -434,8 +434,6 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
         this.ts.show('Success', 'Successful insert');
       })
       .catch((error) => this.ts.show('Error', `${error.message}`));
-    // // Emit next value to child component
-    //   this.eventsSubject.next(this.userModel.id);
   }
 
   /**
@@ -450,10 +448,6 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
    *
    */
 
-  // login() {
-  //   this.us.saveUser();
-  //   this.eventsSubject.next(this.userModel.id); // TODO: COMMENT THIS
-  // }
   /**
    * -----------------------------------------------Login end
    */
