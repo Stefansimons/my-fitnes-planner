@@ -1,3 +1,5 @@
+import { environment } from './../../../../../environments/environment.prod';
+import { Store } from '@ngrx/store';
 import { ToastService } from './../../../shared/services/toast.service';
 import { SpinnerService } from './../../../shared/services/spinner.service';
 import { Exercise, Series } from './../../models/training.model';
@@ -8,10 +10,7 @@ import {
 import { User } from './../../../shared/models/user.model';
 import { FirestoreService } from './../../../shared/services/firestore.service';
 import { TrainingService } from '../../services/training.service';
-import {
-  AngularFirestore,
-  AngularFirestoreDocument,
-} from '@angular/fire/compat/firestore';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 import {
   Component,
   OnInit,
@@ -30,12 +29,12 @@ import {
 } from '@angular/forms';
 import { Validators } from '@angular/forms';
 import { Training } from '../../models/index';
-import { map, skip, tap } from 'rxjs/operators';
 import {} from './../../../shared/';
-import { BehaviorSubject, Subject } from 'rxjs';
 import { NgbDateStruct, NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
 import { SubSink } from 'subsink';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import { typesOfTraining, exercises } from 'src/app/store/dummyData/trainings';
+
+import * as fromAppState from 'src/app/store/app.reducer';
 
 @Component({
   selector: 'app-training-form',
@@ -53,80 +52,17 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
   model1: string;
   // date: { year: number; month: number };
   trainingForm: FormGroup;
-  typesOfTraining = ['Trening A', 'Trening B', 'Push', 'Pull', 'Legs', 'Drugo'];
   selectedExercises: any[] = [];
-  exercises = {
-    'Trening A': [
-      'Barbell Inclane Bench Press',
-      'Bent over barbell row',
-      'Lat Pulldown',
-      'Leg press',
-      'Barbell Squat',
-      'Machine Push',
-      'Cabl rope pushdown',
-      'Bicep curls dumbell',
-      'Cabl rope pushdown',
-      'Dumbell flies',
-    ],
 
-    'Trening B': [
-      'Barbell Bench Press',
-      'Bent over barbell row',
-      'Lat Pulldown',
-      'Leg press',
-      'Dumbbell lunges',
-      'Machine Push',
-      'Cabl rope pushdown',
-      'Bicep curls dumbell',
-      'Cabl rope pushdown',
-      'Over head press',
-    ],
+  typesOfTraining = typesOfTraining;
+  exercises = exercises;
 
-    Push: [
-      'Dumbbell Bench Press',
-      'Dumbbell Inclane Bench Press',
-      'Incline Flye',
-      'Push machine',
-      'Cabl rope pushdown',
-      'Dumbbell Inclane Bench Press',
-      'Dumbbell Flies',
-      'Cabl rope pushdown',
-      'Inclane Dumbell Triceps Extension Bench',
-      'Overhead press machine',
-      'Flies',
-    ],
-
-    Pull: [
-      'Bent over barbell row',
-      'T-bar row',
-      'Wide grip Lat pull-down',
-      'Wide grip Lat pull-down behind the head',
-      'Trapezius',
-      'Single Arm Dumbell Curl',
-      'Dumbel Alternate Biceps Curl',
-    ],
-
-    Legs: [
-      'Barbell squat',
-      'Machine Leg press',
-      'Dumbell lunges',
-      'Leg extension',
-      'Lying leg Curl',
-      'Calf raise',
-    ],
-    Drugo: [''],
-  };
-
+  minValue: number = 1;
+  maxValue: number = 10;
   private subsink: SubSink = new SubSink();
   constructor(
-    private fs: AngularFirestore,
     private fb: FormBuilder,
-    private dts: TrainingService,
-    private fss: FirestoreService,
-    private us: UserService,
-    private cal: NgbCalendar,
-    private ss: SpinnerService,
-    private ts: ToastService
+    private store: Store<fromAppState.AppState>
   ) {}
   ngAfterViewInit(): void {}
 
@@ -142,17 +78,25 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
       updatedAt: new Date(),
       isActive: [],
       typeOfTraining: ['', Validators.required],
-      exerciseNum: [0, [Validators.required, this.numberZeroToNullValidator()]],
+      exerciseNum: [
+        0,
+        [
+          Validators.required,
+          Validators.min(this.minValue),
+          Validators.max(this.maxValue),
+          this.numberCustomValidator(),
+        ],
+      ],
       exercises: this.fb.array([]),
       // series: new FormArray([]), // ? exercises.series
     });
 
-    const editTrainingData = this.dts.getTraining$.subscribe((training) => {
-      this.editTraining = training;
-      if (this.editTraining) this.setFormValue(this.editTraining);
-    });
+    // const editTrainingData = this.dts.getTraining$.subscribe((training) => {
+    //   this.editTraining = training;
+    //   if (this.editTraining) this.setFormValue(this.editTraining);
+    // });
 
-    this.subsink.add(editTrainingData);
+    // this.subsink.add(editTrainingData);
   }
   /**
    *
@@ -218,10 +162,12 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
    *
    * @returns
    */
-  numberZeroToNullValidator(): ValidatorFn {
+  numberCustomValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const controlValue = control.value;
-      return controlValue == 0 ? { nullValue: null } : null;
+      return controlValue < this.minValue || controlValue > this.maxValue
+        ? { missedValue: true }
+        : null;
     };
   }
   /**
@@ -235,7 +181,7 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
       : '';
   }
   onSubmit() {
-    // this.trainingForm.get('exercises').controls[1].controls.series;
+    console.log(this.trainingForm);
   }
   /**
    *  convenience getters for easy access to form fields , Angular 8
@@ -426,14 +372,30 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
 
     training.updatedAt = new Date();
 
-    this.dts
-      .saveTraining(training)
-      .then((res) => {
-        this.form.reset();
-        this.save.emit(true);
-        this.ts.show('Success', 'Successful insert');
-      })
-      .catch((error) => this.ts.show('Error', `${error.message}`));
+    this.store.dispatch(
+      new fromAppState.fromTrainingListActions.AddTraining(training)
+    );
+    console.log(`saved`);
+
+    // this.dts.saveTraining(training).subscribe((res) => {
+    //   this.form.reset();
+    //   this.save.emit(true);
+    //   this.ss.hide();
+    //   this.ts.show('Success', 'Successful insert');
+    // });
+    // this.dts.saveTraining(training).subscribe(
+    //   (res) => {
+    //     console.log('vracen id:=>', res);
+    //     this.form.reset();
+    //     this.save.emit(true);
+    //     this.ss.hide();
+    //     this.ts.show('Success', 'Successful');
+    //   },
+    //   (error) => {
+    //     this.ss.hide();
+    //     this.ts.show('Error', `Something went wrong error=>${error}`);
+    //   }
+    // );
   }
 
   /**

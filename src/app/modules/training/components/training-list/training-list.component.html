@@ -52,7 +52,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let training of trainings$ | async">
+        <tr *ngFor="let training of (trainings$ | async)?.trainings">
           <!-- trackBy: trackTraining -->
           <td>
             <input
@@ -64,7 +64,7 @@
               disabled
             />
           </td>
-          <td>{{ training.id }}</td>
+          <td>{{ training.idCounter }}</td>
           <td>{{ training.trainingDate }}</td>
           <td>{{ training.typeOfTraining }}</td>
           <td>
@@ -153,6 +153,23 @@
     </div>
   </div>
 </div>
+<!-- TODO : Modal for edit -->
+<!-- <ng-template #mymodalcontent let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{ title }}</h4>
+    <button
+      type="button"
+      class="close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <app-training-form (save)="modal.close('Save click')"></app-training-form>
+  </div>
+</ng-template> -->
 <ng-template #modalcontent let-modal>
   <div class="modal-header">
     <button

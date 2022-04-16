@@ -1,3 +1,4 @@
+import { SpinnerService } from './../../services/spinner.service';
 import { ToastService } from './../../services/toast.service';
 import { UserService } from './../../services/user.service';
 import { AuthenticationService } from './../../../core/auth/authentication.service';
@@ -23,7 +24,8 @@ export class RegisterComponent implements OnInit {
     private auth: AuthenticationService,
     private us: UserService,
     private ts: ToastService,
-    private router: Router
+    private router: Router,
+    private sS: SpinnerService
   ) {}
 
   ngOnInit(): void {
@@ -36,6 +38,7 @@ export class RegisterComponent implements OnInit {
         year: new Date().getFullYear(),
       }),
       firstName: ['Sima', Validators.required],
+      username: ['SimaSimic', Validators.required],
       lastName: ['Simic', Validators.required],
       email: ['simasimic@gmail.com', [Validators.required, Validators.email]],
       password: ['sifra123', [Validators.required]],
@@ -55,62 +58,24 @@ export class RegisterComponent implements OnInit {
    */
   register(formValue: any) {
     if (!this.form.valid) return;
-    this.auth.register(formValue.email, formValue.password).subscribe(
-      (cred) => {
-        // Create fb doc with with cred.user.id
-        const basicUserData: User = {
-          id: cred.user?.uid || '',
-          firstName: formValue.firstName,
-          lastName: formValue.lastName,
-          username: '',
-          email: formValue.email,
-          password: formValue.password,
-          trainings: new Array(),
-          code: '',
-          updatedAt: new Date(),
-          isActive: true,
-        };
-        // Set local user data
-        this.us.saveUser(basicUserData);
 
-        // if remember me == true logg user in
-        if (formValue.rememberMe) {
-          this.auth.login(formValue.email, formValue.password).subscribe(
-            (response) => {
-              const tempUser = response as User;
-              //    Save user data in local storage
-              this.us.emitLoggedUserValue = tempUser;
-              this.us.setLocalStorageUserData(tempUser);
-              this.us.loadLocalStorageUserData();
-
-              this.auth.setIsLoggedUser = true;
-
-              this.ts.show('Success', `WELLCOME ${tempUser.firstName} 🏋️‍♂️💪`);
-              this.router.navigateByUrl('/home'); // if there is not some error
-            },
-            (error) => this.ts.show('error', `something went wrong ${error}`)
-          );
+    this.auth
+      .signup(
+        formValue.firstName,
+        formValue.lastName,
+        formValue.username,
+        formValue.email,
+        formValue.password
+      )
+      .subscribe(
+        (authUserDataRes) => {
+          this.router.navigateByUrl('/login'); // if there is not some error
+          this.form.reset();
+          this.sS.hide();
+        },
+        (errorResponse) => {
+          this.ts.show('Ooops Error', `Register =>Error =>${errorResponse}`);
         }
-        this.form.reset();
-      },
-      (error) =>
-        this.ts.show(
-          'error',
-          `Register => Something went wrong error=>${error}`
-        )
-    );
-    // training.trainingDate = this.format(
-    //   this.trainingForm.controls['trainingDate'].value
-    // );
-    // this.dts
-    //   .saveTraining(training)
-    //   .then((res) => {
-    //     this.form.reset();
-    //     this.save.emit(true);
-    //     this.ts.show('Success', 'Successful insert');
-    //   })
-    //   .catch((error) => this.ts.show('Error', `${error.message}`));
-    // // Emit next value to child component
-    //   this.eventsSubject.next(this.userModel.id);
+      );
   }
 }

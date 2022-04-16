@@ -1,5 +1,6 @@
 export interface Training {
-  id?: number;
+  id: string;
+  idCounter: number;
   trainingDate: string;
   exercises: Exercise[];
   typeOfTraining: string;
@@ -7,13 +8,13 @@ export interface Training {
   updatedAt: Date; // timestamp
 }
 export interface Exercise {
-  id?: number;
+  id: number;
   exerciseName: string;
-  series?: Series[];
-  serieNum?: number;
+  series: Series[];
+  serieNum: number;
 }
 export interface Series {
-  id?: string;
+  id: number;
   repsNum: number;
   weight: number;
 }

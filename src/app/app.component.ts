@@ -1,15 +1,14 @@
 import { environment } from './../environments/environment';
+import { HttpRequestsService } from './modules/shared/services/http-requests.service';
 import { Router } from '@angular/router';
 import { HelperService } from './modules/shared/services/helper.service';
 import { IToast } from './modules/shared/components/toast/toast.component';
 import { ToastService } from './modules/shared/services/toast.service';
-import { IToken, User } from './modules/shared/models/user.model';
-import { AuthenticationService } from './modules/core/auth/authentication.service';
+import { User } from './modules/shared/models/user.model';
 import { SpinnerService } from './modules/shared/services/spinner.service';
 import { UserService } from './modules/shared/services/user.service';
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { IProvaderData } from './modules/shared/models/firebaseUser.model';
 import { SubSink } from 'subsink';
 
 interface Item {
@@ -39,36 +38,46 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     private us: UserService,
     private ss: SpinnerService,
-    private auth: AuthenticationService,
     private ts: ToastService,
     private hs: HelperService,
     private router: Router
   ) {
+    // TODO: DELETE HttpRequestsService
     this.loading$ = this.ss.loading$;
     //  this.loading$
   }
   ngAfterViewInit(): void {}
 
   ngOnInit(): void {
+    // const postObs = this.appS
+    //   .postTraining('-N-NRr7MdBpDFwfZGRER')
+    //   .subscribe((response) => {
+    //     console.log(`response=>`, response);
+    //   });
+    // const getObs = this.appS
+    //   .fetchTraningsRequest('-N-NRr7MdBpDFwfZGRER', '-N-NhR6NP2qnKLcVQ2j6')
+    //   .subscribe((response) => {
+    //     console.log(`response=>`, response);
+    //   });
     // LOCAL STORAGE DATA
-    if (this.auth.isUserLoggedIn()) {
-      this.isLoggedUser = true;
-    }
+    // if (this.auth.isUserLoggedIn()) {
+    //   this.isLoggedUser = true;
+    // }
 
-    const userSub = this.auth.isLoggedUser.subscribe((data) => {
-      this.isLoggedUser = data;
-    });
-
+    // const userSub = this.auth.isLoggedUser.subscribe((data) => {
+    //   this.isLoggedUser = data;
+    // });
+    debugger;
     const toastSub = this.ts.toastSourceSubject$.subscribe((data) => {
       this.isShowToast = true;
       this.toastData = data;
       // Close toast after 5 sec
       setTimeout(() => {
         this.isShowToast = false;
-      }, 7000);
+      }, 10000);
     });
 
-    this._subsink.add(toastSub, userSub);
+    this._subsink.add(toastSub);
   }
 
   ngOnDestroy(): void {
@@ -91,7 +100,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   /**
    *
    */
-  test() {
-    this.auth.login('', '');
-  }
+  // test() {
+  //   this.auth.login('', '');
+  // }
 }

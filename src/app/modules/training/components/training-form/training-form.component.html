@@ -7,10 +7,7 @@
   Test
 </button> -->
 <div class="training-form-wrapper">
-  <form
-    [formGroup]="trainingForm"
-    (ngSubmit)="saveTraining(trainingForm.value)"
-  >
+  <form [formGroup]="trainingForm" (ngSubmit)="saveTraining(form.value)">
     <div class="form-row">
       <div class="form-group col-md-6 date-padding">
         <ngb-datepicker #dp formControlName="trainingDate"></ngb-datepicker>
@@ -58,10 +55,12 @@
           name="exerciseNum"
           id="inputSerie"
           formControlName="exerciseNum"
-          min="1"
-          max="5"
+          appNumberInput
+          [maxValue]="maxValue"
+          [minValue]="minValue"
           (change)="onChangeExercise($event)"
         />
+        <!-- TODO: Create numberInputDirective -->
       </div>
       <!--// NOTE: Validation -->
       <div
@@ -71,8 +70,9 @@
         "
         class="alert alert-danger"
       >
-        <div *ngIf="!getFormControl('exerciseNum')?.errors?.['nullValue']">
-          Number of exercises is required , 1 is minimum.
+        <div *ngIf="getFormControl('exerciseNum')?.errors?.['missedValue']">
+          Number of exercises is required , {{ minValue }} is minimum
+          {{ maxValue }} is maximum
         </div>
       </div>
       <!--  -->
@@ -123,8 +123,9 @@
                 formControlName="serieNum"
                 class="form-control"
                 (change)="onChangeSeries($event, exeIndex)"
-                min="1"
-                max="5"
+                appNumberInput
+                [maxValue]="5"
+                [minValue]="0"
               />
             </div>
           </div>
@@ -154,8 +155,9 @@
                     class="form-control"
                     formControlName="repsNum"
                     id="inputReps"
-                    min="1"
-                    max="20"
+                    appNumberInput
+                    [maxValue]="20"
+                    [minValue]="0"
                   />
                 </div>
                 <div class="form-group col-md-6 weight-input">
@@ -171,9 +173,26 @@
                       class="example-right-align"
                       placeholder="0"
                       formControlName="weight"
+                      appNumberInput
+                      [maxValue]="1000"
+                      [minValue]="0"
                     />
                     <span matSuffix>kg</span>
                   </mat-form-field>
+                  <div
+                    *ngIf="
+                      getFormControl('weight')?.invalid &&
+                      getFormControl('weight')?.touched
+                    "
+                    class="alert alert-danger"
+                  >
+                    <div
+                      *ngIf="getFormControl('weight')?.errors?.['missedValue']"
+                    >
+                      Number of exercises is required , {{ minValue }} is
+                      minimum {{ maxValue }} is maximum
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -188,7 +207,7 @@
         mat-button
         class="my-button btn-terrnary"
         type="submit"
-        [disabled]="trainingForm.invalid"
+        [disabled]="form.valid"
       >
         Sacuvaj
       </button>

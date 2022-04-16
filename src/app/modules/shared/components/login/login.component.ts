@@ -25,7 +25,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private router: Router,
     private ts: ToastService,
-    private us: UserService
+    private us: UserService,
+    private sS: SpinnerService
   ) {}
   ngOnDestroy(): void {
     this._subsink.unsubscribe();
@@ -61,24 +62,20 @@ export class LoginComponent implements OnInit, OnDestroy {
    * @returns
    */
   login(credentials: any) {
-    // if (!this.form.valid) return;
-    credentials.loginAtTimestamp = new Date().getTime();
+    if (!this.form.valid) return;
     const loginSub = this.auth
       .login(credentials.email, credentials.password)
       .subscribe(
-        (response) => {
-          const tempUser = response as User;
+        (responseData) => {
+          // Empty response because api for post doesnt returna any response!
+          console.log(`subscribe responseData => ${responseData}`);
           //    Save user data in local storage
-          this.us.emitLoggedUserValue = tempUser;
-          this.us.setLocalStorageUserData(tempUser);
-          this.us.loadLocalStorageUserData();
 
-          this.auth.setIsLoggedUser = true;
-
-          this.ts.show('success', `WELLCOME ${tempUser.firstName} 🏋️‍♂️💪`);
+          this.sS.hide();
           this.router.navigateByUrl('/home'); // if there is not some error
         },
-        (error) => this.ts.show('error', `something went wrong ${error}`)
+        (responseError) =>
+          this.ts.show('error', `something went wrong ${responseError}`)
       );
 
     this._subsink.add(loginSub); // NOTE WITHOUT SUBSINK OTHER BUTTON TRIGER LOGIN SUBSCRIBE!!!!

@@ -1,22 +1,32 @@
 <form [formGroup]="registerForm" (ngSubmit)="register(registerForm.value)">
   <div class="form-group">
-    <label for="inputFirstName">Ime</label>
+    <label for="inputFirstName">First Name</label>
     <input
       type="text"
       class="form-control"
       id="inputFirstName"
       formControlName="firstName"
-      placeholder="Unesi ime"
+      placeholder="Insert first name"
     />
   </div>
   <div class="form-group">
-    <label for="inputLastName">Prezime</label>
+    <label for="inputLastName">Last Name</label>
     <input
       type="text"
       class="form-control"
       formControlName="lastName"
       id="inputLastName"
-      placeholder="Unesi prezime"
+      placeholder="Insert last name"
+    />
+  </div>
+  <div class="form-group">
+    <label for="inputUserName">Username</label>
+    <input
+      type="text"
+      class="form-control"
+      formControlName="username"
+      id="inputUsername"
+      placeholder="Insert username"
     />
   </div>
   <div class="form-group">
@@ -26,37 +36,27 @@
       class="form-control"
       id="inputEmail"
       formControlName="email"
-      placeholder="Unesi email"
+      placeholder="Insert email"
     />
   </div>
-  <!-- <div class="form-group">
-    <label for="exampleInputEmail1">Email address</label>
-    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
-    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-  </div>
   <div class="form-group">
-    <label for="exampleInputEmail1">Email address</label>
-    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
-    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-  </div> -->
-  <div class="form-group">
-    <label for="inputPassword">Sifra</label>
+    <label for="inputPassword">Password</label>
     <input
       type="password"
       class="form-control"
       formControlName="password"
       id="inputPassword"
-      placeholder="Sifra"
+      placeholder="Insert password"
     />
   </div>
   <div class="form-group">
-    <label for="inputPasswordRpt">Ponovi sifru</label>
+    <label for="inputPasswordRpt">Repeat password</label>
     <input
       type="password"
       class="form-control"
       formControlName="passwordRpt"
       id="inputPasswordRpt"
-      placeholder="Sifra"
+      placeholder="Repeat password"
     />
   </div>
   <div class="form-check">
@@ -66,9 +66,9 @@
       id="exampleCheck1"
       formControlName="rememberMe"
     />
-    <label class="form-check-label" for="exampleCheck1">
+    <!-- <label class="form-check-label" for="exampleCheck1">
       Automatic login?</label
-    >
+    > -->
   </div>
   <div class="clearfix">
     <button

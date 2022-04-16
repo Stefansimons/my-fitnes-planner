@@ -1,15 +1,19 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HomeComponent } from './components/home/home.component';
-
-
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { Interceptor } from './auth/interceptor';
 
 @NgModule({
-  declarations: [
-    HomeComponent
+  imports: [CommonModule, HttpClientModule],
+  exports: [HomeComponent],
+  declarations: [HomeComponent],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: Interceptor,
+      multi: true,
+    },
   ],
-  imports: [
-    CommonModule
-  ]
 })
-export class CoreModule { }
+export class CoreModule {}
