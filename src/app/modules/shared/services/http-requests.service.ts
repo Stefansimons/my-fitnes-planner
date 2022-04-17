@@ -24,9 +24,7 @@ export class HttpRequestsService {
     private http: HttpClient,
     private ss: SpinnerService,
     private toasts: ToastService
-  ) {
-    console.log(`this.appConfs.config=>${this.fbApi}`);
-  }
+  ) {}
 
   /****CRUD REQUESTS TO FIREBASE*/
   /**

@@ -15,6 +15,19 @@ export function authReducer(
 ) {
   switch (action.type) {
     case AuthActions.LOGIN:
+      // id: action.payload.id,
+      // firstName:action.payload.firstName,
+      // lastName:action.payload.lastName,
+      // username:action.payload.username,
+      // email:action.payload.email,
+      // password:action.payload.password,
+      // code:action.payload.code,
+      // trainings: action.payload.trainings,
+      // token: action.payload.token,
+      // updatedAt: action.payload.updatedAt,
+      // role: action.payload.role,
+      // isActive: action.payload.isActive,
+
       const authUser = {
         id: action.payload.userId,
         token: {

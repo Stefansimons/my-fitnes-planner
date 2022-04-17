@@ -1,8 +1,8 @@
 import { User } from './../../../shared/models/user.model';
 import { Action } from '@ngrx/store';
 
-export const LOGIN = 'LOGIN';
-export const LOGOUT = 'LOGOUT';
+export const LOGIN = '[Auth] Login'; // NOTE NGRX DOCS CONVETION FOR NAMING CONST ACTIONS, [FEATURE PIECE] NAME OF ACTIONS
+export const LOGOUT = '[Auth] Logout';
 
 export class Login implements Action {
   readonly type = LOGIN;
@@ -15,6 +15,18 @@ export class Login implements Action {
       refreshToken: string;
     }
   ) {}
+  // id: string;
+  // firstName: string;
+  // lastName: string;
+  // username: string;
+  // email: string;
+  // password: string;
+  // code: string;
+  // trainings: Training[];
+  // token: IToken;
+  // updatedAt: Date;
+  // role?: ROLE;
+  // isActive: boolean;
 }
 
 export class Logout implements Action {

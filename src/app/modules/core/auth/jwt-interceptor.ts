@@ -1,5 +1,5 @@
 import { Store } from '@ngrx/store';
-import { environment } from './../../../../environments/environment.prod';
+import { environment } from '../../../../environments/environment.prod';
 
 import { Injectable } from '@angular/core';
 import {
@@ -12,14 +12,14 @@ import { take, exhaustMap, map } from 'rxjs/operators';
 import * as fromApp from '../../../store/app.reducer';
 
 @Injectable()
-export class Interceptor implements HttpInterceptor {
+export class JwtInterceptor implements HttpInterceptor {
   constructor(private store: Store<fromApp.AppState>) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler) {
     console.log(`interceptor`);
 
     return this.store.select('auth').pipe(
-      take(1),
+      take(1), // Means take only one snapshot = one value
       map((authState) => {
         return authState.user;
       }),

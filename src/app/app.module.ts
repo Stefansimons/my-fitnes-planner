@@ -30,7 +30,7 @@ import { AppOverlayModule } from './material/overlay/appOverlay.module';
 import { SharedModule } from './modules/shared/shared.module';
 import { StoreModule } from '@ngrx/store';
 import { TrainingListReducer } from './store/training-list.reducer';
-import { Interceptor } from './modules/core/auth/interceptor';
+import { EffectsModule } from '@ngrx/effects';
 // import { TrainingListReducer } from './store/training-list.reducer';
 
 // import { reducers } from './reducers/'
@@ -57,6 +57,7 @@ export function myAppConfigService(configService: AppConfigService) {
     HttpClientModule,
     StoreModule.forRoot(reducers),
     CoreModule,
+    EffectsModule.forRoot([]),
   ],
   entryComponents: [AppComponent, SpinnerComponent], // TODO: entryComponents ?!?
   exports: [RouterModule],

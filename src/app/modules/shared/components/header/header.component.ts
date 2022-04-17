@@ -25,12 +25,13 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit(): void {
     // ACCOUNT LOCAL STORAGE DATA
-    this.store.select('auth').subscribe((resAuthUser) => {
-      if (resAuthUser.user) {
-        console.log('auth user =>', resAuthUser.user);
-        const userAuthData = resAuthUser.user;
+    this.store.select('user').subscribe((resUser) => {
+      console.log('header user =>', resUser);
+
+      if (resUser.user) {
+        const userAuthData = resUser.user;
         this.isLoggedUser = true;
-        this.loggedUserFirstName = userAuthData.id;
+        this.loggedUserFirstName = userAuthData.firstName;
       }
     });
     // if (this.auth.isUserLoggedIn()) {

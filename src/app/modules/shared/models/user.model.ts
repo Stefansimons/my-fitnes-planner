@@ -8,7 +8,6 @@ export interface User {
   password: string;
   code: string;
   trainings: Training[];
-  token: IToken;
   updatedAt: Date;
   role?: ROLE;
   isActive: boolean;

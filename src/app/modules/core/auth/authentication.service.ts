@@ -20,6 +20,7 @@ import firebase from 'firebase/compat/app';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import * as fromApp from '../../../store/app.reducer';
 import * as AuthActions from '../auth/store/auth.actions';
+import * as UserActions from '../auth/store/user.actions';
 @Injectable({
   providedIn: 'root',
 })
@@ -102,7 +103,6 @@ export class AuthenticationService {
             email: resAuthData.email,
             password: password,
             code: '',
-            token: userAuthData.token,
             updatedAt: new Date(),
             role: ROLE.Bodybuilder,
             isActive: true,
@@ -138,8 +138,7 @@ export class AuthenticationService {
       .pipe(
         catchError(this.handleError),
         tap((resAuthData) => {
-          console.log(`tap za auth data`);
-
+          // Send token to interceptor to attach access token
           this.handleAuthentication(
             resAuthData.localId,
             resAuthData.idToken,
@@ -148,7 +147,6 @@ export class AuthenticationService {
           );
         }),
         switchMap((authUserData) => {
-          console.log(`switchmap`);
           const userAuthData = {
             id: authUserData.localId,
             token: {
@@ -162,7 +160,6 @@ export class AuthenticationService {
 
           // Prepare token for setting to user...
           const token = userAuthData.token;
-          console.log(`postavljen token useru..`);
 
           // this._userTokenSource.next(userAuthData);
           const userId = authUserData.localId;
@@ -181,28 +178,17 @@ export class AuthenticationService {
               return this.httpS.fetchUserRequest(fbGeneratedId).pipe(
                 catchError(this.handleError),
                 tap((responseUserData) => {
-                  console.log('tap za usera =>', responseUserData);
-
+                  const user = responseUserData;
                   this.sS.show();
                   this.ts.show(
                     'Success',
                     `WELLCOME ${responseUserData.firstName} 🏋️‍♂️💪`
                   );
-                  this.handleAuthentication(
-                    responseUserData.id,
-                    responseUserData.token.accessToken,
-                    responseUserData.token.refreshToken,
-                    +authUserData.expiresIn
-                  );
+                  this.handleUser(user);
                 }),
                 map((responseUserData) => {
-                  console.log('map =>', responseUserData);
                   // ... then set the rest params to user
-                  this.loggedUserData = { token: token, ...responseUserData };
-                  console.log(
-                    `postavljen ostatak  usera=>`,
-                    this.loggedUserData
-                  );
+                  this.loggedUserData = { ...responseUserData };
                 })
               );
             }),
@@ -211,7 +197,15 @@ export class AuthenticationService {
         })
       );
   }
-
+  /**
+   *
+   * @param user
+   */
+  handleUser(user: User) {
+    this.store.dispatch(new UserActions.AddUser(user));
+    this._loggedUserSource.next(user);
+    localStorage.setItem('user', JSON.stringify(user));
+  }
   /**
    * Logs user in
    * @param email
@@ -370,7 +364,7 @@ export class AuthenticationService {
     // this.loggedUserData.tokenExpirationDate = expirationDate;
     // this._loggedUserSource.next(this.loggedUserData);
     this.autoLogout(expiresIn * 1000);
-    localStorage.setItem('userAuthData', JSON.stringify(tokentest));
+    localStorage.setItem('token', JSON.stringify(tokentest));
   }
   /**
    *
@@ -379,7 +373,7 @@ export class AuthenticationService {
     this.ts.show('Warning', 'Your session is expired =>Please login');
     this._loggedUserSource.next(null);
     this.router.navigate(['/login']);
-    localStorage.removeItem('userData');
+    localStorage.removeItem('token');
     if (this.tokenExpirationTimer) {
       clearTimeout(this.tokenExpirationTimer);
     }
@@ -393,7 +387,7 @@ export class AuthenticationService {
   autoLogout(expirationDuration: number) {
     this.tokenExpirationTimer = setTimeout(() => {
       this.logout();
-    }, expirationDuration);
+    }, 10000);
   }
 
   private handleError(errorRes: HttpErrorResponse) {

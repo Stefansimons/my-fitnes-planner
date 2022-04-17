@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HomeComponent } from './components/home/home.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { Interceptor } from './auth/interceptor';
+import { JwtInterceptor } from './auth/jwt-interceptor';
 
 @NgModule({
   imports: [CommonModule, HttpClientModule],
@@ -11,7 +11,7 @@ import { Interceptor } from './auth/interceptor';
   providers: [
     {
       provide: HTTP_INTERCEPTORS,
-      useClass: Interceptor,
+      useClass: JwtInterceptor,
       multi: true,
     },
   ],
