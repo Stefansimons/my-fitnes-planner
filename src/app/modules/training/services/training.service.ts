@@ -1,3 +1,5 @@
+import { ToastService } from './../../shared/services/toast.service';
+import { HttpRequestsService } from './../../shared/services/http-requests.service';
 import { SpinnerService } from './../../shared/services/spinner.service';
 import { UserService } from './../../shared/services/user.service';
 import {
@@ -11,9 +13,22 @@ import {
 } from './../../shared/services/firestore.service';
 import { Training } from '../models/training.model';
 import { MatTableDataSource } from '@angular/material/table';
-import { Observable, of, scheduled, Subject, BehaviorSubject } from 'rxjs';
+import {
+  Observable,
+  of,
+  scheduled,
+  Subject,
+  BehaviorSubject,
+  throwError,
+} from 'rxjs';
 import { Injectable, PipeTransform } from '@angular/core';
-import { debounceTime, tap, switchMap, delay } from 'rxjs/operators';
+import {
+  debounceTime,
+  tap,
+  switchMap,
+  delay,
+  catchError,
+} from 'rxjs/operators';
 import { DecimalPipe } from '@angular/common';
 
 interface SearchResult {
@@ -109,7 +124,9 @@ export class TrainingService {
   constructor(
     private fs: FirestoreService,
     private us: UserService,
-    private ss: SpinnerService
+    private ss: SpinnerService,
+    private https: HttpRequestsService,
+    private ts: ToastService
   ) {
     this._search$
       .pipe(
@@ -137,37 +154,15 @@ export class TrainingService {
   saveTraining(training: Training) {
     const tempUserData = this.us.getLoggedUserData; // User data for local manipulation
 
-    const updateUser = tempUserData; // USer data for firebase storage, isActive param
-    let updateUserTrainings = updateUser.trainings; // Trainings for fb update
-
-    updateUser.updatedAt = tempUserData.updatedAt = new Date();
-
-    if (training.id) {
-      // Update training in array
-      const updatedArray = tempUserData.trainings.map((item) =>
-        item.id === training.id ? training : item
-      );
-
-      updateUserTrainings = [...updatedArray];
-    } else {
-      // Add training in array
-      updateUserTrainings.push(training);
-    }
+    tempUserData.updatedAt = new Date();
 
     // Setting ids of training and exericises per object ids
-    updateUserTrainings.forEach((training, id) => {
-      training.id ??= id + 1; // NOTE: Nullish coalesc operator
+    tempUserData.trainings.forEach((training, id) => {
+      training.idCounter ??= id + 1; // NOTE: Nullish coalesc operator
       training.exercises.forEach((item, id) => {
         item.id = !item.id ? id + 1 : item.id;
       });
     });
-
-    // tempUserData.trainings = updateUserTrainings;
-
-    // Remove isActive = false training , for display
-    const filtered = updateUserTrainings.filter((item) => item.isActive);
-
-    tempUserData.trainings = filtered;
 
     this.us.updateLocalStorageUserData(tempUserData);
 
@@ -175,13 +170,44 @@ export class TrainingService {
     this.us.fillSearchArrayTrainings(tempUserData.trainings);
 
     // Sort table by id and set the first page
+    this.sortTable();
 
+    if (training.id) {
+      // Update training in array
+      const updatedArray = tempUserData.trainings.map((item) =>
+        item.id === training.id ? training : item
+      );
+      const activeTrainings = updatedArray.filter((item) => item.isActive);
+
+      tempUserData.trainings = activeTrainings;
+
+      return this.https.putTrainingRequest(tempUserData.id, training).pipe(
+        tap(() => this.ss.show()),
+        catchError((error) => {
+          this.ts.show('Error', `Something went wrong =>${error}`);
+          return throwError(error);
+        })
+      );
+      // updateUserTrainings = [...updatedArray];
+    } else {
+      // Add training in array
+      tempUserData.trainings.push(training);
+      return this.https.postTrainingRequest(tempUserData.id, training).pipe(
+        tap(() => this.ss.show()),
+        catchError((error) => {
+          this.ts.show('Error', `Something went wrong =>${error}`);
+          return throwError(error);
+        })
+      );
+    }
+  }
+  /**
+   *
+   */
+  sortTable() {
     this.page = 1;
     this.sortColumn = 'id';
     this.sortDirection = 'desc';
-    //...AND FORWARD USER FOR UPDATE, INSERT ISACTIVE = FALSE TOO...
-    updateUser.trainings = updateUserTrainings;
-    return this.fs.updateItem(updateUser);
   }
   /**
    *

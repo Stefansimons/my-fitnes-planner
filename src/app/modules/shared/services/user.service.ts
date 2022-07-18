@@ -126,7 +126,7 @@ export class UserService {
 
     const filtered = this._loggedUserData.trainings
       .map((item, id) => {
-        item.id = id + 1;
+        item.idCounter = id + 1;
         item.exercises.map((item, id) => {
           item.id = id + 1;
         });

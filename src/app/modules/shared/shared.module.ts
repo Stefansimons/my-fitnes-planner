@@ -11,6 +11,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ToastComponent } from './components/toast/toast.component';
 import { RegisterComponent } from './components/register/register.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NumberInputDirective } from './directive/number-input.directive';
 @NgModule({
   declarations: [
     HeaderComponent,
@@ -19,6 +20,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     SpinnerComponent,
     ToastComponent,
     RegisterComponent,
+    NumberInputDirective,
   ],
   imports: [
     CommonModule,
@@ -37,6 +39,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     ToastComponent,
     FormsModule,
     ReactiveFormsModule,
+    NumberInputDirective,
   ],
   entryComponents: [SpinnerComponent],
 })

@@ -8,17 +8,29 @@ export interface User {
   password: string;
   code: string;
   trainings: Training[];
-  token?: IToken;
   updatedAt: Date;
   role?: ROLE;
   isActive: boolean;
 }
 export interface IToken {
   accessToken: string;
-  expirationTime: number;
+  tokenExpirationDate: Date;
   refreshToken: string;
+}
+export interface AuthResponseData {
+  kind: string;
+  idToken: string;
+  email: string;
+  refreshToken: string;
+  expiresIn: string;
+  localId: string;
+  registered: boolean;
 }
 export enum ROLE {
   Bodybuilder = 'BODYBUILDER',
   Admin = 'ADMIN',
+}
+export interface IAuthUserData {
+  id: string;
+  token: IToken;
 }

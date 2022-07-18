@@ -1,3 +1,4 @@
+import * as AuthActions from './../../../core/auth/store/auth.actions';
 import { UserService } from './../../services/user.service';
 import { ToastService } from './../../services/toast.service';
 import { Router } from '@angular/router';
@@ -12,7 +13,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { SubSink } from 'subsink';
-
+import * as fromApp from '../../../../store/app.reducer';
+import { Store } from '@ngrx/store';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -25,7 +27,9 @@ export class LoginComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private router: Router,
     private ts: ToastService,
-    private us: UserService
+    private us: UserService,
+    private sS: SpinnerService,
+    private store: Store<fromApp.AppState>
   ) {}
   ngOnDestroy(): void {
     this._subsink.unsubscribe();
@@ -34,6 +38,9 @@ export class LoginComponent implements OnInit, OnDestroy {
   loginForm: FormGroup;
 
   ngOnInit(): void {
+    const loginStoreSub = this.store.select('auth').subscribe((authRes) => {
+      console.log('loginStoreSub => authRes=>', authRes);
+    });
     // Initialization of register form for preventing error getting value of getters
     this.loginForm = this.fb.group({
       id: [null],
@@ -47,6 +54,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       password: ['sifra123', [Validators.required]],
       rememberMe: [true],
     });
+    this._subsink.add(loginStoreSub);
   }
   /**
    *  convenience getters for easy access to form fields , Angular 8
@@ -61,26 +69,29 @@ export class LoginComponent implements OnInit, OnDestroy {
    * @returns
    */
   login(credentials: any) {
-    // if (!this.form.valid) return;
-    credentials.loginAtTimestamp = new Date().getTime();
-    const loginSub = this.auth
-      .login(credentials.email, credentials.password)
-      .subscribe(
-        (response) => {
-          const tempUser = response as User;
-          //    Save user data in local storage
-          this.us.emitLoggedUserValue = tempUser;
-          this.us.setLocalStorageUserData(tempUser);
-          this.us.loadLocalStorageUserData();
+    if (!this.form.valid) return;
+    this.store.dispatch(
+      new AuthActions.LoginStart({
+        email: credentials.email,
+        password: credentials.password,
+      })
+    );
+    this.form.reset();
+    // const loginSub = this.auth
+    //   .login(credentials.email, credentials.password)
+    //   .subscribe(
+    //     (responseData) => {
+    //       // Empty response because api for post doesnt returna any response!
+    //       console.log(`subscribe responseData => ${responseData}`);
+    //       //    Save user data in local storage
 
-          this.auth.setIsLoggedUser = true;
+    //       this.sS.hide();
+    //       this.router.navigateByUrl('/home'); // if there is not some error
+    //     },
+    //     (responseError) =>
+    //       this.ts.show('error', `something went wrong ${responseError}`)
+    //   );
 
-          this.ts.show('success', `WELLCOME ${tempUser.firstName} 🏋️‍♂️💪`);
-          this.router.navigateByUrl('/home'); // if there is not some error
-        },
-        (error) => this.ts.show('error', `something went wrong ${error}`)
-      );
-
-    this._subsink.add(loginSub); // NOTE WITHOUT SUBSINK OTHER BUTTON TRIGER LOGIN SUBSCRIBE!!!!
+    // this._subsink.add(loginSub); // NOTE WITHOUT SUBSINK OTHER BUTTON TRIGER LOGIN SUBSCRIBE!!!!
   }
 }

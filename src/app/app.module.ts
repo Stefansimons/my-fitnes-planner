@@ -1,7 +1,16 @@
+import { AuthEffects } from './modules/core/auth/store/auth.effects';
+import { CoreModule } from './modules/core/core.module';
+import { reducers } from './store/app.reducer';
+import {
+  HttpClient,
+  HttpClientModule,
+  HTTP_INTERCEPTORS,
+} from '@angular/common/http';
+import { AppConfigService } from './core/app-config.service';
 import { SpinnerComponent } from './modules/shared/components/spinner/spinner.component';
 import { RouterModule } from '@angular/router';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore/';
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { environment } from 'src/environments/environment.prod';
 import { AngularFireModule } from '@angular/fire/compat';
@@ -20,10 +29,20 @@ import { AppOverlayModule } from './material/overlay/appOverlay.module';
 
 // Modules
 import { SharedModule } from './modules/shared/shared.module';
+import { StoreModule } from '@ngrx/store';
+import { TrainingListReducer } from './store/training-list.reducer';
+import { EffectsModule } from '@ngrx/effects';
+// import { TrainingListReducer } from './store/training-list.reducer';
+
+// import { reducers } from './reducers/'
 
 // NOTE: Lazy loaded moduls do not need here in app.modules
 // import { NutritionModule } from './modules/nutrition/nutrition.module';
 // import { TrainingModule } from './modules/training/training.module';
+
+export function myAppConfigService(configService: AppConfigService) {
+  return () => configService.load();
+}
 
 @NgModule({
   declarations: [AppComponent], // TODO: SpinnerComponent Mast have?
@@ -36,17 +55,10 @@ import { SharedModule } from './modules/shared/shared.module';
     MaterialModule,
     SharedModule,
     AppOverlayModule,
-
-    // provideFirebaseApp(() => initializeApp(environment.firebase)),
-    // provideAnalytics(() => getAnalytics()),
-    // provideAuth(() => getAuth()),
-    // provideDatabase(() => getDatabase()),
-    // provideFunctions(() => getFunctions()),
-    // provideMessaging(() => getMessaging()),
-    // providePerformance(() => getPerformance()),
-    // provideRemoteConfig(() => getRemoteConfig()),
-    // provideStorage(() => getStorage()),
-    // provideFirestore(() => getFirestore()),
+    HttpClientModule,
+    StoreModule.forRoot(reducers),
+    CoreModule,
+    EffectsModule.forRoot([AuthEffects]),
   ],
   entryComponents: [AppComponent, SpinnerComponent], // TODO: entryComponents ?!?
   exports: [RouterModule],
@@ -54,6 +66,12 @@ import { SharedModule } from './modules/shared/shared.module';
     AngularFirestoreModule,
     ScreenTrackingService,
     UserTrackingService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: myAppConfigService,
+      deps: [AppConfigService],
+      multi: true,
+    },
   ],
   bootstrap: [AppComponent],
 })
