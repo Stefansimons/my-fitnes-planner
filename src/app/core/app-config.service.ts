@@ -15,7 +15,7 @@ export class AppConfigService {
       .toPromise()
       .then((data) => {
         this._config = data;
-        console.log('config loaded data=>', data);
+        console.log('config loaded data=>', this._config);
       })
       .catch((error) => {
         console.log('Config file is not founded=>', error);

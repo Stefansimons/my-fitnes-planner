@@ -3,15 +3,16 @@ import { Router } from '@angular/router';
 import { AuthenticationService } from './../../../core/auth/authentication.service';
 import { UserService } from './../../services/user.service';
 import { ToastService } from './../../services/toast.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { SubSink } from 'subsink';
+import * as AuthActions from '@auth/store/auth.actions';
 import * as fromApp from '../../../../../app/store/app.reducer';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css'],
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
   private _subsink = new SubSink();
   isLoggedUser: boolean;
   loggedUserFirstName: string;
@@ -57,10 +58,11 @@ export class HeaderComponent implements OnInit {
    *
    */
   logout() {
-    this.auth.logout();
-    this.isLoggedUser = false;
-    this.auth.setIsLoggedUser = false;
-    this.us.clearUserData();
+    // TODO na logout-u prikazati poruku goodbye
+    this.store.dispatch(new AuthActions.Logout());
     this.router.navigateByUrl('/home');
+  }
+  ngOnDestroy() {
+    this._subsink.unsubscribe();
   }
 }

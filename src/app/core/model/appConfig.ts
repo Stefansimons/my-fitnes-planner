@@ -1,5 +1,5 @@
 export interface IConfigModel {
-  apiKey: string;
+  appName: string;
   firebase: {
     apiKey: string;
     authDomain: string;

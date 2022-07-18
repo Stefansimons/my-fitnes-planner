@@ -1,7 +1,7 @@
 import { Training } from './../../../training/models/training.model';
 import { IToken, ROLE } from './../../../shared/models/user.model';
 import { Action } from '@ngrx/store';
-export const ADD_USER = 'ADD_USER';
+export const ADD_USER = '[User] Add user';
 
 export class AddUser implements Action {
   readonly type = ADD_USER;

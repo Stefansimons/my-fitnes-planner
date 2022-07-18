@@ -3,10 +3,14 @@ import * as AuthActions from './auth.actions';
 
 export interface State {
   user: IAuthUserData;
+  authError: string;
+  loading: boolean;
 }
 
 const initialState: State = {
   user: null,
+  authError: null,
+  loading: false,
 };
 
 export function authReducer(
@@ -14,20 +18,7 @@ export function authReducer(
   action: AuthActions.AuthActions
 ) {
   switch (action.type) {
-    case AuthActions.LOGIN:
-      // id: action.payload.id,
-      // firstName:action.payload.firstName,
-      // lastName:action.payload.lastName,
-      // username:action.payload.username,
-      // email:action.payload.email,
-      // password:action.payload.password,
-      // code:action.payload.code,
-      // trainings: action.payload.trainings,
-      // token: action.payload.token,
-      // updatedAt: action.payload.updatedAt,
-      // role: action.payload.role,
-      // isActive: action.payload.isActive,
-
+    case AuthActions.AUTHENTICATE_SUCCESS:
       const authUser = {
         id: action.payload.userId,
         token: {
@@ -38,12 +29,33 @@ export function authReducer(
       };
       return {
         ...state,
+        authError: null,
         user: authUser,
+        loading: false,
       };
     case AuthActions.LOGOUT:
       return {
         ...state,
         user: null,
+      };
+    case AuthActions.LOGIN_START:
+    case AuthActions.SIGNUP_START:
+      return {
+        ...state,
+        authError: null,
+        loading: true,
+      };
+    case AuthActions.AUTHENTICATE_FAIL:
+      return {
+        ...state,
+        user: null,
+        authError: action.payload,
+        loading: false,
+      };
+    case AuthActions.CLEAR_ERROR:
+      return {
+        ...state,
+        authError: null,
       };
     default:
       return state;

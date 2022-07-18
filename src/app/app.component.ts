@@ -1,3 +1,5 @@
+import { map } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
 import { environment } from './../environments/environment';
 import { HttpRequestsService } from './modules/shared/services/http-requests.service';
 import { Router } from '@angular/router';
@@ -10,7 +12,8 @@ import { UserService } from './modules/shared/services/user.service';
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { SubSink } from 'subsink';
-
+import * as fromApp from '@store/app.reducer';
+import * as AuthActions from '@auth/store/auth.actions';
 interface Item {
   name: string;
 }
@@ -33,14 +36,15 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   isShowToast: boolean = false; // TOAST
   toastData: IToast;
   private _subsink = new SubSink();
-  isLoggedUser: boolean = false;
+  isAuthenticated = false;
   loggedUserFirstName: string;
   constructor(
     private us: UserService,
     private ss: SpinnerService,
     private ts: ToastService,
     private hs: HelperService,
-    private router: Router
+    private router: Router,
+    private store: Store<fromApp.AppState>
   ) {
     // TODO: DELETE HttpRequestsService
     this.loading$ = this.ss.loading$;
@@ -49,25 +53,18 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit(): void {}
 
   ngOnInit(): void {
-    // const postObs = this.appS
-    //   .postTraining('-N-NRr7MdBpDFwfZGRER')
-    //   .subscribe((response) => {
-    //     console.log(`response=>`, response);
-    //   });
-    // const getObs = this.appS
-    //   .fetchTraningsRequest('-N-NRr7MdBpDFwfZGRER', '-N-NhR6NP2qnKLcVQ2j6')
-    //   .subscribe((response) => {
-    //     console.log(`response=>`, response);
-    //   });
-    // LOCAL STORAGE DATA
-    // if (this.auth.isUserLoggedIn()) {
-    //   this.isLoggedUser = true;
-    // }
+    const userSub = this.store
+      .select('auth')
+      .pipe(map((authState) => authState.user))
+      .subscribe((user) => {
+        this.isAuthenticated = !!user;
+        console.log(!user);
+        console.log(!!user);
+      });
 
     // const userSub = this.auth.isLoggedUser.subscribe((data) => {
     //   this.isLoggedUser = data;
     // });
-    debugger;
     const toastSub = this.ts.toastSourceSubject$.subscribe((data) => {
       this.isShowToast = true;
       this.toastData = data;
@@ -77,7 +74,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       }, 10000);
     });
 
-    this._subsink.add(toastSub);
+    this._subsink.add(toastSub, userSub);
   }
 
   ngOnDestroy(): void {

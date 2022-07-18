@@ -1,3 +1,4 @@
+import { AuthEffects } from './modules/core/auth/store/auth.effects';
 import { CoreModule } from './modules/core/core.module';
 import { reducers } from './store/app.reducer';
 import {
@@ -57,7 +58,7 @@ export function myAppConfigService(configService: AppConfigService) {
     HttpClientModule,
     StoreModule.forRoot(reducers),
     CoreModule,
-    EffectsModule.forRoot([]),
+    EffectsModule.forRoot([AuthEffects]),
   ],
   entryComponents: [AppComponent, SpinnerComponent], // TODO: entryComponents ?!?
   exports: [RouterModule],

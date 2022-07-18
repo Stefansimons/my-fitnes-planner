@@ -1,3 +1,4 @@
+import { Store } from '@ngrx/store';
 import { SpinnerService } from './../../services/spinner.service';
 import { ToastService } from './../../services/toast.service';
 import { UserService } from './../../services/user.service';
@@ -11,6 +12,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
+import * as AuthActions from '@auth/store/auth.actions';
+import * as fromApp from '../../../../../app/store/app.reducer';
 
 @Component({
   selector: 'app-register',
@@ -25,7 +28,8 @@ export class RegisterComponent implements OnInit {
     private us: UserService,
     private ts: ToastService,
     private router: Router,
-    private sS: SpinnerService
+    private sS: SpinnerService,
+    private store: Store<fromApp.AppState>
   ) {}
 
   ngOnInit(): void {
@@ -59,23 +63,17 @@ export class RegisterComponent implements OnInit {
   register(formValue: any) {
     if (!this.form.valid) return;
 
-    this.auth
-      .signup(
-        formValue.firstName,
-        formValue.lastName,
-        formValue.username,
-        formValue.email,
-        formValue.password
-      )
-      .subscribe(
-        (authUserDataRes) => {
-          this.router.navigateByUrl('/login'); // if there is not some error
-          this.form.reset();
-          this.sS.hide();
-        },
-        (errorResponse) => {
-          this.ts.show('Ooops Error', `Register =>Error =>${errorResponse}`);
-        }
-      );
+    const userData = {
+      firstname: formValue.firstName,
+      lastname: formValue.lastName,
+      username: formValue.username,
+      email: formValue.email,
+      password: formValue.password,
+    };
+    this.store.dispatch(new AuthActions.SignupStart(userData));
+
+    this.router.navigateByUrl('/login'); // if there is not some error
+    this.form.reset();
+    this.sS.hide();
   }
 }
