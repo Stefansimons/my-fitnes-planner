@@ -55,50 +55,56 @@ export class RegisterComponent implements OnInit {
    */
   register(formValue: any) {
     if (!this.form.valid) return;
-    this.auth.register(formValue.email, formValue.password).subscribe(
-      (cred) => {
-        // Create fb doc with with cred.user.id
-        const basicUserData: User = {
-          id: cred.user?.uid || '',
-          firstName: formValue.firstName,
-          lastName: formValue.lastName,
-          username: '',
-          email: formValue.email,
-          password: formValue.password,
-          trainings: new Array(),
-          code: '',
-          updatedAt: new Date(),
-          isActive: true,
-        };
-        // Set local user data
-        this.us.saveUser(basicUserData);
+    // this.auth.register(formValue.email, formValue.password).subscribe(
+    //   (cred) => {
+    //     // TODO  proveriti token ovde
+    //     // Create fb doc with with cred.user.id
+    //     const basicUserData: User = {
+    //       id: cred.user?.uid || '',
+    //       firstName: formValue.firstName,
+    //       lastName: formValue.lastName,
+    //       username: '',
+    //       email: formValue.email,
+    //       password: formValue.password,
+    //       trainings: new Array(),
+    //       code: '',
+    //       updatedAt: new Date(),
+    //       isActive: true,
+    //       token: {
+    //         accessToken: '',
+    //         expirationTime: new Date().getMilliseconds(),
+    //         refreshToken: '',
+    //       },
+    //     };
+    //     // Set local user data
+    //     this.us.saveUser(basicUserData);
 
-        // if remember me == true logg user in
-        if (formValue.rememberMe) {
-          this.auth.login(formValue.email, formValue.password).subscribe(
-            (response) => {
-              const tempUser = response as User;
-              //    Save user data in local storage
-              this.us.emitLoggedUserValue = tempUser;
-              this.us.setLocalStorageUserData(tempUser);
-              this.us.loadLocalStorageUserData();
+    // if remember me == true logg user in
+    //     if (formValue.rememberMe) {
+    //       this.auth.login(formValue.email, formValue.password).subscribe(
+    //         (response) => {
+    //           const tempUser = response as User;
+    //           //    Save user data in local storage
+    //           this.us.emitLoggedUserValue = tempUser;
+    //           this.us.setLocalStorageUserData(tempUser);
+    //           this.us.loadLocalStorageUserData();
 
-              this.auth.setIsLoggedUser = true;
+    //           this.auth.setIsLoggedUser = true;
 
-              this.ts.show('Success', `WELLCOME ${tempUser.firstName} 🏋️‍♂️💪`);
-              this.router.navigateByUrl('/home'); // if there is not some error
-            },
-            (error) => this.ts.show('error', `something went wrong ${error}`)
-          );
-        }
-        this.form.reset();
-      },
-      (error) =>
-        this.ts.show(
-          'error',
-          `Register => Something went wrong error=>${error}`
-        )
-    );
+    //           this.ts.show('Success', `WELLCOME ${tempUser.firstName} 🏋️‍♂️💪`);
+    //           this.router.navigateByUrl('/home'); // if there is not some error
+    //         },
+    //         (error) => this.ts.show('error', `something went wrong ${error}`)
+    //       );
+    //     }
+    //     this.form.reset();
+    //   },
+    //   (error) =>
+    //     this.ts.show(
+    //       'error',
+    //       `Register => Something went wrong error=>${error}`
+    //     )
+    // );
     // training.trainingDate = this.format(
     //   this.trainingForm.controls['trainingDate'].value
     // );

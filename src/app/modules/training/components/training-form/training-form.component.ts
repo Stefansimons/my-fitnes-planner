@@ -422,18 +422,13 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
       this.trainingForm.controls['trainingDate'].value
     );
 
-    training.isActive = true;
-
     training.updatedAt = new Date();
+    training.isActive = true;
+    this.dts.saveTraining(training);
 
-    this.dts
-      .saveTraining(training)
-      .then((res) => {
-        this.form.reset();
-        this.save.emit(true);
-        this.ts.show('Success', 'Successful insert');
-      })
-      .catch((error) => this.ts.show('Error', `${error.message}`));
+    this.save.emit(true);
+    // this.form.reset();
+
   }
 
   /**

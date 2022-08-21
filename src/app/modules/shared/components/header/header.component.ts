@@ -24,16 +24,17 @@ export class HeaderComponent implements OnInit {
   ngOnInit(): void {
     // ACCOUNT LOCAL STORAGE DATA
     if (this.auth.isUserLoggedIn()) {
-      this.us.loadLocalStorageUserData();
       const loggedUser = this.us.getLoggedUserData; // In order to  assigning token to logged user later
       this.isLoggedUser = true;
-      this.loggedUserFirstName = loggedUser.firstName;
+      this.loggedUserFirstName = 'Stefan';
     }
 
     const userSub = this.auth.isLoggedUser.subscribe((data) => {
+      console.log('isLoggedUser subscribe');
+
       const tempUser = this.us.getLoggedUserData;
       this.isLoggedUser = data;
-      this.loggedUserFirstName = tempUser.firstName;
+      this.loggedUserFirstName = 'Stefan';
     });
 
     this._subsink.add(userSub);
@@ -49,7 +50,6 @@ export class HeaderComponent implements OnInit {
     this.auth.logUserOut();
     this.isLoggedUser = false;
     this.auth.setIsLoggedUser = false;
-    this.us.clearUserData();
     this.router.navigateByUrl('/home');
   }
 }

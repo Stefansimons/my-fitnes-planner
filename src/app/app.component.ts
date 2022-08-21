@@ -73,7 +73,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnDestroy(): void {
     this._subsink.unsubscribe();
-    this.us.clearUserData();
   }
   public add() {
     const todo = {

@@ -1,12 +1,14 @@
+import { TrainingService } from './../../training/services/training.service';
+import { HttpRequestsService } from './http-requests.service';
 import { environment } from './../../../../environments/environment';
 import { ToastService } from './toast.service';
-import { Subject, Observable } from 'rxjs';
+import { Subject, Observable, throwError } from 'rxjs';
 import { Training } from './../../training/models/training.model';
 import { SpinnerService } from './spinner.service';
 import { FirestoreService, trainings } from './firestore.service';
 import { User, IToken } from './../models/user.model';
 import { Injectable } from '@angular/core';
-import { tap, map } from 'rxjs/operators';
+import { tap, map, catchError } from 'rxjs/operators';
 
 export const userTempData = {
   code: 'Code 123',
@@ -20,9 +22,7 @@ export const userTempData = {
 })
 export class UserService {
   private _loggedUserSource = new Subject<User>();
-  private _trainingsSource = new Subject<Training[]>();
   public readonly loggedUser$ = this._loggedUserSource.asObservable();
-  public readonly trainings$ = this._trainingsSource.asObservable();
   userId: string; // Global user ID for sharing
   private _arrayTrainings: Training[];
   private _loggedUserData: User;
@@ -30,7 +30,8 @@ export class UserService {
   constructor(
     private fs: FirestoreService,
     private ss: SpinnerService,
-    private ts: ToastService
+    private ts: ToastService,
+    private httpS: HttpRequestsService
   ) {}
 
   // GET USER DATA BY USERNAME AND PASSWORD , SET THIS.USER AND INJECT VALUE TO OTHER COMPONENTS
@@ -40,12 +41,6 @@ export class UserService {
     return this.loggedUser$;
   }
 
-  /**
-   *
-   */
-  get getTrainings() {
-    return this.trainings$;
-  }
   /**
    * // NOTE: DATA FOR GETTING USER DATA, NOT SOURCE!
    */
@@ -91,6 +86,23 @@ export class UserService {
   getLoggedUserId(): string {
     return this.userId;
   }
+  /**
+   *
+   * @param user
+   */
+  updateUser(user: User) {
+    return this.httpS.putUserRequest(user).pipe(
+      tap(() => this.ss.show()),
+      map((res) => {
+        console.log('map=>res=>', res);
+        return res;
+      }),
+      catchError((error) => {
+        this.ts.show('Error', `Something went wrong =>${error.message}`);
+        return throwError(error);
+      })
+    );
+  }
 
   /**
    *
@@ -104,7 +116,10 @@ export class UserService {
    * @returns
    */
   getData() {
-    return localStorage.getItem('userData');
+    const user = localStorage.getItem('userData');
+    if (user) return JSON.parse(user) as User;
+
+    return undefined;
   }
   /**
    *
@@ -116,48 +131,4 @@ export class UserService {
     this._arrayTrainings = trainings;
   }
   /*********************************Local storage******************************************/
-  /**
-   *
-   */
-  loadLocalStorageUserData() {
-    this._loggedUserData = JSON.parse(this.getData() || '{}') as User;
-
-    // Setting id for every training and every exercise in training
-
-    const filtered = this._loggedUserData.trainings
-      .map((item, id) => {
-        item.id = id + 1;
-        item.exercises.map((item, id) => {
-          item.id = id + 1;
-        });
-        return item;
-      })
-      .filter((item) => item.isActive);
-
-    this.userId = this._loggedUserData.id;
-    this._loggedUserData.trainings = filtered;
-
-    // Emit new user value
-    this._arrayTrainings = filtered;
-    this._loggedUserSource.next(this._loggedUserData);
-
-    // emit trainings new value
-    this._trainingsSource.next(this._loggedUserData.trainings as Training[]);
-  }
-  /**
-   *
-   */
-  clearUserData() {
-    localStorage.removeItem('userData');
-  }
-
-  /**
-   *
-   * @param user
-   */
-  updateLocalStorageUserData(user: User) {
-    this.clearUserData();
-    this._loggedUserData = user;
-    this.setLocalStorageUserData(user);
-  }
 }

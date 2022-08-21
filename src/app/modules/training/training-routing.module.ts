@@ -1,4 +1,3 @@
-import { ResolveGuard } from './../core/auth/resolve.guard';
 import { StatisticsComponent } from './components/statistics/statistics.component';
 import { TrainingComponent } from './components/training/training.component';
 import { TrainingListComponent } from './components/training-list/training-list.component';
@@ -14,9 +13,6 @@ const routes: Routes = [
   {
     path: 'list',
     component: TrainingListComponent,
-    resolve: {
-      data: ResolveGuard,
-    },
   },
   {
     path: 'statistics',

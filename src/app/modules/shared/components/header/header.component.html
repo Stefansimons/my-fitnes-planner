@@ -1,51 +1,79 @@
 <div class="container-lg container-md">
   <div class="row g-0">
     <div class="col col-md-8">
-      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="navigation">
         <div class="container-fluid">
-          <button
-            #navbarToggler
-            class="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span class="navbar-toggler-icon"></span>
-          </button>
+          <div class="hamburger-menu">
+            <input
+              type="checkbox"
+              class="navigation__checkbox"
+              id="navi-toggle"
+            />
 
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              <li class="nav-item">
-                <a class="nav-link" href="" [routerLinkActive]="['active']"
-                  >Home</a
-                >
-              </li>
-              <li class="nav-item">
-                <a
-                  class="nav-link"
-                  routerLink="/training"
-                  [routerLinkActive]="['active']"
-                  >Training</a
-                >
-              </li>
-              <li class="nav-item">
+            <label for="navi-toggle" class="navigation__button-hamburger">
+              <span class="navigation__icon">&nbsp;</span>
+            </label>
+
+            <div class="navigation__background">&nbsp;</div>
+
+            <nav class="navigation__nav">
+              <ul class="navigation__list">
+                <li class="navigation__item">
+                  <a
+                    class="navigation__link"
+                    routerLink="/home"
+                    [routerLinkActive]="['active']"
+                  >
+                    <svg class="navbar-nav__icon">
+                      <use
+                        xlink:href="assets/images/sprite.svg#icon-home"
+                      ></use>
+                    </svg>
+                    <span>Home</span>
+                  </a>
+                </li>
+                <li class="navigation__item">
+                  <a
+                    class="navigation__link"
+                    routerLink="/training"
+                    [routerLinkActive]="['active']"
+                  >
+                    <img
+                      class="navbar-nav__icon"
+                      src="assets/images/workout-64.png"
+                      alt="alt"
+                    />
+                    <span>Training</span>
+                  </a>
+                </li>
+                <!-- <li class="nav-item">
                 <a
                   class="nav-link"
                   routerLink="/nutrition"
                   [routerLinkActive]="['active']"
-                  >Nutrition</a
+                  >Other</a
                 >
-              </li>
-            </ul>
+              </li> -->
+              </ul>
+            </nav>
           </div>
         </div>
-      </nav>
+      </div>
     </div>
     <div class="col col-md-4">
       <div class="userbox" *ngIf="isLoggedUser">
+        <div class="userbox__icon-box">
+          <svg class="userbox__icon">
+            <use xlink:href="assets/images/sprite.svg#icon-bookmark"></use>
+          </svg>
+          <span class="userbox__notification">7</span>
+        </div>
+        <div class="userbox__icon-box">
+          <svg class="userbox__icon">
+            <use xlink:href="assets/images/sprite.svg#icon-chat"></use>
+          </svg>
+          <span class="userbox__notification">13</span>
+        </div>
         <div class="dropdown">
           <button type="button" class="remove-btn" data-toggle="dropdown">
             <div class="user-circle-icon"></div>

@@ -1,4 +1,3 @@
-import { ResolveGuard } from './../core/auth/resolve.guard';
 import { SharedModule } from './../shared/shared.module';
 import { TrainingRoutingModule } from './training-routing.module';
 import { MaterialModule } from './../../material/material.module';
@@ -27,7 +26,7 @@ import { StatisticsComponent } from './components/statistics/statistics.componen
     SharedModule,
   ],
   exports: [],
-  providers: [DecimalPipe, ResolveGuard],
+  providers: [DecimalPipe],
 })
 export class TrainingModule {
   constructor() {}

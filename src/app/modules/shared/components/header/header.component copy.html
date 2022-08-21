@@ -1,0 +1,180 @@
+<div class="container-lg container-md">
+  <div class="row g-0">
+    <div class="col col-md-8">
+      <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+          <button
+            #navbarToggler
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="navbar-nav__nav-item">
+                <a
+                  class="navbar-nav__nav-link"
+                  href=""
+                  [routerLinkActive]="['active']"
+                >
+                  <svg class="navbar-nav__icon">
+                    <use xlink:href="assets/images/sprite.svg#icon-home"></use>
+                  </svg>
+                  <span>Home</span>
+                </a>
+              </li>
+              <li class="navbar-nav__nav-item">
+                <a
+                  class="navbar-nav__nav-link"
+                  routerLink="/training"
+                  [routerLinkActive]="['active']"
+                >
+                  <img
+                    class="navbar-nav__icon"
+                    src="assets/images/workout-64.png"
+                    alt="alt"
+                  />
+                  <span>Training</span>
+                </a>
+              </li>
+              <!-- <li class="nav-item">
+                <a
+                  class="nav-link"
+                  routerLink="/nutrition"
+                  [routerLinkActive]="['active']"
+                  >Other</a
+                >
+              </li> -->
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </div>
+    <div class="col col-md-4">
+      <div class="userbox" *ngIf="isLoggedUser">
+        <div class="userbox__icon-box">
+          <svg class="userbox__icon">
+            <use xlink:href="assets/images/sprite.svg#icon-bookmark"></use>
+          </svg>
+          <span class="userbox__notification">7</span>
+        </div>
+        <div class="userbox__icon-box">
+          <svg class="userbox__icon">
+            <use xlink:href="assets/images/sprite.svg#icon-chat"></use>
+          </svg>
+          <span class="userbox__notification">13</span>
+        </div>
+        <div class="dropdown">
+          <button type="button" class="remove-btn" data-toggle="dropdown">
+            <div class="user-circle-icon"></div>
+          </button>
+          <div class="dropdown-content">
+            <a class="dropdown-item" (click)="logout()">
+              <i class="fa fa-home"></i> LOGOUT
+            </a>
+          </div>
+        </div>
+        <span class="name">{{ loggedUserFirstName }}</span>
+      </div>
+      <!-- <form class="d-flex">
+        <input
+          class="form-control me-2"
+          type="search"
+          placeholder="Search"
+          aria-label="Search"
+        />
+        <button
+          class="btn btn-outline-success"
+          type="button"
+          (click)="showMessage()"
+        >
+          Search
+        </button>
+      </form> -->
+    </div>
+  </div>
+  <!-- <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <button
+      #navbarToggler
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a
+            class="nav-link active"
+            aria-current="page"
+            href=""
+            (click)="navbarToggler.click()"
+            >Home</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            routerLink="/training"
+            (click)="navbarToggler.click()"
+            >Training</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            routerLink="/nutrition"
+            (click)="navbarToggler.click()"
+            >Nutrition</a
+          >
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="user-searchbox">
+  <div class="userbox" *ngIf="isLoggedUser">
+    <div class="dropdown">
+      <button type="button" class="remove-btn" data-toggle="dropdown">
+        <div class="user-circle-icon"></div>
+      </button>
+      <div class="dropdown-content">
+        <a class="dropdown-item" (click)="logout()">
+          <i class="fa fa-home"></i> LOGOUT
+        </a>
+      </div>
+    </div>
+    <span class="name">SIMA{{ loggedUserFirstName }}</span>
+  </div>
+
+  <!-- <form class="d-flex">
+    <input
+      class="form-control me-2"
+      type="search"
+      placeholder="Search"
+      aria-label="Search"
+    />
+    <button
+      class="btn btn-outline-success"
+      type="button"
+      (click)="showMessage()"
+    >
+      Search
+    </button>
+  </form>
+</div> -->
+</div>

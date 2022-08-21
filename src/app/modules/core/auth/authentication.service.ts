@@ -1,6 +1,9 @@
+import { Router } from '@angular/router';
+import { HttpRequestsService } from './../../shared/services/http-requests.service';
 import { HelperService } from './../../shared/services/helper.service';
 import { FirestoreService } from './../../shared/services/firestore.service';
-import { Observable, Subject, from } from 'rxjs';
+import { Observable, Subject, BehaviorSubject, throwError } from 'rxjs';
+
 import { ToastService } from './../../shared/services/toast.service';
 import { SpinnerService } from './../../shared/services/spinner.service';
 import { IToken, ROLE, User } from './../../shared/models/user.model';
@@ -14,24 +17,33 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthenticationService {
-  private isLoggedIn: boolean = false;
-  loggedUser: User;
-  userToken: IToken;
+  // private isLoggedIn: boolean = false;
+  // private tokenExpirationTimer: any;
+  // loggedUser: User;
+  // userToken: IToken;
+  user = new BehaviorSubject<User | null>(null);
+  userData: User;
+  authtoken = new BehaviorSubject<IToken | null>(null);
+  authtokenData: IToken;
+  private tokenExpirationTimer: any;
   private _isLoggedUserSource = new Subject<boolean>();
   public readonly isLoggedUserSource$ = this._isLoggedUserSource.asObservable();
   constructor(
     private fs: AngularFirestore,
+    private httpS: HttpRequestsService,
     private us: UserService,
     private ss: SpinnerService,
     private ts: ToastService,
     private fss: FirestoreService,
-    private hs: HelperService
+    private hs: HelperService,
+    private router: Router
   ) {}
   /**
    * Logs user in
@@ -40,33 +52,104 @@ export class AuthenticationService {
    * @returns
    */
   login(email: string, password: string) {
-    return from(this.fss.logUserIn(email, password)) // NOTE: With rxjs form operator i gives observable instead promise
-      .pipe(
-        map((res) => {
-          return res.user?.toJSON();
-        }),
-        switchMap((authUserData: any) => {
-          const userToken = authUserData.stsTokenManager;
+    return this.httpS.login(email, password).pipe(
+      catchError(this.handleError),
+      tap((resData) => {
+        this.ss.show();
 
-          return this.us.getFirebaseUser(authUserData.uid).pipe(
-            map((res) => {
-              return (this.loggedUser = {
-                token: userToken,
-                ...res,
-                role: ROLE.Bodybuilder,
-              });
-            }),
-            catchError((error) => {
-              this.ts.show('error', `something went wrong ${error}`);
-              return error;
-            })
-          );
-        }),
-        catchError((error) => {
-          this.ts.show('error', `something went wrong ${error}`);
-          return error;
-        })
-      );
+        const expirationDate = new Date(
+          new Date().getTime() + +resData.expiresIn * 1000
+        );
+
+        this.authtokenData = {
+          accessToken: resData.idToken,
+          refreshToken: resData.refreshToken,
+          expirationTime: expirationDate,
+        };
+        this.authtoken.next(this.authtokenData);
+      }),
+      // map((resData) => {
+      //   return resData;
+      // }),
+      switchMap((resData) => {
+        console.log('switchMap=>AuthResponseData=>', resData);
+
+        // console.log('authUserData=>user id', authUserData.uid);
+        return this.httpS.fetchUsersRequest().pipe(
+          map((response) => {
+            // const { ...user } = response;
+            for (const [key, childvalue] of Object.entries(response)) {
+              console.log(`${key}: ${childvalue}`);
+              for (const [key, value] of Object.entries(childvalue)) {
+                console.log(`${key}: ${value}`);
+                this.userData = { ...this.userData, [key]: value };
+              }
+            }
+            this.userData.token = this.authtokenData;
+            this.user.next(this.userData);
+
+            this.handleAuthentication(this.userData);
+
+            this.setIsLoggedUser = true;
+            return this.userData;
+          })
+        );
+      })
+    );
+  }
+  /**
+   *
+   */
+  logout() {
+    this.user.next(null);
+    this.router.navigate(['/login']);
+    localStorage.removeItem('userData');
+    if (this.tokenExpirationTimer) {
+      clearTimeout(this.tokenExpirationTimer);
+    }
+    this.tokenExpirationTimer = null;
+  }
+  /**
+   *
+   * @param expirationDuration
+   */
+  autoLogout(expirationDuration: number) {
+    this.tokenExpirationTimer = setTimeout(() => {
+      this.logout();
+    }, expirationDuration);
+  }
+  /**
+   *
+   * @param user
+   *
+   */
+  private handleAuthentication(user: User) {
+    this.us.emitLoggedUserValue = user;
+    this.autoLogout(user.token.expirationTime.getTime() * 1000);
+    localStorage.setItem('userData', JSON.stringify(user));
+  }
+  /**
+   *
+   * @param errorRes
+   * @returns
+   */
+  private handleError(errorRes: HttpErrorResponse) {
+    let errorMessage = 'An unknown error occurred!';
+    if (!errorRes.error || !errorRes.error.error) {
+      return throwError(errorMessage);
+    }
+    switch (errorRes.error.error.message) {
+      case 'EMAIL_EXISTS':
+        errorMessage = 'This email exists already';
+        break;
+      case 'EMAIL_NOT_FOUND':
+        errorMessage = 'This email does not exist.';
+        break;
+      case 'INVALID_PASSWORD':
+        errorMessage = 'This password is not correct.';
+        break;
+    }
+    return throwError(errorMessage);
   }
   /**
    *
@@ -78,6 +161,8 @@ export class AuthenticationService {
    *
    */
   set setIsLoggedUser(isLoggedUser: boolean) {
+    console.log('next boolean value');
+
     this._isLoggedUserSource.next(isLoggedUser);
   }
   /**
@@ -86,18 +171,7 @@ export class AuthenticationService {
   logUserOut() {
     this.fss.logout().then(() => this.ts.show('Success', `GOODBYE 👋`));
   }
-  /**
-   * Registers user
-   * @param email
-   * @param password
-   * @returns Observable
-   */
-  register(
-    email: string,
-    password: string
-  ): Observable<firebase.auth.UserCredential> {
-    return from(this.fss.register(email, password));
-  }
+
   /**
    *
    * @returns
@@ -132,5 +206,17 @@ export class AuthenticationService {
     }
 
     return false;
+  }
+  setLogoutTimer(expirationDuration: number) {
+    // this.tokenExpirationTimer = setTimeout(() => {
+    //   this.store.dispatch(new AuthActions.Logout());
+    // }, expirationDuration);
+  }
+
+  clearLogoutTimer() {
+    // if (this.tokenExpirationTimer) {
+    //   clearTimeout(this.tokenExpirationTimer);
+    //   this.tokenExpirationTimer = null;
+    // }
   }
 }

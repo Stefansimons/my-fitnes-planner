@@ -1,7 +1,8 @@
+import { Observable } from 'rxjs';
 import { UserService } from './../../services/user.service';
 import { ToastService } from './../../services/toast.service';
 import { Router } from '@angular/router';
-import { IToken, User } from './../../models/user.model';
+import { IToken, User, AuthResponseData } from './../../models/user.model';
 import { SpinnerService } from './../../services/spinner.service';
 import { AuthenticationService } from './../../../core/auth/authentication.service';
 import { Component, OnInit, OnDestroy } from '@angular/core';
@@ -25,7 +26,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private router: Router,
     private ts: ToastService,
-    private us: UserService
+    private ss: SpinnerService
   ) {}
   ngOnDestroy(): void {
     this._subsink.unsubscribe();
@@ -43,7 +44,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         year: new Date().getFullYear(),
       }),
       loginAtTimestamp: new FormControl(new Date().getTime()),
-      email: ['simasimic@gmail.com', [Validators.required, Validators.email]],
+      email: ['simasimic12@gmail.com', [Validators.required, Validators.email]],
       password: ['sifra123', [Validators.required]],
       rememberMe: [true],
     });
@@ -61,26 +62,32 @@ export class LoginComponent implements OnInit, OnDestroy {
    * @returns
    */
   login(credentials: any) {
-    // if (!this.form.valid) return;
-    credentials.loginAtTimestamp = new Date().getTime();
-    const loginSub = this.auth
-      .login(credentials.email, credentials.password)
-      .subscribe(
-        (response) => {
-          const tempUser = response as User;
-          //    Save user data in local storage
-          this.us.emitLoggedUserValue = tempUser;
-          this.us.setLocalStorageUserData(tempUser);
-          this.us.loadLocalStorageUserData();
+    if (!this.form.valid) return;
 
-          this.auth.setIsLoggedUser = true;
+    let authObs: Observable<User | null>;
+    authObs = this.auth.login(credentials.email, credentials.password);
+
+    this._subsink.add(
+      authObs.subscribe(
+        (resData) => {
+          const tempUser = resData as User;
 
           this.ts.show('success', `WELLCOME ${tempUser.firstName} 🏋️‍♂️💪`);
           this.router.navigateByUrl('/home'); // if there is not some error
-        },
-        (error) => this.ts.show('error', `something went wrong ${error}`)
-      );
+          //this.isLoading = false;
 
-    this._subsink.add(loginSub); // NOTE WITHOUT SUBSINK OTHER BUTTON TRIGER LOGIN SUBSCRIBE!!!!
+          this.router.navigate(['/home']);
+          this.ss.hide();
+        },
+        (errorMessage) => {
+          this.ts.show('error', `something went wrong ${errorMessage}`);
+          this.ss.hide();
+
+          // this.isLoading = false;
+        }
+      )
+    ); // NOTE WITHOUT SUBSINK OTHER BUTTON TRIGER LOGIN SUBSCRIBE!!!!
+
+    this.form.reset();
   }
 }

@@ -1,30 +1,39 @@
 <!-- <div class="col-md-12"> -->
 <div class="training-wrapper">
-  <div class="col-md-12 my-button-wrapper">
-    <button class="btn btn-primary" (click)="open(mymodalcontent, false)">
-      New training
-    </button>
+  <div class="bg-video">
+    <video class="bg-video__content" autoplay muted loop>
+      <source src="assets/images/working-out.mp4" type="video/mp4" />
+    </video>
   </div>
-  <div class="col-md-12">
-    <app-training-list
-      (editTrainingEvent)="editTraining($event)"
-    ></app-training-list>
-  </div>
-  <!-- NG TEMPLATE WHICH WILL BE PASSED AS PARAM TO NG MODAL  -->
-  <ng-template #mymodalcontent let-modal>
-    <div class="modal-header">
-      <h4 class="modal-title" id="modal-basic-title">{{ title }}</h4>
-      <button
-        type="button"
-        class="close"
-        aria-label="Close"
-        (click)="modal.dismiss('Cross click')"
-      >
-        <span aria-hidden="true">&times;</span>
+  <section class="section-table">
+    <div class="col-md-12 my-button-wrapper">
+      <button class="btn btn-primary" (click)="open(mymodalcontent, false)">
+        New training
       </button>
     </div>
-    <div class="modal-body">
-      <app-training-form (save)="modal.close('Save click')"></app-training-form>
+    <div class="col-md-12">
+      <app-training-list
+        (editTrainingEvent)="editTraining($event)"
+      ></app-training-list>
     </div>
-  </ng-template>
+    <!-- NG TEMPLATE WHICH WILL BE PASSED AS PARAM TO NG MODAL  -->
+    <ng-template #mymodalcontent let-modal>
+      <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">{{ title }}</h4>
+        <button
+          type="button"
+          class="close"
+          aria-label="Close"
+          (click)="modal.dismiss('Cross click')"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <app-training-form
+          (save)="modal.close('Save click')"
+        ></app-training-form>
+      </div>
+    </ng-template>
+  </section>
 </div>

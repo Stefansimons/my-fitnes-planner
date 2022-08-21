@@ -7,6 +7,7 @@
       id="inputFirstName"
       formControlName="firstName"
       placeholder="Unesi ime"
+      readonly
     />
   </div>
   <div class="form-group">
@@ -17,6 +18,7 @@
       formControlName="lastName"
       id="inputLastName"
       placeholder="Unesi prezime"
+      readonly
     />
   </div>
   <div class="form-group">
@@ -27,6 +29,7 @@
       id="inputEmail"
       formControlName="email"
       placeholder="Unesi email"
+      readonly
     />
   </div>
   <!-- <div class="form-group">
@@ -47,6 +50,7 @@
       formControlName="password"
       id="inputPassword"
       placeholder="Sifra"
+      readonly
     />
   </div>
   <div class="form-group">
@@ -57,6 +61,7 @@
       formControlName="passwordRpt"
       id="inputPasswordRpt"
       placeholder="Sifra"
+      readonly
     />
   </div>
   <div class="form-check">
@@ -71,12 +76,6 @@
     >
   </div>
   <div class="clearfix">
-    <button
-      type="submit"
-      class="btn btn-primary"
-      [disabled]="registerForm.invalid"
-    >
-      Sign up
-    </button>
+    <button type="submit" class="btn btn-primary" disabled>Sign up</button>
   </div>
 </form>

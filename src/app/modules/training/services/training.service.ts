@@ -1,3 +1,5 @@
+import { ToastService } from './../../shared/services/toast.service';
+import { HttpRequestsService } from './../../shared/services/http-requests.service';
 import { SpinnerService } from './../../shared/services/spinner.service';
 import { UserService } from './../../shared/services/user.service';
 import {
@@ -11,9 +13,22 @@ import {
 } from './../../shared/services/firestore.service';
 import { Training } from '../models/training.model';
 import { MatTableDataSource } from '@angular/material/table';
-import { Observable, of, scheduled, Subject, BehaviorSubject } from 'rxjs';
+import {
+  Observable,
+  of,
+  scheduled,
+  Subject,
+  BehaviorSubject,
+  throwError,
+} from 'rxjs';
 import { Injectable, PipeTransform } from '@angular/core';
-import { debounceTime, tap, switchMap, delay } from 'rxjs/operators';
+import {
+  debounceTime,
+  tap,
+  switchMap,
+  delay,
+  catchError,
+} from 'rxjs/operators';
 import { DecimalPipe } from '@angular/common';
 
 interface SearchResult {
@@ -109,7 +124,10 @@ export class TrainingService {
   constructor(
     private fs: FirestoreService,
     private us: UserService,
-    private ss: SpinnerService
+    private ss: SpinnerService,
+    private https: HttpRequestsService,
+    private ts: ToastService,
+    private uS: UserService
   ) {
     this._search$
       .pipe(
@@ -129,59 +147,14 @@ export class TrainingService {
       });
     this._search$.next();
   }
+
   /**
    *
-   * @param training
-   * @returns
    */
-  saveTraining(training: Training) {
-    const tempUserData = this.us.getLoggedUserData; // User data for local manipulation
-
-    const updateUser = tempUserData; // USer data for firebase storage, isActive param
-    let updateUserTrainings = updateUser.trainings; // Trainings for fb update
-
-    updateUser.updatedAt = tempUserData.updatedAt = new Date();
-
-    if (training.id) {
-      // Update training in array
-      const updatedArray = tempUserData.trainings.map((item) =>
-        item.id === training.id ? training : item
-      );
-
-      updateUserTrainings = [...updatedArray];
-    } else {
-      // Add training in array
-      updateUserTrainings.push(training);
-    }
-
-    // Setting ids of training and exericises per object ids
-    updateUserTrainings.forEach((training, id) => {
-      training.id ??= id + 1; // NOTE: Nullish coalesc operator
-      training.exercises.forEach((item, id) => {
-        item.id = !item.id ? id + 1 : item.id;
-      });
-    });
-
-    // tempUserData.trainings = updateUserTrainings;
-
-    // Remove isActive = false training , for display
-    const filtered = updateUserTrainings.filter((item) => item.isActive);
-
-    tempUserData.trainings = filtered;
-
-    this.us.updateLocalStorageUserData(tempUserData);
-
-    // Update trainings array for filtering table
-    this.us.fillSearchArrayTrainings(tempUserData.trainings);
-
-    // Sort table by id and set the first page
-
+  sortTable() {
     this.page = 1;
     this.sortColumn = 'id';
     this.sortDirection = 'desc';
-    //...AND FORWARD USER FOR UPDATE, INSERT ISACTIVE = FALSE TOO...
-    updateUser.trainings = updateUserTrainings;
-    return this.fs.updateItem(updateUser);
   }
   /**
    *
@@ -296,5 +269,31 @@ export class TrainingService {
     );
 
     return of({ trainings, total });
+  }
+
+  saveTraining(training: Training) {
+    let userData = this.us.getData();
+    // let trainings: Training[] = userData.trainings;
+    if (training.id) {
+      // UPDATE ARRAY
+      userData.trainings.forEach((element, id) => {
+        if (element.id == training.id) {
+          element = training;
+        }
+      });
+    } else {
+      // ADD
+      training.id = userData.trainings.length + 1;
+      training.exercises.forEach((item, id) => {
+        item.id = id + 1;
+        item.series.forEach((item, id) => {
+          item.id = id + 1;
+        });
+      });
+      userData.trainings.push(training);
+    }
+    
+    this.sortTable();
+    console.log('user =lista treninga=>', userData);
   }
 }
