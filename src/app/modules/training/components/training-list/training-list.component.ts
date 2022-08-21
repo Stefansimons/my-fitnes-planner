@@ -31,6 +31,9 @@ import { MatPaginator } from '@angular/material/paginator';
 import { throwToolbarMixedModesError } from '@angular/material/toolbar';
 import { SubSink } from 'subsink';
 import { switchMap } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
+
+import * as fromAppState from 'src/app/store/app.reducer';
 
 @Component({
   selector: 'app-training-list',
@@ -56,7 +59,7 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
 
   // Table pagination
   total$: Observable<number>;
-  trainings$: Observable<Training[]>;
+  trainings$: Observable<{ trainings: Training[] }>; // Object form which i am getting from select() from store
 
   selectedTraining: Training;
   //  trainingsDataSource: Training[];
@@ -72,18 +75,19 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
     const filterValue = (event.target as HTMLInputElement).value;
   }
   constructor(
-    public dts: TrainingService, //NOTE: Public because assigning ngModel valu direct to service setters ?!?
+    public dts: TrainingService, //TODO: Public because assigning ngModel valu direct to service setters ?!? Remove this after ngrx
     private us: UserService,
     private ss: SpinnerService,
     private modals: NgbModal,
-    private ts: ToastService
+    private ts: ToastService,
+    private store: Store<fromAppState.AppState> // Generic type , trainingList is key = area of global reducer=one  object from app.reducer
   ) {
     this.modalOptions = {
       backdrop: 'static',
       backdropClass: 'customBackdrop',
     };
     // Table pagination
-    this.trainings$ = dts.trainings$;
+    // this.trainings$ = dts.trainings$;
     this.total$ = dts.total$;
   }
 
@@ -92,6 +96,8 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    // NGRX SELECT DATA LIST
+    this.trainings$ = this.store.select('trainingList');
     // Local storage user data
     const userObs = this.us.getLoggedUser$.subscribe((user) => {
       this.userID = user.id;
@@ -171,8 +177,17 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
    * @param value
    */
   editTraining(value: Training) {
-    value.updatedAt = new Date(); // TODO delete when convert updatedAt from number to date
-    this.editTrainingEvent.emit(value);
+    value.updatedAt = new Date();
+    // TODO open modal
+    this.store.dispatch(
+      new fromAppState.fromTrainingListActions.StartEdit(value.idCounter)
+    );
+    this.store.dispatch(
+      new fromAppState.fromTrainingListActions.UpdateTraining({
+        training: value,
+      })
+    );
+    //  this.editTrainingEvent.emit(value);
   }
   /**
    *
@@ -184,7 +199,13 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
     this.modals.open(modal, this.modalOptions).result.then(
       (result) => {
         training.isActive = false;
-        this.dts.saveTraining(training);
+        this.store.dispatch(
+          new fromAppState.fromTrainingListActions.UpdateTraining({
+            training: training,
+          })
+        );
+
+        // this.dts.saveTraining(training);
         this.ts.show('Success', 'Deleted training');
         //   this.closeResult = `Closed with: ${result}`;
       },

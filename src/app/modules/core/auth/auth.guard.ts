@@ -20,12 +20,13 @@ export class AuthGuard implements CanActivate {
     private ts: ToastService
   ) {}
   canActivate() {
-    if (this.auth.isUserLoggedIn()) {
-      return true;
-    } else {
-      this.ts.show('warning', '🙏 login 👈');
-      this.router.navigateByUrl('/login');
-      return false;
-    }
+    return true;
+    // if (this.auth.isUserLoggedIn()) {
+    //   return true;
+    // } else {
+    //   this.ts.show('warning', '🙏 login 👈');
+    //   this.router.navigateByUrl('/login');
+    //   return false;
+    // }
   }
 }

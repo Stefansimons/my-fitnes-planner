@@ -126,8 +126,12 @@ export class TrainingService {
     private us: UserService,
     private ss: SpinnerService,
     private https: HttpRequestsService,
+<<<<<<< HEAD
     private ts: ToastService,
     private uS: UserService
+=======
+    private ts: ToastService
+>>>>>>> 8e2260c489d820c568c3da66389de54e010ef16a
   ) {
     this._search$
       .pipe(
@@ -151,6 +155,62 @@ export class TrainingService {
   /**
    *
    */
+<<<<<<< HEAD
+=======
+  saveTraining(training: Training) {
+    const tempUserData = this.us.getLoggedUserData; // User data for local manipulation
+
+    tempUserData.updatedAt = new Date();
+
+    // Setting ids of training and exericises per object ids
+    tempUserData.trainings.forEach((training, id) => {
+      training.idCounter ??= id + 1; // NOTE: Nullish coalesc operator
+      training.exercises.forEach((item, id) => {
+        item.id = !item.id ? id + 1 : item.id;
+      });
+    });
+
+    this.us.updateLocalStorageUserData(tempUserData);
+
+    // Update trainings array for filtering table
+    this.us.fillSearchArrayTrainings(tempUserData.trainings);
+
+    // Sort table by id and set the first page
+    this.sortTable();
+
+    if (training.id) {
+      // Update training in array
+      const updatedArray = tempUserData.trainings.map((item) =>
+        item.id === training.id ? training : item
+      );
+      const activeTrainings = updatedArray.filter((item) => item.isActive);
+
+      tempUserData.trainings = activeTrainings;
+
+      return this.https.putTrainingRequest(tempUserData.id, training).pipe(
+        tap(() => this.ss.show()),
+        catchError((error) => {
+          this.ts.show('Error', `Something went wrong =>${error}`);
+          return throwError(error);
+        })
+      );
+      // updateUserTrainings = [...updatedArray];
+    } else {
+      // Add training in array
+      tempUserData.trainings.push(training);
+      return this.https.postTrainingRequest(tempUserData.id, training).pipe(
+        tap(() => this.ss.show()),
+        catchError((error) => {
+          this.ts.show('Error', `Something went wrong =>${error}`);
+          return throwError(error);
+        })
+      );
+    }
+  }
+  /**
+   *
+   */
+>>>>>>> 8e2260c489d820c568c3da66389de54e010ef16a
   sortTable() {
     this.page = 1;
     this.sortColumn = 'id';

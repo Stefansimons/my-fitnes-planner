@@ -1,6 +1,6 @@
 <form [formGroup]="registerForm" (ngSubmit)="register(registerForm.value)">
   <div class="form-group">
-    <label for="inputFirstName">Ime</label>
+    <label for="inputFirstName">First Name</label>
     <input
       type="text"
       class="form-control"
@@ -11,7 +11,7 @@
     />
   </div>
   <div class="form-group">
-    <label for="inputLastName">Prezime</label>
+    <label for="inputLastName">Last Name</label>
     <input
       type="text"
       class="form-control"
@@ -32,18 +32,8 @@
       readonly
     />
   </div>
-  <!-- <div class="form-group">
-    <label for="exampleInputEmail1">Email address</label>
-    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
-    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-  </div>
   <div class="form-group">
-    <label for="exampleInputEmail1">Email address</label>
-    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
-    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-  </div> -->
-  <div class="form-group">
-    <label for="inputPassword">Sifra</label>
+    <label for="inputPassword">Password</label>
     <input
       type="password"
       class="form-control"
@@ -54,7 +44,7 @@
     />
   </div>
   <div class="form-group">
-    <label for="inputPasswordRpt">Ponovi sifru</label>
+    <label for="inputPasswordRpt">Repeat password</label>
     <input
       type="password"
       class="form-control"
@@ -71,9 +61,9 @@
       id="exampleCheck1"
       formControlName="rememberMe"
     />
-    <label class="form-check-label" for="exampleCheck1">
+    <!-- <label class="form-check-label" for="exampleCheck1">
       Automatic login?</label
-    >
+    > -->
   </div>
   <div class="clearfix">
     <button type="submit" class="btn btn-primary" disabled>Sign up</button>

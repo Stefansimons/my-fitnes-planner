@@ -1,9 +1,3 @@
-import { CoreModule } from './modules/core/core.module';
-import {
-  HttpClient,
-  HttpClientModule,
-  HTTP_INTERCEPTORS,
-} from '@angular/common/http';
 import { AppConfigService } from './config/app-config.service';
 import { SpinnerComponent } from './modules/shared/components/spinner/spinner.component';
 import { RouterModule } from '@angular/router';
@@ -27,9 +21,6 @@ import { AppOverlayModule } from './material/overlay/appOverlay.module';
 
 // Modules
 import { SharedModule } from './modules/shared/shared.module';
-// import { TrainingListReducer } from './store/training-list.reducer';
-
-// import { reducers } from './reducers/'
 
 // NOTE: Lazy loaded moduls do not need here in app.modules
 // import { NutritionModule } from './modules/nutrition/nutrition.module';
@@ -50,8 +41,17 @@ export function myAppConfigService(configService: AppConfigService) {
     MaterialModule,
     SharedModule,
     AppOverlayModule,
-    HttpClientModule,
-    CoreModule,
+
+    // provideFirebaseApp(() => initializeApp(environment.firebase)),
+    // provideAnalytics(() => getAnalytics()),
+    // provideAuth(() => getAuth()),
+    // provideDatabase(() => getDatabase()),
+    // provideFunctions(() => getFunctions()),
+    // provideMessaging(() => getMessaging()),
+    // providePerformance(() => getPerformance()),
+    // provideRemoteConfig(() => getRemoteConfig()),
+    // provideStorage(() => getStorage()),
+    // provideFirestore(() => getFirestore()),
   ],
   entryComponents: [AppComponent, SpinnerComponent], // TODO: entryComponents ?!?
   exports: [RouterModule],

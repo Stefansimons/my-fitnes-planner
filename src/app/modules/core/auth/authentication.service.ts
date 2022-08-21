@@ -20,9 +20,7 @@ import {
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class AuthenticationService {
   // private isLoggedIn: boolean = false;
   // private tokenExpirationTimer: any;

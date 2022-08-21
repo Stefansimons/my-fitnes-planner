@@ -1,3 +1,5 @@
+import { Store } from '@ngrx/store';
+import { SpinnerService } from './../../services/spinner.service';
 import { ToastService } from './../../services/toast.service';
 import { UserService } from './../../services/user.service';
 import { AuthenticationService } from './../../../core/auth/authentication.service';
@@ -10,6 +12,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
+import * as AuthActions from '@auth/store/auth.actions';
+import * as fromApp from '../../../../../app/store/app.reducer';
 
 @Component({
   selector: 'app-register',
@@ -23,7 +27,9 @@ export class RegisterComponent implements OnInit {
     private auth: AuthenticationService,
     private us: UserService,
     private ts: ToastService,
-    private router: Router
+    private router: Router,
+    private sS: SpinnerService,
+    private store: Store<fromApp.AppState>
   ) {}
 
   ngOnInit(): void {
@@ -36,6 +42,7 @@ export class RegisterComponent implements OnInit {
         year: new Date().getFullYear(),
       }),
       firstName: ['Sima', Validators.required],
+      username: ['SimaSimic', Validators.required],
       lastName: ['Simic', Validators.required],
       email: ['simasimic@gmail.com', [Validators.required, Validators.email]],
       password: ['sifra123', [Validators.required]],

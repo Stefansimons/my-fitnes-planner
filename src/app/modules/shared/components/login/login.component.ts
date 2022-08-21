@@ -13,7 +13,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { SubSink } from 'subsink';
-
+import * as fromApp from '../../../../store/app.reducer';
+import { Store } from '@ngrx/store';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -35,6 +36,9 @@ export class LoginComponent implements OnInit, OnDestroy {
   loginForm: FormGroup;
 
   ngOnInit(): void {
+    const loginStoreSub = this.store.select('auth').subscribe((authRes) => {
+      console.log('loginStoreSub => authRes=>', authRes);
+    });
     // Initialization of register form for preventing error getting value of getters
     this.loginForm = this.fb.group({
       id: [null],
@@ -48,6 +52,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       password: ['sifra123', [Validators.required]],
       rememberMe: [true],
     });
+    this._subsink.add(loginStoreSub);
   }
   /**
    *  convenience getters for easy access to form fields , Angular 8
