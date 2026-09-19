@@ -6,9 +6,9 @@ import { SpinnerService } from './../../services/spinner.service';
 import { AuthenticationService } from './../../../core/auth/authentication.service';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
+  UntypedFormBuilder,
+  UntypedFormControl,
+  UntypedFormGroup,
   Validators,
 } from '@angular/forms';
 import { SubSink } from 'subsink';
@@ -22,7 +22,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   private _subsink = new SubSink();
   constructor(
     private auth: AuthenticationService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private router: Router,
     private ts: ToastService,
     private us: UserService
@@ -31,18 +31,18 @@ export class LoginComponent implements OnInit, OnDestroy {
     this._subsink.unsubscribe();
   }
 
-  loginForm: FormGroup;
+  loginForm: UntypedFormGroup;
 
   ngOnInit(): void {
     // Initialization of register form for preventing error getting value of getters
     this.loginForm = this.fb.group({
       id: [null],
-      loginAt: new FormControl({
+      loginAt: new UntypedFormControl({
         day: new Date().getDate(),
         month: new Date().getMonth() + 1,
         year: new Date().getFullYear(),
       }),
-      loginAtTimestamp: new FormControl(new Date().getTime()),
+      loginAtTimestamp: new UntypedFormControl(new Date().getTime()),
       email: ['simasimic@gmail.com', [Validators.required, Validators.email]],
       password: ['sifra123', [Validators.required]],
       rememberMe: [true],

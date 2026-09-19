@@ -4,9 +4,9 @@ import { AuthenticationService } from './../../../core/auth/authentication.servi
 import { User } from './../../models/user.model';
 import { Component, OnInit } from '@angular/core';
 import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
+  UntypedFormBuilder,
+  UntypedFormControl,
+  UntypedFormGroup,
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -17,9 +17,9 @@ import { Router } from '@angular/router';
   styleUrls: ['./register.component.css'],
 })
 export class RegisterComponent implements OnInit {
-  registerForm: FormGroup;
+  registerForm: UntypedFormGroup;
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private auth: AuthenticationService,
     private us: UserService,
     private ts: ToastService,
@@ -30,7 +30,7 @@ export class RegisterComponent implements OnInit {
     // Initialization of register form for preventing error getting value of getters
     this.registerForm = this.fb.group({
       id: [null],
-      createdAt: new FormControl({
+      createdAt: new UntypedFormControl({
         day: new Date().getDate(),
         month: new Date().getMonth() + 1,
         year: new Date().getFullYear(),

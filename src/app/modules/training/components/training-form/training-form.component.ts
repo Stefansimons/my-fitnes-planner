@@ -21,10 +21,10 @@ import {
 } from '@angular/core';
 import {
   AbstractControl,
-  FormArray,
-  FormBuilder,
-  FormControl,
-  FormGroup,
+  UntypedFormArray,
+  UntypedFormBuilder,
+  UntypedFormControl,
+  UntypedFormGroup,
   ValidationErrors,
   ValidatorFn,
 } from '@angular/forms';
@@ -51,7 +51,7 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
   readonly DELIMITER = '/';
   model1: string;
   // date: { year: number; month: number };
-  trainingForm: FormGroup;
+  trainingForm: UntypedFormGroup;
   typesOfTraining = ['Trening A', 'Trening B', 'Push', 'Pull', 'Legs', 'Drugo'];
   selectedExercises: any[] = [];
   exercises = {
@@ -119,7 +119,7 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
   private subsink: SubSink = new SubSink();
   constructor(
     private fs: AngularFirestore,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private dts: TrainingService,
     private fss: FirestoreService,
     private us: UserService,
@@ -133,7 +133,7 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
     // Initialization of training form for preventing error getting value of getters
     this.trainingForm = this.fb.group({
       id: [null],
-      trainingDate: new FormControl({
+      trainingDate: new UntypedFormControl({
         day: new Date().getDate(),
         month: new Date().getMonth() + 1,
         year: new Date().getFullYear(),
@@ -242,12 +242,12 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
   get form() {
     return this.trainingForm;
   }
-  get exercisesArray(): FormArray {
-    return this.form.get('exercises') as FormArray;
+  get exercisesArray(): UntypedFormArray {
+    return this.form.get('exercises') as UntypedFormArray;
   }
 
   get exercisesControls() {
-    return this.exercisesArray.controls as FormGroup[];
+    return this.exercisesArray.controls as UntypedFormGroup[];
     //   <div *ngFor="let exercise of exercisesControls; let i = index">
     // <div [formGroupName]="i" class="row">
   }
@@ -255,8 +255,8 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
    *
    * @returns FormArray object
    */
-  exerciseSeriesArray(exerciseIndex: number): FormArray {
-    return this.exercisesArray.at(exerciseIndex).get('series') as FormArray;
+  exerciseSeriesArray(exerciseIndex: number): UntypedFormArray {
+    return this.exercisesArray.at(exerciseIndex).get('series') as UntypedFormArray;
   }
 
   // Get for form controls
@@ -317,7 +317,7 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
    *
    * @returns formGroup
    */
-  newExerciseSerie(): FormGroup {
+  newExerciseSerie(): UntypedFormGroup {
     return this.fb.group({
       repsNum: [''],
       weight: [''],
@@ -327,7 +327,7 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
    *
    * @returns formGroup
    */
-  newExercise(): FormGroup {
+  newExercise(): UntypedFormGroup {
     return this.fb.group({
       id: [null],
       exerciseName: [''],
@@ -372,7 +372,7 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
    * @param controlPath
    */
   getFormControlArrayValue(controlPath: string) {
-    return <FormArray>this.form.get(controlPath);
+    return <UntypedFormArray>this.form.get(controlPath);
   }
   /**
    *
