@@ -1,6 +1,6 @@
 import { HelperService } from './../../shared/services/helper.service';
 import { FirestoreService } from './../../shared/services/firestore.service';
-import { Observable, Subject, from } from 'rxjs';
+import { Observable, Subject, from, throwError } from 'rxjs';
 import { ToastService } from './../../shared/services/toast.service';
 import { SpinnerService } from './../../shared/services/spinner.service';
 import { IToken, ROLE, User } from './../../shared/models/user.model';
@@ -58,13 +58,13 @@ export class AuthenticationService {
             }),
             catchError((error) => {
               this.ts.show('error', `something went wrong ${error}`);
-              return error;
+              return throwError(error);
             })
           );
         }),
         catchError((error) => {
           this.ts.show('error', `something went wrong ${error}`);
-          return error;
+          return throwError(error);
         })
       );
   }
