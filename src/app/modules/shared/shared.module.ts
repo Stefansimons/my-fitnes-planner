@@ -12,32 +12,31 @@ import { ToastComponent } from './components/toast/toast.component';
 import { RegisterComponent } from './components/register/register.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 @NgModule({
-  declarations: [
-    HeaderComponent,
-    FooterComponent,
-    LoginComponent,
-    SpinnerComponent,
-    ToastComponent,
-    RegisterComponent,
-  ],
-  imports: [
-    CommonModule,
-    RouterModule,
-    MaterialModule,
-    OverlayModule,
-    NgbModule,
-    FormsModule,
-    ReactiveFormsModule,
-  ],
-  exports: [
-    HeaderComponent,
-    FooterComponent,
-    SpinnerComponent,
-    NgbModule,
-    ToastComponent,
-    FormsModule,
-    ReactiveFormsModule,
-  ],
-  entryComponents: [SpinnerComponent],
+    declarations: [
+        HeaderComponent,
+        FooterComponent,
+        LoginComponent,
+        SpinnerComponent,
+        ToastComponent,
+        RegisterComponent,
+    ],
+    imports: [
+        CommonModule,
+        RouterModule,
+        MaterialModule,
+        OverlayModule,
+        NgbModule,
+        FormsModule,
+        ReactiveFormsModule,
+    ],
+    exports: [
+        HeaderComponent,
+        FooterComponent,
+        SpinnerComponent,
+        NgbModule,
+        ToastComponent,
+        FormsModule,
+        ReactiveFormsModule,
+    ]
 })
 export class SharedModule {}

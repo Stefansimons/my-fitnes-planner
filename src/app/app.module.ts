@@ -26,35 +26,33 @@ import { SharedModule } from './modules/shared/shared.module';
 // import { TrainingModule } from './modules/training/training.module';
 
 @NgModule({
-  declarations: [AppComponent], // TODO: SpinnerComponent Mast have?
-  imports: [
-    BrowserModule,
-    AngularFireModule.initializeApp(environment.firebase),
-    BrowserAnimationsModule,
-    AppRoutingModule,
-    ReactiveFormsModule,
-    MaterialModule,
-    SharedModule,
-    AppOverlayModule,
-
-    // provideFirebaseApp(() => initializeApp(environment.firebase)),
-    // provideAnalytics(() => getAnalytics()),
-    // provideAuth(() => getAuth()),
-    // provideDatabase(() => getDatabase()),
-    // provideFunctions(() => getFunctions()),
-    // provideMessaging(() => getMessaging()),
-    // providePerformance(() => getPerformance()),
-    // provideRemoteConfig(() => getRemoteConfig()),
-    // provideStorage(() => getStorage()),
-    // provideFirestore(() => getFirestore()),
-  ],
-  entryComponents: [AppComponent, SpinnerComponent], // TODO: entryComponents ?!?
-  exports: [RouterModule],
-  providers: [
-    AngularFirestoreModule,
-    ScreenTrackingService,
-    UserTrackingService,
-  ],
-  bootstrap: [AppComponent],
+    declarations: [AppComponent],
+    imports: [
+        BrowserModule,
+        AngularFireModule.initializeApp(environment.firebase),
+        BrowserAnimationsModule,
+        AppRoutingModule,
+        ReactiveFormsModule,
+        MaterialModule,
+        SharedModule,
+        AppOverlayModule,
+        // provideFirebaseApp(() => initializeApp(environment.firebase)),
+        // provideAnalytics(() => getAnalytics()),
+        // provideAuth(() => getAuth()),
+        // provideDatabase(() => getDatabase()),
+        // provideFunctions(() => getFunctions()),
+        // provideMessaging(() => getMessaging()),
+        // providePerformance(() => getPerformance()),
+        // provideRemoteConfig(() => getRemoteConfig()),
+        // provideStorage(() => getStorage()),
+        // provideFirestore(() => getFirestore()),
+    ],
+    exports: [RouterModule],
+    providers: [
+        AngularFirestoreModule,
+        ScreenTrackingService,
+        UserTrackingService,
+    ],
+    bootstrap: [AppComponent]
 })
 export class AppModule {}
