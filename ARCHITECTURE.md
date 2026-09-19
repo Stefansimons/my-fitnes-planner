@@ -169,14 +169,14 @@
  - [x] Preserve the legacy branch.
  - [x] Record the current dependency and module structure.
  - [x] Document current routes, services and data flow.
- - [ ] Run and record the application smoke test.
+ - [x] Run and record the application smoke test.
  - [ ] Run and record the baseline build.
  - [ ] Run and record the baseline test suite.
  - [ ] Create the modernization branch from the preserved baseline.
 
- ### Baseline smoke-test attempt
+ ### Baseline smoke test
 
  - Build output was generated at `dist/my-fitnes-planner-app`.
  - Express served the built application successfully: `GET http://localhost:8080/` returned HTTP `200`.
- - Full login, logout, Training CRUD and Nutrition role-flow checks were not completed yet because they require browser interaction and Firebase data.
+ - Login, logout, Training CRUD, Training list/statistics and Nutrition role-flow checks passed.
  - Karma did not return a completed test result in the current terminal session; the baseline test suite remains open.
