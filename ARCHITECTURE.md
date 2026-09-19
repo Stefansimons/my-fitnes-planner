@@ -173,3 +173,10 @@
  - [ ] Run and record the baseline build.
  - [ ] Run and record the baseline test suite.
  - [ ] Create the modernization branch from the preserved baseline.
+
+ ### Baseline smoke-test attempt
+
+ - Build output was generated at `dist/my-fitnes-planner-app`.
+ - Express served the built application successfully: `GET http://localhost:8080/` returned HTTP `200`.
+ - Full login, logout, Training CRUD and Nutrition role-flow checks were not completed yet because they require browser interaction and Firebase data.
+ - Karma did not return a completed test result in the current terminal session; the baseline test suite remains open.
