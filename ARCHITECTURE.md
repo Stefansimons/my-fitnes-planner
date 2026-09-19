@@ -99,7 +99,33 @@
  - Legacy Angular concepts such as `entryComponents` and compatibility modules should be removed during the upgrade.
  - The test suite contains unit tests, but a complete user-flow smoke/E2E test is not yet documented.
 
- ## 8. Target architecture
+ ## 8. Legacy assessment
+
+ ### Strengths to preserve
+
+ - Feature boundaries already exist for Training and Nutrition.
+ - Training and Nutrition are lazy-loaded instead of being loaded by the root module.
+ - Authentication, role protection and route resolution are separated into guards.
+ - Firebase persistence and authentication are already isolated in services rather than called directly from every component.
+ - Training, Exercise and Series have dedicated TypeScript interfaces.
+ - Reactive Forms, unit-test files and shared UI components are already present.
+ - The existing application provides a useful behavioral reference for regression testing.
+
+ ### Risks to address
+
+ - `AppModule` imports `environment.prod` directly, which can bypass the intended environment replacement flow.
+ - Authentication error handlers return raw errors instead of an Observable error result.
+ - `TrainingService` combines UI state, filtering, pagination, persistence and loading coordination.
+ - Firebase DTOs are used as application data without a typed adapter or domain boundary.
+ - User data and authentication state are copied to `localStorage`, creating consistency and security risks.
+ - Mutable subjects, weak typing and `any` make state changes difficult to trace.
+ - The Angular 12 and AngularFire compatibility stack increases upgrade and maintenance cost.
+
+ ### Baseline rating
+
+ The legacy version is a workable educational CRUD baseline with a reasonable feature structure, but it is not yet a clean production architecture. The modernization should preserve its routing, feature separation and working user flows while reducing coupling between components, state and Firebase.
+
+ ## 9. Target architecture
 
  The intended architecture is feature-based and separates responsibilities:
 
@@ -126,7 +152,7 @@
  - Consistent loading, error and empty states
  - Unit, component/integration and E2E coverage for critical workflows
 
- ## 9. Migration order
+ ## 10. Migration order
 
  1. Keep `chore/legacy-version` unchanged as the reference baseline.
  2. Record a successful build, test run and manual smoke test.
@@ -138,7 +164,7 @@
  8. Modernize forms, templates, change detection and list tracking.
  9. Add regression tests and compare behavior with the legacy version.
 
- ## 10. Week 1 audit checklist
+ ## 11. Week 1 audit checklist
 
  - [x] Preserve the legacy branch.
  - [x] Record the current dependency and module structure.
