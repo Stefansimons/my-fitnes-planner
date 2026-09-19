@@ -14,7 +14,6 @@ import {
   AngularFirestoreCollection,
   AngularFirestoreDocument,
 } from '@angular/fire/compat/firestore';
-import { collection, query, getDocs } from 'firebase/firestore';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 
 export const trainings = [

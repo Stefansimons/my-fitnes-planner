@@ -35,7 +35,6 @@ import {} from './../../../shared/';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { NgbDateStruct, NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
 import { SubSink } from 'subsink';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 @Component({
   selector: 'app-training-form',
