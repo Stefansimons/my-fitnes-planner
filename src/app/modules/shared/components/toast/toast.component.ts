@@ -21,7 +21,7 @@ export interface IToast {
 })
 export class ToastComponent implements OnInit, OnDestroy {
   @Output() closeToastEvent = new EventEmitter<boolean>();
-  @Input() toast: IToast;
+  @Input() toast: IToast | null = null;
   constructor(private ts: ToastService) {}
 
   ngOnInit(): void {}
