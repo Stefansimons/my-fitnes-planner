@@ -154,6 +154,7 @@ const document = new Document({
         bullet('Dodati WorkoutState unit testove za signals i reset'),
         bullet('Dodati WorkoutFacade unit testove za orchestration i error flow'),
         bullet('Povezati pocetno ucitavanje TrainingListComponent sa WorkoutFacade'),
+        bullet('Prebaciti TrainingList delete/deactivate tok na WorkoutFacade'),
         bullet('Dodati naprednije state transitions i facade business flow', false),
         new Paragraph({ heading: HeadingLevel.HEADING_1, text: 'Napomena' }),
         new Paragraph({ text: 'PDF plan je lokalni referentni fajl i nije deo source koda. Karma/ChromeHeadless testovi jos nemaju pouzdan zavrsen rezultat; production build je prolazio nakon migracionih koraka.' }),

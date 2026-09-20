@@ -15,7 +15,10 @@ import { map, tap } from 'rxjs/operators';
 import { Training, Exercise } from './../../models/training.model';
 import { TrainingService } from '../../services/training.service';
 import { WorkoutFacade } from '../../workout.facade';
-import { workoutToTraining } from '../../adapters/training.adapter';
+import {
+  trainingToWorkout,
+  workoutToTraining,
+} from '../../adapters/training.adapter';
 import {
   AfterViewInit,
   Component,
@@ -102,8 +105,8 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
       this.workoutFacade.loadWorkouts(user.id).subscribe({
         next: (workouts) => {
           this.dts.setTrainings$(workouts.map(workoutToTraining));
-      this.onSort({ column: 'trainingDate', direction: 'desc' });
-      this.ss.hide();
+          this.onSort({ column: 'trainingDate', direction: 'desc' });
+          this.ss.hide();
         },
         error: () => this.ss.hide(),
       });
@@ -188,9 +191,16 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
     // TODO :CALL MODAL...
     this.modals.open(modal, this.modalOptions).result.then(
       (result) => {
-        training.isActive = false;
-        this.dts.saveTraining(training);
-        this.ts.show('Success', 'Deleted training');
+        const workout = trainingToWorkout(training);
+        if (workout.id === undefined) {
+          this.ts.show('Error', 'Unable to delete training without an ID');
+          return;
+        }
+
+        this.workoutFacade.finishWorkout(this.userID, workout.id).subscribe({
+          next: () => this.ts.show('Success', 'Deleted training'),
+          error: (error) => this.ts.show('Error', error.message),
+        });
         //   this.closeResult = `Closed with: ${result}`;
       },
       (reason) => {
