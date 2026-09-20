@@ -33,9 +33,10 @@ import { SubSink } from 'subsink';
 import { switchMap } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-training-list',
-  templateUrl: './training-list.component.html',
-  styleUrls: ['./training-list.component.css'],
+    selector: 'app-training-list',
+    templateUrl: './training-list.component.html',
+    styleUrls: ['./training-list.component.css'],
+    standalone: false
 })
 export class TrainingListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator)

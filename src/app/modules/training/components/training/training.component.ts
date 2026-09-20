@@ -13,9 +13,10 @@ import {
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'app-training',
-  templateUrl: './training.component.html',
-  styleUrls: ['./training.component.css'],
+    selector: 'app-training',
+    templateUrl: './training.component.html',
+    styleUrls: ['./training.component.css'],
+    standalone: false
 })
 export class TrainingComponent implements OnInit {
   @Input() name: string;

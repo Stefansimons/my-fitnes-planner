@@ -37,9 +37,10 @@ import { NgbDateStruct, NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
 import { SubSink } from 'subsink';
 
 @Component({
-  selector: 'app-training-form',
-  templateUrl: './training-form.component.html',
-  styleUrls: ['./training-form.component.css'],
+    selector: 'app-training-form',
+    templateUrl: './training-form.component.html',
+    styleUrls: ['./training-form.component.css'],
+    standalone: false
 })
 export class TrainingFormComponent implements OnInit, AfterViewInit {
   @Output() save = new EventEmitter<boolean>();
