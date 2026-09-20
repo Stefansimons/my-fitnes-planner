@@ -134,6 +134,45 @@ flowchart LR
     legacy --> foundation --> standalone --> folders --> week3 --> state --> facade
 ```
 
+## Data flow: citanje podataka
+
+```mermaid
+flowchart TD
+    firebase[(Firebase / Firestore)]
+    api[WorkoutApiService]
+    dto[WorkoutDto]
+    adapter[Adapter: DTO -> Workout]
+    state[WorkoutState\nSignals source of truth]
+    facade[WorkoutFacade\npublic feature API]
+    component[UI Component]
+
+    firebase --> api --> dto --> adapter --> state --> facade --> component
+```
+
+Ovo je smer koji se koristi kada aplikacija ucitava treninge: backend format ne ide direktno u komponentu.
+
+## Data flow: korisnicka akcija
+
+```mermaid
+flowchart LR
+    component[UI Component\nclick / submit]
+    facade[WorkoutFacade\nuse-case orchestration]
+    state[WorkoutState\noptimistic/local state]
+    adapter[Adapter: Workout -> DTO]
+    dto[WorkoutDto]
+    api[WorkoutApiService]
+    firebase[(Firebase / Firestore)]
+
+    component --> facade
+    facade --> state
+    facade --> adapter --> dto --> api --> firebase
+    firebase -. rezultat / greska .-> api -. Observable .-> facade
+    facade -. update .-> state
+    state -. Signals .-> component
+```
+
+Komponenta ne poziva Firebase i ne poznaje DTO field naming. Facade koordinira akciju, Adapter prevodi model, a State objavljuje novi rezultat UI-ju.
+
 ## Week 3 - Domain, API, Adapter, State i Facade
 
 Week 3, na grani `modernize/week-3-domain-api`:

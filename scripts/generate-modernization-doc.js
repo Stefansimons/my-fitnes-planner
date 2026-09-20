@@ -75,6 +75,22 @@ function architectureDiagram() {
   </svg>`;
 }
 
+function dataFlowDiagram() {
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="360" viewBox="0 0 1100 360">
+    <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#64748b"/></marker></defs>
+    <rect width="1100" height="360" fill="#f8fafc"/>
+    <text x="550" y="34" text-anchor="middle" font-family="Arial" font-size="24" font-weight="bold" fill="#0f172a">Workout data flow</text>
+    ${box(35, 115, 160, 65, 'Firebase', '#e2e8f0')}
+    ${box(230, 115, 175, 65, 'API Service', '#dbeafe')}
+    ${box(440, 115, 150, 65, 'DTO', '#fef3c7')}
+    ${box(625, 115, 170, 65, 'Adapter', '#fde68a')}
+    ${box(830, 65, 220, 65, 'Workout domain', '#dcfce7')}
+    ${box(830, 165, 220, 65, 'State + Facade', '#ede9fe')}
+    ${arrow(195, 147, 230, 147)}${arrow(405, 147, 440, 147)}${arrow(590, 147, 625, 147)}${arrow(795, 147, 830, 98)}${arrow(940, 130, 940, 165)}
+    <text x="550" y="300" text-anchor="middle" font-family="Arial" font-size="17" fill="#475569">Firebase -> API -> DTO -> Adapter -> Workout -> State/Facade -> UI</text>
+  </svg>`;
+}
+
 function bullet(text, checked = true) {
   return new Paragraph({
     bullet: { level: 0 },
@@ -133,6 +149,8 @@ const document = new Document({
         new Paragraph({ children: [svgImage(gitDiagram(), 650, 248)] }),
         new Paragraph({ heading: HeadingLevel.HEADING_1, text: 'Arhitektonska tranzicija' }),
         new Paragraph({ children: [svgImage(architectureDiagram(), 650, 177)] }),
+        new Paragraph({ heading: HeadingLevel.HEADING_1, text: 'Workout data flow' }),
+        new Paragraph({ children: [svgImage(dataFlowDiagram(), 650, 213)] }),
         new Paragraph({ heading: HeadingLevel.HEADING_1, text: 'Status po planu' }),
         statusTable(),
         new Paragraph({ heading: HeadingLevel.HEADING_1, text: 'Zavrseno' }),
