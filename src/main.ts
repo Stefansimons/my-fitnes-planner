@@ -1,12 +1,36 @@
-import { enableProdMode } from '@angular/core';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-
-import { AppModule } from './app/app.module';
+import { enableProdMode, importProvidersFrom } from '@angular/core';
+import { bootstrapApplication } from '@angular/platform-browser';
+import { provideRouter, withPreloading, PreloadAllModules } from '@angular/router';
+import { AngularFireModule } from '@angular/fire/compat';
+import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
+import { ScreenTrackingService, UserTrackingService } from '@angular/fire/analytics';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MaterialModule } from './app/material/material.module';
+import { AppOverlayModule } from './app/material/overlay/appOverlay.module';
+import { SharedModule } from './app/modules/shared/shared.module';
+import { AppComponent } from './app/app.component';
+import { routes } from './app/app-routing.module';
 import { environment } from './environments/environment';
 
 if (environment.production) {
   enableProdMode();
 }
 
-platformBrowserDynamic().bootstrapModule(AppModule)
+bootstrapApplication(AppComponent, {
+  providers: [
+    provideRouter(routes, withPreloading(PreloadAllModules)),
+    importProvidersFrom(
+      AngularFireModule.initializeApp(environment.firebase),
+      AngularFirestoreModule,
+      BrowserAnimationsModule,
+      ReactiveFormsModule,
+      MaterialModule,
+      SharedModule,
+      AppOverlayModule,
+    ),
+    ScreenTrackingService,
+    UserTrackingService,
+  ],
+})
   .catch(err => console.error(err));

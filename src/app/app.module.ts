@@ -11,7 +11,6 @@ import {
   UserTrackingService,
 } from '@angular/fire/analytics';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { AppRoutingModule } from './app-routing.module';
 import { ReactiveFormsModule } from '@angular/forms';
 
 // My material module
@@ -32,7 +31,6 @@ import { SharedModule } from './modules/shared/shared.module';
         BrowserModule,
         AngularFireModule.initializeApp(environment.firebase),
         BrowserAnimationsModule,
-        AppRoutingModule,
         ReactiveFormsModule,
         MaterialModule,
         SharedModule,

@@ -3,10 +3,9 @@ import { AuthGuard } from './modules/core/auth/auth.guard';
 import { LoginComponent } from './modules/shared/components/login/login.component';
 import { RegisterComponent } from './modules/shared/components/register/register.component';
 import { HomeComponent } from './modules/core/components/home/home.component';
-import { NgModule } from '@angular/core';
-import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 
-const routes: Routes = [
+export const routes: Routes = [
   {
     path: 'training',
     loadChildren: () =>
@@ -32,9 +31,3 @@ const routes: Routes = [
     pathMatch: 'full',
   },
 ];
-
-@NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule],
-})
-export class AppRoutingModule {}
