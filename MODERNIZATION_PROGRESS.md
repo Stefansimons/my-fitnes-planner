@@ -156,5 +156,6 @@ Week 3, na grani `modernize/week-3-domain-api`:
 - [x] Uklonjen je neiskorisceni direktni read tok iz `TrainingListComponent`.
 - [x] `TrainingListComponent` prikaz, query state i pagination koriste WorkoutFacade/WorkoutState.
 - [x] `TrainingListComponent` vise nema zavisnost od legacy `TrainingService`.
+- [x] `TrainingFormComponent` create/update tok koristi `WorkoutFacade`.
  - Production build prolazi; Karma test runner jos nema pouzdan zavrsen rezultat.
 - Promena je izolovana u mali proverljiv commit.

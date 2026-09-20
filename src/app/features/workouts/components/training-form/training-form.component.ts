@@ -1,17 +1,9 @@
 import { ToastService } from './../../../../shared/services/toast.service';
-import { SpinnerService } from './../../../../shared/services/spinner.service';
-import { Exercise, Series } from './../../models/training.model';
-import {
-  userTempData,
-  UserService,
-} from './../../../../shared/services/user.service';
-import { User } from './../../../../shared/models/user.model';
-import { FirestoreService } from './../../../../shared/services/firestore.service';
+import { Series } from './../../models/training.model';
+import { UserService } from './../../../../shared/services/user.service';
 import { TrainingService } from '../../services/training.service';
-import {
-  AngularFirestore,
-  AngularFirestoreDocument,
-} from '@angular/fire/compat/firestore';
+import { WorkoutFacade } from '../../workout.facade';
+import { trainingToWorkout } from '../../adapters/training.adapter';
 import {
   Component,
   OnInit,
@@ -27,12 +19,10 @@ import {
   UntypedFormGroup,
   ValidationErrors,
   ValidatorFn,
+  Validators,
 } from '@angular/forms';
-import { Validators } from '@angular/forms';
 import { Training } from '../../models/index';
-import { map, skip, tap } from 'rxjs/operators';
-import { BehaviorSubject, Subject } from 'rxjs';
-import { NgbDateStruct, NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { SubSink } from 'subsink';
 
 @Component({
@@ -43,14 +33,9 @@ import { SubSink } from 'subsink';
 })
 export class TrainingFormComponent implements OnInit, AfterViewInit {
   @Output() save = new EventEmitter<boolean>();
-  //eventsSubject: Subject<string> = new Subject<string>(); // There is not default value! so...
-  clicked = false;
-  userModel: User;
   editTraining: Training | undefined;
   emptyTypeOfTraining: boolean = false;
   readonly DELIMITER = '/';
-  model1: string;
-  // date: { year: number; month: number };
   trainingForm: UntypedFormGroup;
   typesOfTraining = ['Trening A', 'Trening B', 'Push', 'Pull', 'Legs', 'Drugo'];
   selectedExercises: any[] = [];
@@ -118,13 +103,10 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
 
   private subsink: SubSink = new SubSink();
   constructor(
-    private fs: AngularFirestore,
     private fb: UntypedFormBuilder,
-    private dts: TrainingService,
-    private fss: FirestoreService,
+    private trainingService: TrainingService,
+    private workoutFacade: WorkoutFacade,
     private us: UserService,
-    private cal: NgbCalendar,
-    private ss: SpinnerService,
     private ts: ToastService
   ) {}
   ngAfterViewInit(): void {}
@@ -146,7 +128,7 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
       // series: new FormArray([]), // ? exercises.series
     });
 
-    const editTrainingData = this.dts.getTraining$.subscribe((training) => {
+    const editTrainingData = this.trainingService.getTraining$.subscribe((training) => {
       this.editTraining = training;
       if (this.editTraining) this.setFormValue(this.editTraining);
     });
@@ -198,19 +180,7 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
     }
 
     this.setCertainExercises(tempTraining.typeOfTraining);
-    // End *************************************
     this.form.setValue(tempTraining);
-    //let tempExercises: Exercise[] = [];
-    // NOTE: IF I COULD SET VALUE FOR FORM I NEED TO SET INTERFACES OR TEMP OBJECTS WITH THE EXACT PROPS AS FORM CONTROL!!
-    // tempTraining.exercises?.forEach((item, i) => {
-    //   let tempItem: Exercise = { serieNum: item.series?.length, ...item };
-    //   tempExercises.push({
-    //     exerciseName: item.exerciseName,
-    //     serieNum: item.serieNum,
-    //     series: [],
-    //   });
-    // });
-    //    this.form.patchValue(tempTraining);
   }
   /**
    *
@@ -232,9 +202,6 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
     return date
       ? date.day + this.DELIMITER + date.month + this.DELIMITER + date.year
       : '';
-  }
-  onSubmit() {
-    // this.trainingForm.get('exercises').controls[1].controls.series;
   }
   /**
    *  convenience getters for easy access to form fields , Angular 8
@@ -268,37 +235,26 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
   getFormControl(control: string) {
     return this.form.get(control);
   }
-  /**
-   *
-   * @param e
-   */
-  onChangeExercise(e: any) {
-    if (!this.getFormControl('typeOfTraining')?.value)
+
+  onChangeExercise(event: Event): void {
+    if (!this.getFormControl('typeOfTraining')?.value) {
       this.emptyTypeOfTraining = true;
+    }
 
-    const numberOfExercises = e.target.value || 0;
+    const numberOfExercises = Number((event.target as HTMLInputElement).value) || 0;
     if (this.exercisesArray.length < numberOfExercises) {
-      this.createExercisesFormControls(
-        this.exercisesArray.length,
-        numberOfExercises
-      );
-    } else {
-      for (let i = this.exercisesArray.length; i >= numberOfExercises; i--) {
-        this.exercisesArray.removeAt(i);
+      this.createExercisesFormControls(this.exercisesArray.length, numberOfExercises);
+      return;
+    }
 
-        // this.getFormControl('exerciseNum').setValue(this.exercisesArray.length);
-      }
+    while (this.exercisesArray.length > numberOfExercises) {
+      this.exercisesArray.removeAt(this.exercisesArray.length - 1);
     }
   }
-  /**
-   * It sets appropriate exercises
-   *
-   * @returns
-   */
-  onChangeTypeOfTraining(e: any) {
+
+  onChangeTypeOfTraining(event: Event): void {
     this.emptyTypeOfTraining = false;
-    const type = String(e.target.value);
-    this.setCertainExercises(type);
+    this.setCertainExercises((event.target as HTMLSelectElement).value);
   }
 
   /**
@@ -425,23 +381,25 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
 
     training.updatedAt = new Date();
 
-    this.dts
-      .saveTraining(training)
-      .then((res) => {
+    const workout = trainingToWorkout(training);
+    const userId = this.us.getLoggedUserId();
+    const saveRequest = workout.id === undefined
+      ? this.workoutFacade.createWorkout(userId, workout)
+      : this.workoutFacade.updateWorkout(userId, workout);
+
+    saveRequest.subscribe({
+      next: () => {
         this.form.reset();
         this.save.emit(true);
         this.ts.show('Success', 'Successful insert');
-      })
-      .catch((error) => this.ts.show('Error', `${error.message}`));
+      },
+      error: (error) => this.ts.show('Error', `${error.message}`),
+    });
   }
 
   /**
    * Test Everything new features
    */
-  testNewAll() {
-    // this.testEmiter = !this.testEmiter;
-    // this.dts.setNewTrainingEvent(true);
-  }
   /**
    * -----------------------------------------------Login Component --------------------------------------------
    *
