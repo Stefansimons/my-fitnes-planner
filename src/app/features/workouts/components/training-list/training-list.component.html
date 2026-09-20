@@ -16,7 +16,7 @@
           type="text"
           class="form-control"
           name="searchTerm"
-          [(ngModel)]="dts.searchTerm"
+          [(ngModel)]="trainingService.searchTerm"
         />
       </div>
     </div>
@@ -135,8 +135,8 @@
     <div class="d-flex justify-content-between p-2">
       <ngb-pagination
         [collectionSize]="(total$ | async)!"
-        [(page)]="dts.page"
-        [pageSize]="dts.pageSize"
+        [(page)]="trainingService.page"
+        [pageSize]="trainingService.pageSize"
       >
       </ngb-pagination>
 
@@ -144,7 +144,7 @@
         class="form-select"
         style="width: auto"
         name="pageSize"
-        [(ngModel)]="dts.pageSize"
+        [(ngModel)]="trainingService.pageSize"
       >
         <option [ngValue]="2">2 items per page</option>
         <option [ngValue]="4">4 items per page</option>

@@ -1,4 +1,3 @@
-import { environment } from 'src/environments/environment.prod';
 import { ToastService } from './../../../../shared/services/toast.service';
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import {
@@ -6,13 +5,11 @@ import {
   SortEvent,
 } from './../../directives/ngb-sortable-table.directive';
 import { User } from './../../../../shared/models/user.model';
-import { trainings } from './../../../../shared/services/firestore.service';
 import { SpinnerService } from './../../../../shared/services/spinner.service';
 import { UserService } from './../../../../shared/services/user.service';
-import { Observable, Subscription } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
-import { Training, Exercise } from './../../models/training.model';
+import { Training } from './../../models/training.model';
 import { TrainingService } from '../../services/training.service';
 import { WorkoutFacade } from '../../workout.facade';
 import {
@@ -31,11 +28,8 @@ import {
   ViewChild,
   ViewChildren,
 } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
-import { throwToolbarMixedModesError } from '@angular/material/toolbar';
 import { SubSink } from 'subsink';
-import { switchMap } from 'rxjs/operators';
 
 @Component({
     selector: 'app-training-list',
@@ -78,7 +72,7 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
     const filterValue = (event.target as HTMLInputElement).value;
   }
   constructor(
-    public dts: TrainingService, //NOTE: Public because assigning ngModel valu direct to service setters ?!?
+    public trainingService: TrainingService,
     private workoutFacade: WorkoutFacade,
     private us: UserService,
     private ss: SpinnerService,
@@ -90,8 +84,8 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
       backdropClass: 'customBackdrop',
     };
     // Table pagination
-    this.trainings$ = dts.trainings$;
-    this.total$ = dts.total$;
+    this.trainings$ = trainingService.trainings$;
+    this.total$ = trainingService.total$;
   }
 
   ngAfterViewInit(): void {
@@ -104,7 +98,7 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
       this.userID = user.id;
       this.workoutFacade.loadWorkouts(user.id).subscribe({
         next: (workouts) => {
-          this.dts.setTrainings$(workouts.map(workoutToTraining));
+          this.trainingService.setTrainings$(workouts.map(workoutToTraining));
           this.onSort({ column: 'trainingDate', direction: 'desc' });
           this.ss.hide();
         },
@@ -113,15 +107,15 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
     });
 
     // Emited new training
-    const newItemEvent = this.dts
+    const newItemEvent = this.trainingService
       .getNewTrainingEvent()
       .subscribe((isNewEvent) => {
         if (isNewEvent) {
           this.workoutFacade.loadWorkouts(this.userID).subscribe((workouts) => {
             const trainings = workouts.map(workoutToTraining);
-            this.dts.setTrainings$(trainings);
+            this.trainingService.setTrainings$(trainings);
             this.onSort({ column: 'trainingDate', direction: 'desc' });
-            this.dts.trainings(trainings);
+            this.trainingService.trainings(trainings);
             this.ss.hide();
           });
         }
@@ -129,10 +123,6 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
     // Add observables in subsink array
     this.subs.add(newItemEvent, userObs);
   }
-  /**
-   * // NOTE:test Observables With SwitchMap
-   */
-  testObservablesWithSwitchMap() {}
   /**
    * Unsubscribe when the component dies
    */
@@ -184,8 +174,8 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
       }
     });
 
-    this.dts.sortColumn = column;
-    this.dts.sortDirection = direction;
+    this.trainingService.sortColumn = column;
+    this.trainingService.sortDirection = direction;
   }
 
   /**
