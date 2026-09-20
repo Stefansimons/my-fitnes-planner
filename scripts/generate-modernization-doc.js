@@ -91,8 +91,7 @@ function statusTable() {
     ['Folder reorganizacija', 'Zavrseno', 'core / shared / features'],
     ['Feature standalone migracija', 'U toku', 'HomeComponent je prvi migrirani feature'],
     ['Domain/API/Adapter', 'Zavrseno', 'DTO, adapter testovi, API servis i error handling postoje'],
-    ['State/Signals/Facade', 'U toku', 'WorkoutState i WorkoutFacade postoje'],
-    ['State/Signals/Facade', 'Nije zapoceto', 'Planirano za Week 4-5'],
+    ['State/Signals/Facade', 'U toku', 'WorkoutState i WorkoutFacade business flow postoje'],
     ['Karma/ChromeHeadless testovi', 'Otvoreno', 'Nema pouzdanog zavrsenog rezultata'],
   ];
 
@@ -151,6 +150,7 @@ const document = new Document({
         bullet('Izdvojiti API service: WorkoutApiService'),
         bullet('Dodati API error handling kroz WorkoutApiError'),
         bullet('Povezati API service sa WorkoutState i WorkoutFacade'),
+        bullet('Implementirati create/update/delete/finish workout flow'),
         bullet('Dodati naprednije state transitions i facade business flow', false),
         new Paragraph({ heading: HeadingLevel.HEADING_1, text: 'Napomena' }),
         new Paragraph({ text: 'PDF plan je lokalni referentni fajl i nije deo source koda. Karma/ChromeHeadless testovi jos nemaju pouzdan zavrsen rezultat; production build je prolazio nakon migracionih koraka.' }),

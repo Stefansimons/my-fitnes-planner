@@ -86,6 +86,18 @@ src/app/
     └── nutrition/
 ```
 
+- Workouts feature internals now follow the target boundaries:
+
+```text
+features/workouts/
+├── adapters/
+├── components/
+├── models/
+├── services/
+├── workout.facade.ts
+└── workout.state.ts
+```
+
 - Production build je prolazio nakon migracionih koraka.
 
 ## Arhitektonska tranzicija
@@ -98,7 +110,7 @@ flowchart LR
     folders[Feature-based folders\ncore / shared / features]
     week3[Week 3\nDomain + DTO + Adapter + API]
     state[Week 4\nWorkoutState + Signals]
-    facade[Week 5\nWorkoutFacade]
+    facade[Week 5\nWorkoutFacade business flow]
 
     legacy --> foundation --> standalone --> folders --> week3 --> state --> facade
 ```
@@ -113,7 +125,8 @@ Week 3, na grani `modernize/week-3-domain-api`:
 4. [x] Izdvojiti API/Firestore service granicu kroz `WorkoutApiService`.
 5. [x] Dodati osnovni error handling kroz `WorkoutApiError`.
 6. [x] Povezati API service sa `WorkoutState` i `WorkoutFacade`.
-7. [ ] Proveriti da UI i feature kod ne zavise direktno od backend field naming-a.
+7. [x] Implementirati create/update/delete/finish workout flow u facade-u.
+8. [ ] Proveriti da UI i feature kod ne zavise direktno od backend field naming-a.
 
 ## Otvorene stavke
 
@@ -132,5 +145,6 @@ Week 3, na grani `modernize/week-3-domain-api`:
 - [x] API greške imaju tipizovan `WorkoutApiError`.
 - [x] `WorkoutState` ima Signals source of truth i `computed()` derived state.
 - [x] `WorkoutFacade` orkestrira API, adapter i state.
+- [x] `WorkoutFacade` ima create/update/delete/finish business flow.
 - Production build i relevantni testovi prolaze.
 - Promena je izolovana u mali proverljiv commit.
