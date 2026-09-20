@@ -102,8 +102,8 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
       this.workoutFacade.loadWorkouts(user.id).subscribe({
         next: (workouts) => {
           this.dts.setTrainings$(workouts.map(workoutToTraining));
-          this.onSort({ column: 'trainingDate', direction: 'desc' });
-          this.ss.hide();
+      this.onSort({ column: 'trainingDate', direction: 'desc' });
+      this.ss.hide();
         },
         error: () => this.ss.hide(),
       });
@@ -114,13 +114,11 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
       .getNewTrainingEvent()
       .subscribe((isNewEvent) => {
         if (isNewEvent) {
-          this.dts.getTrainings(this.userID).subscribe((data: Training[]) => {
-            this.dts.setTrainings$(data);
-
+          this.workoutFacade.loadWorkouts(this.userID).subscribe((workouts) => {
+            const trainings = workouts.map(workoutToTraining);
+            this.dts.setTrainings$(trainings);
             this.onSort({ column: 'trainingDate', direction: 'desc' });
-
-            this.dts.trainings(data);
-
+            this.dts.trainings(trainings);
             this.ss.hide();
           });
         }
