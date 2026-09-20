@@ -1,7 +1,8 @@
-import { SpinnerService } from './../../../shared/services/spinner.service';
+import { SpinnerService } from './../../../../shared/services/spinner.service';
 import { map } from 'rxjs/operators';
-import { TrainingService } from './../../services/training.service';
 import { Training } from './../../models/training.model';
+import { trainingToWorkout } from '../../adapters/training.adapter';
+import { WorkoutFacade } from '../../workout.facade';
 import {
   Component,
   OnInit,
@@ -31,7 +32,7 @@ export class TrainingComponent implements OnInit {
 
   training: Training;
   constructor(
-    private ts: TrainingService,
+    private workoutFacade: WorkoutFacade,
     private modalService: NgbModal,
     private ss: SpinnerService
   ) {
@@ -52,7 +53,7 @@ export class TrainingComponent implements OnInit {
     this.ss.show();
     // NOTE: TIMEOUT IN ORDER TO COMPONENT PASSED TO MODAL BODY BE READ(NGONINIT HOOK)
     setTimeout(() => {
-      this.ts.editTraining(training);
+      this.workoutFacade.selectWorkout(trainingToWorkout(training));
       this.ss.hide();
     }, 200);
     this.open(this.modalTemplate, true);

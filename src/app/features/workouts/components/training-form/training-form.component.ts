@@ -1,17 +1,6 @@
-import { ToastService } from './../../../shared/services/toast.service';
-import { SpinnerService } from './../../../shared/services/spinner.service';
-import { Exercise, Series } from './../../models/training.model';
-import {
-  userTempData,
-  UserService,
-} from './../../../shared/services/user.service';
-import { User } from './../../../shared/models/user.model';
-import { FirestoreService } from './../../../shared/services/firestore.service';
-import { TrainingService } from '../../services/training.service';
-import {
-  AngularFirestore,
-  AngularFirestoreDocument,
-} from '@angular/fire/compat/firestore';
+import { ToastService } from './../../../../shared/services/toast.service';
+import { UserService } from './../../../../shared/services/user.service';
+import { WorkoutFacade } from '../../workout.facade';
 import {
   Component,
   OnInit,
@@ -27,14 +16,12 @@ import {
   UntypedFormGroup,
   ValidationErrors,
   ValidatorFn,
+  Validators,
 } from '@angular/forms';
-import { Validators } from '@angular/forms';
-import { Training } from '../../models/index';
-import { map, skip, tap } from 'rxjs/operators';
-import {} from './../../../shared/';
-import { BehaviorSubject, Subject } from 'rxjs';
-import { NgbDateStruct, NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
+import { Workout } from '../../models/workout.model';
+import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { SubSink } from 'subsink';
+import { toObservable } from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'app-training-form',
@@ -44,14 +31,9 @@ import { SubSink } from 'subsink';
 })
 export class TrainingFormComponent implements OnInit, AfterViewInit {
   @Output() save = new EventEmitter<boolean>();
-  //eventsSubject: Subject<string> = new Subject<string>(); // There is not default value! so...
-  clicked = false;
-  userModel: User;
-  editTraining: Training | undefined;
+  editWorkout: Workout | undefined;
   emptyTypeOfTraining: boolean = false;
   readonly DELIMITER = '/';
-  model1: string;
-  // date: { year: number; month: number };
   trainingForm: UntypedFormGroup;
   typesOfTraining = ['Trening A', 'Trening B', 'Push', 'Pull', 'Legs', 'Drugo'];
   selectedExercises: any[] = [];
@@ -119,13 +101,9 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
 
   private subsink: SubSink = new SubSink();
   constructor(
-    private fs: AngularFirestore,
     private fb: UntypedFormBuilder,
-    private dts: TrainingService,
-    private fss: FirestoreService,
+    private workoutFacade: WorkoutFacade,
     private us: UserService,
-    private cal: NgbCalendar,
-    private ss: SpinnerService,
     private ts: ToastService
   ) {}
   ngAfterViewInit(): void {}
@@ -147,12 +125,12 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
       // series: new FormArray([]), // ? exercises.series
     });
 
-    const editTrainingData = this.dts.getTraining$.subscribe((training) => {
-      this.editTraining = training;
-      if (this.editTraining) this.setFormValue(this.editTraining);
-    });
+    const editWorkoutData = toObservable(this.workoutFacade.currentWorkout).subscribe((workout) => {
+        this.editWorkout = workout ?? undefined;
+        if (this.editWorkout) this.setFormValue(this.editWorkout);
+      });
 
-    this.subsink.add(editTrainingData);
+    this.subsink.add(editWorkoutData);
   }
   /**
    *
@@ -167,20 +145,25 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
    * @param training
    * @returns
    */
-  setFormValue(training: Training) {
-    const dateSplited = training.trainingDate.split('/');
+  setFormValue(workout: Workout) {
+    const formDate = this.toDateStruct(workout.date);
+    const exercises = workout.exercises.map((exercise) => ({
+      id: exercise.id ?? null,
+      exerciseName: exercise.name,
+      serieNum: exercise.sets.length,
+      series: exercise.sets.map((set) => ({
+        repsNum: set.reps,
+        weight: set.weight,
+      })),
+    }));
     const tempTraining = {
-      id: training.id,
-      exerciseNum: training.exercises?.length,
-      exercises: training.exercises,
-      trainingDate: {
-        day: +dateSplited[0],
-        month: +dateSplited[1],
-        year: +dateSplited[2],
-      },
-      isActive: training.isActive,
-      typeOfTraining: training.typeOfTraining,
-      updatedAt: training.updatedAt,
+      id: workout.id ?? null,
+      exerciseNum: exercises.length,
+      exercises,
+      trainingDate: formDate,
+      isActive: workout.isActive,
+      typeOfTraining: workout.type,
+      updatedAt: workout.updatedAt,
     };
     //const tempExercisesFormArray = this.getFormControlArrayValue('exercises');
 
@@ -194,24 +177,23 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
       const element = tempTraining.exercises[index];
 
       this.exerciseSeriesArray(index).push(this.newExerciseSerie());
-      if (element.series?.length! > 0)
-        this.createSeriesFormControls(element.series!, index);
+      if (element.series.length > 0)
+        this.createSeriesFormControls(element.series.length, index);
     }
 
     this.setCertainExercises(tempTraining.typeOfTraining);
-    // End *************************************
     this.form.setValue(tempTraining);
-    //let tempExercises: Exercise[] = [];
-    // NOTE: IF I COULD SET VALUE FOR FORM I NEED TO SET INTERFACES OR TEMP OBJECTS WITH THE EXACT PROPS AS FORM CONTROL!!
-    // tempTraining.exercises?.forEach((item, i) => {
-    //   let tempItem: Exercise = { serieNum: item.series?.length, ...item };
-    //   tempExercises.push({
-    //     exerciseName: item.exerciseName,
-    //     serieNum: item.serieNum,
-    //     series: [],
-    //   });
-    // });
-    //    this.form.patchValue(tempTraining);
+  }
+
+  private toDateStruct(date: string): NgbDateStruct {
+    const parts = date.includes('/') ? date.split('/') : date.split('-');
+    const isLegacyDate = date.includes('/');
+
+    return {
+      day: +(isLegacyDate ? parts[0] : parts[2]),
+      month: +(isLegacyDate ? parts[1] : parts[1]),
+      year: +(isLegacyDate ? parts[2] : parts[0]),
+    };
   }
   /**
    *
@@ -233,9 +215,6 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
     return date
       ? date.day + this.DELIMITER + date.month + this.DELIMITER + date.year
       : '';
-  }
-  onSubmit() {
-    // this.trainingForm.get('exercises').controls[1].controls.series;
   }
   /**
    *  convenience getters for easy access to form fields , Angular 8
@@ -269,37 +248,26 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
   getFormControl(control: string) {
     return this.form.get(control);
   }
-  /**
-   *
-   * @param e
-   */
-  onChangeExercise(e: any) {
-    if (!this.getFormControl('typeOfTraining')?.value)
+
+  onChangeExercise(event: Event): void {
+    if (!this.getFormControl('typeOfTraining')?.value) {
       this.emptyTypeOfTraining = true;
+    }
 
-    const numberOfExercises = e.target.value || 0;
+    const numberOfExercises = Number((event.target as HTMLInputElement).value) || 0;
     if (this.exercisesArray.length < numberOfExercises) {
-      this.createExercisesFormControls(
-        this.exercisesArray.length,
-        numberOfExercises
-      );
-    } else {
-      for (let i = this.exercisesArray.length; i >= numberOfExercises; i--) {
-        this.exercisesArray.removeAt(i);
+      this.createExercisesFormControls(this.exercisesArray.length, numberOfExercises);
+      return;
+    }
 
-        // this.getFormControl('exerciseNum').setValue(this.exercisesArray.length);
-      }
+    while (this.exercisesArray.length > numberOfExercises) {
+      this.exercisesArray.removeAt(this.exercisesArray.length - 1);
     }
   }
-  /**
-   * It sets appropriate exercises
-   *
-   * @returns
-   */
-  onChangeTypeOfTraining(e: any) {
+
+  onChangeTypeOfTraining(event: Event): void {
     this.emptyTypeOfTraining = false;
-    const type = String(e.target.value);
-    this.setCertainExercises(type);
+    this.setCertainExercises((event.target as HTMLSelectElement).value);
   }
 
   /**
@@ -398,13 +366,13 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
   }
   /**
    *
-   * @param exercises
+  * @param seriesCount
    */
-  createSeriesFormControls(series: Series[], exeIndex: number) {
+  createSeriesFormControls(seriesCount: number, exeIndex: number) {
     // series form controls..
     for (
       let i = this.exerciseSeriesArray(exeIndex).controls.length;
-      i < series.length;
+      i < seriesCount;
       i++
     ) {
       this.exerciseSeriesArray(exeIndex).push(this.newExerciseSerie());
@@ -415,54 +383,41 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
    *
    * @param training
    */
-  saveTraining(training: Training) {
+  saveTraining(formValue: any) {
     if (!this.form.valid) return;
 
-    training.trainingDate = this.format(
-      this.trainingForm.controls['trainingDate'].value
-    );
+    const workout: Workout = {
+      id: formValue.id ?? undefined,
+      date: this.format(formValue.trainingDate),
+      type: formValue.typeOfTraining,
+      isActive: true,
+      updatedAt: new Date(),
+      exercises: (formValue.exercises ?? []).map((exercise: any) => ({
+        id: exercise.id ?? undefined,
+        name: exercise.exerciseName,
+        sets: (exercise.series ?? []).map((set: any) => ({
+          reps: Number(set.repsNum),
+          weight: Number(set.weight),
+        })),
+      })),
+    };
+    const userId = this.us.getLoggedUserId();
+    const saveRequest = workout.id === undefined
+      ? this.workoutFacade.createWorkout(userId, workout)
+      : this.workoutFacade.updateWorkout(userId, workout);
 
-    training.isActive = true;
-
-    training.updatedAt = new Date();
-
-    this.dts
-      .saveTraining(training)
-      .then((res) => {
+    saveRequest.subscribe({
+      next: () => {
         this.form.reset();
         this.save.emit(true);
         this.ts.show('Success', 'Successful insert');
-      })
-      .catch((error) => this.ts.show('Error', `${error.message}`));
+      },
+      error: (error) => this.ts.show('Error', `${error.message}`),
+    });
   }
 
-  /**
-   * Test Everything new features
-   */
-  testNewAll() {
-    // this.testEmiter = !this.testEmiter;
-    // this.dts.setNewTrainingEvent(true);
-  }
-  /**
-   * -----------------------------------------------Login Component --------------------------------------------
-   *
-   */
-
-  /**
-   * -----------------------------------------------Login end
-   */
-  // testSave() {
-  //   this.eventsSubject.next();
-  // }
-  /**
-   *
-   */
+  
   ngOnDestroy() {
     this.subsink.unsubscribe();
-    //  this.eventsSubject.unsubscribe();
-    // needed if child gets re-created (eg on some model changes)
-    // note that subsequent subscriptions on the same subject will fail
-    // so the parent has to re-create parentSubject on changes
-    // this.parentSubject.unsubscribe();
   }
 }

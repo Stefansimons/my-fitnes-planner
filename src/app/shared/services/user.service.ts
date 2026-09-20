@@ -65,8 +65,7 @@ export class UserService {
    */
   getFirebaseUser(userId: string) {
     return this.fs.getUser(userId).pipe(
-      map((actions) => {
-        const user: User = actions.payload.data();
+      map((user) => {
         user.trainings = user.trainings.filter((item) => item.isActive);
         return user;
       })

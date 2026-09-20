@@ -1,19 +1,18 @@
-import { environment } from 'src/environments/environment.prod';
-import { ToastService } from './../../../shared/services/toast.service';
+import { ToastService } from './../../../../shared/services/toast.service';
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import {
   NgbSortableTableDirective,
   SortEvent,
 } from './../../directives/ngb-sortable-table.directive';
-import { User } from './../../../shared/models/user.model';
-import { trainings } from './../../../shared/services/firestore.service';
-import { SpinnerService } from './../../../shared/services/spinner.service';
-import { UserService } from './../../../shared/services/user.service';
-import { Observable, Subscription } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { User } from './../../../../shared/models/user.model';
+import { SpinnerService } from './../../../../shared/services/spinner.service';
+import { UserService } from './../../../../shared/services/user.service';
+import { Observable } from 'rxjs';
 
-import { Training, Exercise } from './../../models/training.model';
-import { TrainingService } from '../../services/training.service';
+import { Training } from './../../models/training.model';
+import { Workout } from '../../models/workout.model';
+import { WorkoutFacade } from '../../workout.facade';
+import { workoutToTraining } from '../../adapters/training.adapter';
 import {
   AfterViewInit,
   Component,
@@ -26,11 +25,8 @@ import {
   ViewChild,
   ViewChildren,
 } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
-import { throwToolbarMixedModesError } from '@angular/material/toolbar';
 import { SubSink } from 'subsink';
-import { switchMap } from 'rxjs/operators';
 
 @Component({
     selector: 'app-training-list',
@@ -57,7 +53,7 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
 
   // Table pagination
   total$: Observable<number>;
-  trainings$: Observable<Training[]>;
+  workouts$: Observable<Workout[]>;
 
   selectedTraining: Training;
   //  trainingsDataSource: Training[];
@@ -73,7 +69,7 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
     const filterValue = (event.target as HTMLInputElement).value;
   }
   constructor(
-    public dts: TrainingService, //NOTE: Public because assigning ngModel valu direct to service setters ?!?
+    public workoutFacade: WorkoutFacade,
     private us: UserService,
     private ss: SpinnerService,
     private modals: NgbModal,
@@ -84,8 +80,8 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
       backdropClass: 'customBackdrop',
     };
     // Table pagination
-    this.trainings$ = dts.trainings$;
-    this.total$ = dts.total$;
+    this.workouts$ = workoutFacade.workouts$;
+    this.total$ = workoutFacade.total$;
   }
 
   ngAfterViewInit(): void {
@@ -96,45 +92,17 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
     // Local storage user data
     const userObs = this.us.getLoggedUser$.subscribe((user) => {
       this.userID = user.id;
-      this.dts.setTrainings$(user.trainings);
-
-      this.onSort({ column: 'trainingDate', direction: 'desc' });
-
-      this.ss.hide();
+      this.workoutFacade.loadWorkouts(user.id).subscribe({
+        next: (workouts) => {
+          this.onSort({ column: 'trainingDate', direction: 'desc' });
+          this.ss.hide();
+        },
+        error: () => this.ss.hide(),
+      });
     });
 
-    // Emited new training
-    const newItemEvent = this.dts
-      .getNewTrainingEvent()
-      .subscribe((isNewEvent) => {
-        if (isNewEvent) {
-          this.dts.getTrainings(this.userID).subscribe((data: Training[]) => {
-            this.dts.setTrainings$(data);
-
-            this.onSort({ column: 'trainingDate', direction: 'desc' });
-
-            this.dts.trainings(data);
-
-            this.ss.hide();
-          });
-        }
-      });
-    // GET TRAININGS AFTER DELETING SOME TRAINING
-    // this.dts.getTrainings(this.userID).subscribe((data: Training[]) => {
-    //   this.dts.setTrainings$(data);
-
-    //   this.onSort({ column: 'trainingDate', direction: 'desc' });
-
-    //   this.dts.trainings(data);
-
-    // });
-    // Add observables in subsink array
-    this.subs.add(newItemEvent, userObs);
+    this.subs.add(userObs);
   }
-  /**
-   * // NOTE:test Observables With SwitchMap
-   */
-  testObservablesWithSwitchMap() {}
   /**
    * Unsubscribe when the component dies
    */
@@ -144,49 +112,31 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
 
   /**
    *
-   * @param userId
-   */
-  getTrainingsByUserId(userId: string) {
-    this.ss.show();
-    this.dts.getTrainings(userId).subscribe((data: Training[]) => {
-      // this.trainingsDataSource = [];
-      // TREBA DA KREIRAM TAKAV NIZ DA SE PRIKAZU SVE VEZBE ! ILI DA UBACIM DRUGU TABELU PA SA INNER TABLE
-      // Looping Object
-      for (const [id, training] of Object.entries(data)) {
-        // Destructuring
-        // console.log('id:', id); // 0 , 1 ...
-        // let tempItem = { ...training }; -- DESTRUCTURING
-        // this.trainingsDataSource.push({ ...training });
-      }
-      this.ss.hide();
-    });
-  }
-  /**
-   * Gets trainings by user Id
-   */
-  getTrainings() {
-    this.getTrainingsByUserId(this.userID);
-  }
-  /**
-   *
    * @param value
    */
-  editTraining(value: Training) {
-    value.updatedAt = new Date(); // TODO delete when convert updatedAt from number to date
-    this.editTrainingEvent.emit(value);
+  editTraining(workout: Workout) {
+    const training = workoutToTraining(workout);
+    training.updatedAt = new Date();
+    this.editTrainingEvent.emit(training);
   }
   /**
    *
    * @param modal
    * @param training
    */
-  deleteTraining(modal: any, training: Training) {
+  deleteTraining(modal: any, workout: Workout) {
     // TODO :CALL MODAL...
     this.modals.open(modal, this.modalOptions).result.then(
       (result) => {
-        training.isActive = false;
-        this.dts.saveTraining(training);
-        this.ts.show('Success', 'Deleted training');
+        if (workout.id === undefined) {
+          this.ts.show('Error', 'Unable to delete training without an ID');
+          return;
+        }
+
+        this.workoutFacade.finishWorkout(this.userID, workout.id).subscribe({
+          next: () => this.ts.show('Success', 'Deleted training'),
+          error: (error) => this.ts.show('Error', error.message),
+        });
         //   this.closeResult = `Closed with: ${result}`;
       },
       (reason) => {
@@ -204,8 +154,14 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
       }
     });
 
-    this.dts.sortColumn = column;
-    this.dts.sortDirection = direction;
+    const stateColumn = column === 'id'
+      ? 'id'
+      : column === 'trainingDate'
+        ? 'date'
+        : column === 'typeOfTraining'
+          ? 'type'
+          : '';
+    this.workoutFacade.setSort(stateColumn, direction);
   }
 
   /**

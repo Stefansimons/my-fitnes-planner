@@ -8,6 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "compodoc": "npx compodoc -p tsconfig.doc.json",
+    "docs:modernization": "node scripts/generate-modernization-doc.js",
     "heroku-postbuild": "ng build"
   },
   "private": true,
@@ -44,6 +45,7 @@
     "@angular/localize": "^19.2.25",
     "@types/jasmine": "~3.8.0",
     "@types/node": "^12.11.1",
+    "docx": "^9.7.1",
     "jasmine-core": "~3.8.0",
     "karma": "~6.3.0",
     "karma-chrome-launcher": "~3.1.0",

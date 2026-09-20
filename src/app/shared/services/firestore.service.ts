@@ -14,7 +14,13 @@ import {
   AngularFirestoreCollection,
   AngularFirestoreDocument,
 } from '@angular/fire/compat/firestore';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth } from '@angular/fire/auth';
+import { Firestore, doc, docData } from '@angular/fire/firestore';
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+} from 'firebase/auth';
 
 export const trainings = [
   {
@@ -81,7 +87,8 @@ export class FirestoreService {
   constructor(
     public fs: AngularFirestore,
     private ss: SpinnerService,
-    private afAuth: AngularFireAuth
+    private auth: Auth,
+    private modularFirestore: Firestore
   ) {
     //  this.itemsCollection = fs.collection<User>('users/t58eflvZawe59plcNDuh/trainings');
     this.itemsCollection = fs.collection<User>('users/');
@@ -145,9 +152,7 @@ export class FirestoreService {
    * @returns Observable
    */
   getUser(userId: string) {
-    return this.itemsCollection
-      .doc(userId) // ID kolekcije
-      .snapshotChanges();
+    return docData(doc(this.modularFirestore, `users/${userId}`)) as Observable<User>;
   }
   /**
    *
@@ -156,13 +161,13 @@ export class FirestoreService {
     return this.itemsCollection.add({ user });
   }
   logUserIn(email: string, password: string) {
-    return this.afAuth.signInWithEmailAndPassword(email, password);
+    return signInWithEmailAndPassword(this.auth, email, password);
   }
   /**
    *
    */
   logout() {
-    return this.afAuth.signOut();
+    return signOut(this.auth);
   }
   /**
    * Registers user
@@ -171,6 +176,6 @@ export class FirestoreService {
    * @returns
    */
   register(email: string, password: string) {
-    return this.afAuth.createUserWithEmailAndPassword(email, password);
+    return createUserWithEmailAndPassword(this.auth, email, password);
   }
 }

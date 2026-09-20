@@ -1,4 +1,23 @@
-export type WorkoutType = string;
+export type GymWorkoutType =
+  | 'Trening A'
+  | 'Trening B'
+  | 'Push'
+  | 'Pull'
+  | 'Legs'
+  | 'Drugo';
+
+export type CrossFitWorkoutType = 'AMRAP' | 'EMOM' | 'For Time' | 'Rounds';
+
+export type WorkoutType = GymWorkoutType | CrossFitWorkoutType | string;
+
+export type CrossFitFormat = 'AMRAP' | 'EMOM' | 'For Time' | 'Rounds';
+
+export interface CrossFitResult {
+  score?: number;
+  timeSeconds?: number;
+  rounds?: number;
+  notes?: string;
+}
 
 export interface WorkoutSet {
   id?: string;
@@ -19,4 +38,10 @@ export interface Workout {
   type: WorkoutType;
   isActive: boolean;
   updatedAt: Date;
+}
+
+export interface CrossFitWorkout extends Workout {
+  type: CrossFitWorkoutType;
+  format: CrossFitFormat;
+  result?: CrossFitResult;
 }
