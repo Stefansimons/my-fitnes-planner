@@ -1,5 +1,10 @@
 export { Training, Exercise, Series } from './training.model';
 export {
+	CrossFitFormat,
+	CrossFitResult,
+	CrossFitWorkout,
+	CrossFitWorkoutType,
+	GymWorkoutType,
 	Workout,
 	WorkoutExercise,
 	WorkoutSet,
