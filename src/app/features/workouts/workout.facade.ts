@@ -3,11 +3,14 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, finalize, map, tap } from 'rxjs/operators';
 import {
   workoutDtoToDomain,
+  workoutToTraining,
   workoutToDto,
 } from './adapters/training.adapter';
 import { Workout } from './models/workout.model';
+import { Training } from './models/training.model';
 import { WorkoutApiService } from './services/workout-api.service';
 import { WorkoutState } from './workout.state';
+import { toObservable } from '@angular/core/rxjs-interop';
 
 @Injectable({ providedIn: 'root' })
 export class WorkoutFacade {
@@ -16,6 +19,31 @@ export class WorkoutFacade {
   readonly error = this.state.error;
   readonly currentWorkout = this.state.currentWorkout;
   readonly workoutCount = this.state.workoutCount;
+  readonly page = this.state.page;
+  readonly pageSize = this.state.pageSize;
+  readonly searchTerm = this.state.searchTerm;
+  readonly sortColumn = this.state.sortColumn;
+  readonly sortDirection = this.state.sortDirection;
+  readonly workouts$: Observable<Training[]> = toObservable(this.state.pagedWorkouts).pipe(
+    map((workouts: Workout[]) => workouts.map(workoutToTraining))
+  );
+  readonly total$ = toObservable(this.state.total);
+
+  setPage(page: number): void {
+    this.state.setPage(page);
+  }
+
+  setPageSize(pageSize: number): void {
+    this.state.setPageSize(pageSize);
+  }
+
+  setSearchTerm(searchTerm: string): void {
+    this.state.setSearchTerm(searchTerm);
+  }
+
+  setSort(column: 'id' | 'date' | 'type' | '', direction: 'asc' | 'desc' | ''): void {
+    this.state.setSort(column, direction);
+  }
 
   constructor(
     private readonly api: WorkoutApiService,

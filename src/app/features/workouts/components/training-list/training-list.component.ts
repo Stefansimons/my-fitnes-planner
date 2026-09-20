@@ -12,10 +12,7 @@ import { Observable } from 'rxjs';
 import { Training } from './../../models/training.model';
 import { TrainingService } from '../../services/training.service';
 import { WorkoutFacade } from '../../workout.facade';
-import {
-  trainingToWorkout,
-  workoutToTraining,
-} from '../../adapters/training.adapter';
+import { trainingToWorkout } from '../../adapters/training.adapter';
 import {
   AfterViewInit,
   Component,
@@ -72,8 +69,8 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
     const filterValue = (event.target as HTMLInputElement).value;
   }
   constructor(
-    public trainingService: TrainingService,
-    private workoutFacade: WorkoutFacade,
+    private trainingService: TrainingService,
+    public workoutFacade: WorkoutFacade,
     private us: UserService,
     private ss: SpinnerService,
     private modals: NgbModal,
@@ -84,8 +81,8 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
       backdropClass: 'customBackdrop',
     };
     // Table pagination
-    this.trainings$ = trainingService.trainings$;
-    this.total$ = trainingService.total$;
+    this.trainings$ = workoutFacade.workouts$;
+    this.total$ = workoutFacade.total$;
   }
 
   ngAfterViewInit(): void {
@@ -98,7 +95,6 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
       this.userID = user.id;
       this.workoutFacade.loadWorkouts(user.id).subscribe({
         next: (workouts) => {
-          this.trainingService.setTrainings$(workouts.map(workoutToTraining));
           this.onSort({ column: 'trainingDate', direction: 'desc' });
           this.ss.hide();
         },
@@ -112,10 +108,7 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
       .subscribe((isNewEvent) => {
         if (isNewEvent) {
           this.workoutFacade.loadWorkouts(this.userID).subscribe((workouts) => {
-            const trainings = workouts.map(workoutToTraining);
-            this.trainingService.setTrainings$(trainings);
             this.onSort({ column: 'trainingDate', direction: 'desc' });
-            this.trainingService.trainings(trainings);
             this.ss.hide();
           });
         }
@@ -174,8 +167,14 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
       }
     });
 
-    this.trainingService.sortColumn = column;
-    this.trainingService.sortDirection = direction;
+    const stateColumn = column === 'id'
+      ? 'id'
+      : column === 'trainingDate'
+        ? 'date'
+        : column === 'typeOfTraining'
+          ? 'type'
+          : '';
+    this.workoutFacade.setSort(stateColumn, direction);
   }
 
   /**

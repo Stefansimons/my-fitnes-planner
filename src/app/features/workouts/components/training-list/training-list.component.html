@@ -16,7 +16,8 @@
           type="text"
           class="form-control"
           name="searchTerm"
-          [(ngModel)]="trainingService.searchTerm"
+          [ngModel]="workoutFacade.searchTerm()"
+          (ngModelChange)="workoutFacade.setSearchTerm($event)"
         />
       </div>
     </div>
@@ -135,8 +136,9 @@
     <div class="d-flex justify-content-between p-2">
       <ngb-pagination
         [collectionSize]="(total$ | async)!"
-        [(page)]="trainingService.page"
-        [pageSize]="trainingService.pageSize"
+        [page]="workoutFacade.page()"
+        (pageChange)="workoutFacade.setPage($event)"
+        [pageSize]="workoutFacade.pageSize()"
       >
       </ngb-pagination>
 
@@ -144,7 +146,8 @@
         class="form-select"
         style="width: auto"
         name="pageSize"
-        [(ngModel)]="trainingService.pageSize"
+        [ngModel]="workoutFacade.pageSize()"
+        (ngModelChange)="workoutFacade.setPageSize($event)"
       >
         <option [ngValue]="2">2 items per page</option>
         <option [ngValue]="4">4 items per page</option>
