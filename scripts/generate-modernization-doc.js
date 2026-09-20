@@ -151,6 +151,7 @@ const document = new Document({
         bullet('Dodati API error handling kroz WorkoutApiError'),
         bullet('Povezati API service sa WorkoutState i WorkoutFacade'),
         bullet('Implementirati create/update/delete/finish workout flow'),
+        bullet('Dodati WorkoutState unit testove za signals i reset'),
         bullet('Dodati naprednije state transitions i facade business flow', false),
         new Paragraph({ heading: HeadingLevel.HEADING_1, text: 'Napomena' }),
         new Paragraph({ text: 'PDF plan je lokalni referentni fajl i nije deo source koda. Karma/ChromeHeadless testovi jos nemaju pouzdan zavrsen rezultat; production build je prolazio nakon migracionih koraka.' }),

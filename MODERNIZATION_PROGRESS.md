@@ -144,7 +144,8 @@ Week 3, na grani `modernize/week-3-domain-api`:
 - [x] API granica ima zaseban `WorkoutApiService`.
 - [x] API greške imaju tipizovan `WorkoutApiError`.
 - [x] `WorkoutState` ima Signals source of truth i `computed()` derived state.
+- [x] `WorkoutState` ima unit testove za state transitions i reset.
 - [x] `WorkoutFacade` orkestrira API, adapter i state.
 - [x] `WorkoutFacade` ima create/update/delete/finish business flow.
-- Production build i relevantni testovi prolaze.
+- Production build prolazi; Karma test runner jos nema pouzdan zavrsen rezultat.
 - Promena je izolovana u mali proverljiv commit.
