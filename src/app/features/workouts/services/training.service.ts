@@ -1,14 +1,14 @@
-import { SpinnerService } from './../../shared/services/spinner.service';
-import { UserService } from './../../shared/services/user.service';
+import { SpinnerService } from './../../../shared/services/spinner.service';
+import { UserService } from './../../../shared/services/user.service';
 import {
   SortColumn,
   SortDirection,
 } from './../directives/ngb-sortable-table.directive';
-import { User } from './../../shared/models/user.model';
+import { User } from './../../../shared/models/user.model';
 import {
   FirestoreService,
   trainings,
-} from './../../shared/services/firestore.service';
+} from './../../../shared/services/firestore.service';
 import { Training } from '../models/training.model';
 import { MatTableDataSource } from '@angular/material/table';
 import { Observable, of, scheduled, Subject, BehaviorSubject } from 'rxjs';

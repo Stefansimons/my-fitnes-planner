@@ -1,7 +1,7 @@
-import { environment } from './../../../../environments/environment';
+import { environment } from './../../../environments/environment';
 import { ToastService } from './toast.service';
 import { Subject, Observable } from 'rxjs';
-import { Training } from './../../training/models/training.model';
+import { Training } from './../../features/workouts/models/training.model';
 import { SpinnerService } from './spinner.service';
 import { FirestoreService, trainings } from './firestore.service';
 import { User, IToken } from './../models/user.model';

@@ -3,7 +3,7 @@ import {
   Exercise,
   Training,
   Series,
-} from './../../training/models/training.model';
+} from './../../features/workouts/models/training.model';
 import { User } from './../models/user.model';
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';

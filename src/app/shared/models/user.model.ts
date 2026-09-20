@@ -1,4 +1,4 @@
-import { Training } from '../../training/models/training.model';
+import { Training } from '../../features/workouts/models/training.model';
 export interface User {
   id: string;
   firstName: string;

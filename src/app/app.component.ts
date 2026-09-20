@@ -1,19 +1,19 @@
 import { environment } from './../environments/environment';
 import { Router } from '@angular/router';
-import { HelperService } from './modules/shared/services/helper.service';
-import { IToast } from './modules/shared/components/toast/toast.component';
-import { ToastService } from './modules/shared/services/toast.service';
-import { IToken, User } from './modules/shared/models/user.model';
-import { AuthenticationService } from './modules/core/auth/authentication.service';
-import { SpinnerService } from './modules/shared/services/spinner.service';
-import { UserService } from './modules/shared/services/user.service';
+import { HelperService } from './shared/services/helper.service';
+import { IToast } from './shared/components/toast/toast.component';
+import { ToastService } from './shared/services/toast.service';
+import { IToken, User } from './shared/models/user.model';
+import { AuthenticationService } from './core/auth/authentication.service';
+import { SpinnerService } from './shared/services/spinner.service';
+import { UserService } from './shared/services/user.service';
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Observable } from 'rxjs';
-import { IProvaderData } from './modules/shared/models/firebaseUser.model';
+import { IProvaderData } from './shared/models/firebaseUser.model';
 import { SubSink } from 'subsink';
-import { SharedModule } from './modules/shared/shared.module';
+import { SharedModule } from './shared/shared.module';
 
 interface Item {
   name: string;

@@ -1,5 +1,5 @@
 import { SpinnerComponent } from './components/spinner/spinner.component';
-import { MaterialModule } from './../../material/material.module';
+import { MaterialModule } from './../material/material.module';
 import { RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';

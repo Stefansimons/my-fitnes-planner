@@ -1,4 +1,4 @@
-import { SpinnerComponent } from './modules/shared/components/spinner/spinner.component';
+import { SpinnerComponent } from './shared/components/spinner/spinner.component';
 import { RouterModule } from '@angular/router';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { NgModule } from '@angular/core';
@@ -18,11 +18,11 @@ import { MaterialModule } from './material/material.module';
 import { AppOverlayModule } from './material/overlay/appOverlay.module';
 
 // Modules
-import { SharedModule } from './modules/shared/shared.module';
+import { SharedModule } from './shared/shared.module';
 
 // NOTE: Lazy loaded moduls do not need here in app.modules
-// import { NutritionModule } from './modules/nutrition/nutrition.module';
-// import { TrainingModule } from './modules/training/training.module';
+// import { NutritionModule } from './features/nutrition/nutrition.module';
+// import { TrainingModule } from './features/workouts/training.module';
 
 @NgModule({
     declarations: [],

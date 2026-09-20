@@ -8,7 +8,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from './app/material/material.module';
 import { AppOverlayModule } from './app/material/overlay/appOverlay.module';
-import { SharedModule } from './app/modules/shared/shared.module';
+import { SharedModule } from './app/shared/shared.module';
 import { AppComponent } from './app/app.component';
 import { routes } from './app/app-routing.module';
 import { environment } from './environments/environment';

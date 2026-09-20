@@ -1,4 +1,4 @@
-import { Training } from './../../training/models/training.model';
+import { Training } from './../../features/workouts/models/training.model';
 import { UserService } from './../../shared/services/user.service';
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree } from '@angular/router';

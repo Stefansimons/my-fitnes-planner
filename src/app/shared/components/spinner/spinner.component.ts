@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { OverlayService } from './../../../../material/overlay.service';
+import { OverlayService } from './../../../material/overlay.service';
 import { OverlayConfig, OverlayRef } from '@angular/cdk/overlay';
 import {
   Component,

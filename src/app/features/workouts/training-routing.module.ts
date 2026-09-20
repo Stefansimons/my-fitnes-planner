@@ -1,4 +1,4 @@
-import { ResolveGuard } from './../core/auth/resolve.guard';
+import { ResolveGuard } from './../../core/auth/resolve.guard';
 import { StatisticsComponent } from './components/statistics/statistics.component';
 import { TrainingComponent } from './components/training/training.component';
 import { TrainingListComponent } from './components/training-list/training-list.component';
