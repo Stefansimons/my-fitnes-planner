@@ -151,5 +151,6 @@ Week 3, na grani `modernize/week-3-domain-api`:
 - [x] `WorkoutFacade` ima unit testove za API/state orkestraciju i error flow.
  - [x] Prvi postojeci UI read tok koristi Facade bez menjanja legacy tabele.
 - [x] TrainingList delete/deactivate tok koristi `WorkoutFacade.finishWorkout`.
+- [x] Uklonjen je neiskorisceni direktni read tok iz `TrainingListComponent`.
  - Production build prolazi; Karma test runner jos nema pouzdan zavrsen rezultat.
 - Promena je izolovana u mali proverljiv commit.

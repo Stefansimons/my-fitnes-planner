@@ -126,15 +126,6 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
           });
         }
       });
-    // GET TRAININGS AFTER DELETING SOME TRAINING
-    // this.dts.getTrainings(this.userID).subscribe((data: Training[]) => {
-    //   this.dts.setTrainings$(data);
-
-    //   this.onSort({ column: 'trainingDate', direction: 'desc' });
-
-    //   this.dts.trainings(data);
-
-    // });
     // Add observables in subsink array
     this.subs.add(newItemEvent, userObs);
   }
@@ -149,31 +140,6 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
     this.subs.unsubscribe();
   }
 
-  /**
-   *
-   * @param userId
-   */
-  getTrainingsByUserId(userId: string) {
-    this.ss.show();
-    this.dts.getTrainings(userId).subscribe((data: Training[]) => {
-      // this.trainingsDataSource = [];
-      // TREBA DA KREIRAM TAKAV NIZ DA SE PRIKAZU SVE VEZBE ! ILI DA UBACIM DRUGU TABELU PA SA INNER TABLE
-      // Looping Object
-      for (const [id, training] of Object.entries(data)) {
-        // Destructuring
-        // console.log('id:', id); // 0 , 1 ...
-        // let tempItem = { ...training }; -- DESTRUCTURING
-        // this.trainingsDataSource.push({ ...training });
-      }
-      this.ss.hide();
-    });
-  }
-  /**
-   * Gets trainings by user Id
-   */
-  getTrainings() {
-    this.getTrainingsByUserId(this.userID);
-  }
   /**
    *
    * @param value
