@@ -1,15 +1,15 @@
-import { Exercise, Series, Training } from './training.model';
+import { Exercise, Series, Training } from '../models/training.model';
 import {
   WorkoutDto,
   WorkoutExerciseDto,
   WorkoutSetDto,
-} from './workout.dto';
+} from '../models/workout.dto';
 
 import {
   Workout,
   WorkoutExercise,
   WorkoutSet,
-} from './workout.model';
+} from '../models/workout.model';
 
 export function trainingToWorkout(training: Training): Workout {
   return {
