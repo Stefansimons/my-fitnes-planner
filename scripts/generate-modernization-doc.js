@@ -147,6 +147,7 @@ const document = new Document({
         bullet('server.js prilagodjen Angular browser build outputu'),
         bullet('TrainingList prikaz i akcije prebaceni na WorkoutFacade/WorkoutState'),
         bullet('TrainingForm create/update tok prebacen na WorkoutFacade'),
+        bullet('TrainingForm koristi Workout domain model bez Training bridge-a'),
         new Paragraph({ heading: HeadingLevel.HEADING_1, text: 'Sledece' }),
         bullet('Domain modeli, DTO, adapter, API servis, State i Facade', true),
         bullet('TrainingList prikaz, query state i akcije kroz WorkoutFacade/WorkoutState', true),

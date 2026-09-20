@@ -138,7 +138,7 @@ Week 3, na grani `modernize/week-3-domain-api`:
 9. [x] Prebaciti search, sort i pagination u Signals query state.
 10. [x] Prebaciti `TrainingListComponent` prikaz na `Workout` domain polja.
 11. [x] Prebaciti `TrainingFormComponent` create/update tok na Facade.
-12. [ ] Ukloniti poslednji legacy bridge za edit formu.
+12. [x] Ukloniti poslednji legacy bridge za edit formu.
 
 ## Otvorene stavke
 
@@ -167,6 +167,7 @@ Week 3, na grani `modernize/week-3-domain-api`:
 - [x] `TrainingListComponent` prikaz, query state i pagination koriste WorkoutFacade/WorkoutState.
 - [x] `TrainingListComponent` vise nema zavisnost od legacy `TrainingService`.
 - [x] `TrainingFormComponent` create/update tok koristi `WorkoutFacade`.
+- [x] `TrainingFormComponent` koristi `Workout` domain model bez `Training` bridge-a.
 - [x] `TrainingListComponent` prikazuje `Workout` domain polja.
 - [x] `TrainingListComponent` više nema zavisnost od legacy `TrainingService`.
  - Production build prolazi; Karma test runner jos nema pouzdan zavrsen rezultat.
