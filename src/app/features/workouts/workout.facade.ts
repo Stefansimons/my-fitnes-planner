@@ -41,6 +41,10 @@ export class WorkoutFacade {
     this.state.setSort(column, direction);
   }
 
+  selectWorkout(workout: Workout | null): void {
+    this.state.setCurrentWorkout(workout);
+  }
+
   constructor(
     private readonly api: WorkoutApiService,
     private readonly state: WorkoutState

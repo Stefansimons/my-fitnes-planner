@@ -1,9 +1,11 @@
 import { ToastService } from './../../../../shared/services/toast.service';
 import { Series } from './../../models/training.model';
 import { UserService } from './../../../../shared/services/user.service';
-import { TrainingService } from '../../services/training.service';
 import { WorkoutFacade } from '../../workout.facade';
-import { trainingToWorkout } from '../../adapters/training.adapter';
+import {
+  trainingToWorkout,
+  workoutToTraining,
+} from '../../adapters/training.adapter';
 import {
   Component,
   OnInit,
@@ -24,6 +26,8 @@ import {
 import { Training } from '../../models/index';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { SubSink } from 'subsink';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs/operators';
 
 @Component({
     selector: 'app-training-form',
@@ -104,7 +108,6 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
   private subsink: SubSink = new SubSink();
   constructor(
     private fb: UntypedFormBuilder,
-    private trainingService: TrainingService,
     private workoutFacade: WorkoutFacade,
     private us: UserService,
     private ts: ToastService
@@ -128,12 +131,14 @@ export class TrainingFormComponent implements OnInit, AfterViewInit {
       // series: new FormArray([]), // ? exercises.series
     });
 
-    const editTrainingData = this.trainingService.getTraining$.subscribe((training) => {
-      this.editTraining = training;
-      if (this.editTraining) this.setFormValue(this.editTraining);
-    });
+    const editWorkoutData = toObservable(this.workoutFacade.currentWorkout)
+      .pipe(map((workout) => (workout ? workoutToTraining(workout) : null)))
+      .subscribe((training) => {
+        this.editTraining = training ?? undefined;
+        if (this.editTraining) this.setFormValue(this.editTraining);
+      });
 
-    this.subsink.add(editTrainingData);
+    this.subsink.add(editWorkoutData);
   }
   /**
    *
