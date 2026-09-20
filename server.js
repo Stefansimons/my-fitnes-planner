@@ -4,11 +4,13 @@ const path = require("path");
 
 const app = express();
 
-// Serve only the static files from the dist directory
-app.use(express.static("./dist/my-fitnes-planner-app"));
+const buildPath = path.join(__dirname, "dist", "my-fitnes-planner-app", "browser");
+
+// Serve only the static files from the Angular browser build.
+app.use(express.static(buildPath));
 
 app.get("/*", (req, res) =>
-  res.sendFile("index.html", { root: "dist/my-fitnes-planner-app/" })
+  res.sendFile("index.html", { root: buildPath })
 );
 
 // Start the app by listening on the default Heroku port
