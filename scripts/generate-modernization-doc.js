@@ -158,6 +158,7 @@ const document = new Document({
         bullet('Ukloniti neiskorisceni direktni read tok iz TrainingListComponent'),
         bullet('Dodati WorkoutState Signals query state za search, sort i pagination'),
         bullet('Prebaciti TrainingList prikaz i pagination na WorkoutFacade/WorkoutState'),
+        bullet('Ukloniti TrainingService zavisnost iz TrainingListComponent'),
         bullet('Dodati naprednije state transitions i facade business flow', false),
         new Paragraph({ heading: HeadingLevel.HEADING_1, text: 'Napomena' }),
         new Paragraph({ text: 'PDF plan je lokalni referentni fajl i nije deo source koda. Karma/ChromeHeadless testovi jos nemaju pouzdan zavrsen rezultat; production build je prolazio nakon migracionih koraka.' }),

@@ -10,7 +10,6 @@ import { UserService } from './../../../../shared/services/user.service';
 import { Observable } from 'rxjs';
 
 import { Training } from './../../models/training.model';
-import { TrainingService } from '../../services/training.service';
 import { WorkoutFacade } from '../../workout.facade';
 import { trainingToWorkout } from '../../adapters/training.adapter';
 import {
@@ -69,7 +68,6 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
     const filterValue = (event.target as HTMLInputElement).value;
   }
   constructor(
-    private trainingService: TrainingService,
     public workoutFacade: WorkoutFacade,
     private us: UserService,
     private ss: SpinnerService,
@@ -102,19 +100,7 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
       });
     });
 
-    // Emited new training
-    const newItemEvent = this.trainingService
-      .getNewTrainingEvent()
-      .subscribe((isNewEvent) => {
-        if (isNewEvent) {
-          this.workoutFacade.loadWorkouts(this.userID).subscribe((workouts) => {
-            this.onSort({ column: 'trainingDate', direction: 'desc' });
-            this.ss.hide();
-          });
-        }
-      });
-    // Add observables in subsink array
-    this.subs.add(newItemEvent, userObs);
+    this.subs.add(userObs);
   }
   /**
    * Unsubscribe when the component dies

@@ -155,5 +155,6 @@ Week 3, na grani `modernize/week-3-domain-api`:
 - [x] TrainingList delete/deactivate tok koristi `WorkoutFacade.finishWorkout`.
 - [x] Uklonjen je neiskorisceni direktni read tok iz `TrainingListComponent`.
 - [x] `TrainingListComponent` prikaz, query state i pagination koriste WorkoutFacade/WorkoutState.
+- [x] `TrainingListComponent` vise nema zavisnost od legacy `TrainingService`.
  - Production build prolazi; Karma test runner jos nema pouzdan zavrsen rezultat.
 - Promena je izolovana u mali proverljiv commit.
