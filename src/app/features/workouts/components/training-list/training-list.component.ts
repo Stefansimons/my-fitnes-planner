@@ -10,8 +10,9 @@ import { UserService } from './../../../../shared/services/user.service';
 import { Observable } from 'rxjs';
 
 import { Training } from './../../models/training.model';
+import { Workout } from '../../models/workout.model';
 import { WorkoutFacade } from '../../workout.facade';
-import { trainingToWorkout } from '../../adapters/training.adapter';
+import { workoutToTraining } from '../../adapters/training.adapter';
 import {
   AfterViewInit,
   Component,
@@ -52,7 +53,7 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
 
   // Table pagination
   total$: Observable<number>;
-  trainings$: Observable<Training[]>;
+  workouts$: Observable<Workout[]>;
 
   selectedTraining: Training;
   //  trainingsDataSource: Training[];
@@ -79,7 +80,7 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
       backdropClass: 'customBackdrop',
     };
     // Table pagination
-    this.trainings$ = workoutFacade.workouts$;
+    this.workouts$ = workoutFacade.workouts$;
     this.total$ = workoutFacade.total$;
   }
 
@@ -113,20 +114,20 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
    *
    * @param value
    */
-  editTraining(value: Training) {
-    value.updatedAt = new Date(); // TODO delete when convert updatedAt from number to date
-    this.editTrainingEvent.emit(value);
+  editTraining(workout: Workout) {
+    const training = workoutToTraining(workout);
+    training.updatedAt = new Date();
+    this.editTrainingEvent.emit(training);
   }
   /**
    *
    * @param modal
    * @param training
    */
-  deleteTraining(modal: any, training: Training) {
+  deleteTraining(modal: any, workout: Workout) {
     // TODO :CALL MODAL...
     this.modals.open(modal, this.modalOptions).result.then(
       (result) => {
-        const workout = trainingToWorkout(training);
         if (workout.id === undefined) {
           this.ts.show('Error', 'Unable to delete training without an ID');
           return;

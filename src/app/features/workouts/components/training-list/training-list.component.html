@@ -53,21 +53,21 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let training of trainings$ | async">
+        <tr *ngFor="let workout of workouts$ | async">
           <!-- trackBy: trackTraining -->
           <td>
             <input
               class="form-check-input"
               type="checkbox"
               unchecked=""
-              [checked]="training.isActive"
+              [checked]="workout.isActive"
               id="flexCheckChecked"
               disabled
             />
           </td>
-          <td>{{ training.id }}</td>
-          <td>{{ training.trainingDate }}</td>
-          <td>{{ training.typeOfTraining }}</td>
+          <td>{{ workout.id }}</td>
+          <td>{{ workout.date }}</td>
+          <td>{{ workout.type }}</td>
           <td>
             <tr>
               <td>
@@ -79,8 +79,8 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr *ngFor="let exercise of training.exercises">
-                      <td>{{ exercise.exerciseName }}</td>
+                    <tr *ngFor="let exercise of workout.exercises">
+                      <td>{{ exercise.name }}</td>
                       <td>
                         <table class="table mb-0">
                           <thead>
@@ -93,13 +93,13 @@
                           <tbody>
                             <tr
                               *ngFor="
-                                let serie of exercise.series;
+                                let set of exercise.sets;
                                 let i = index
                               "
                             >
                               <td>{{ i + 1 }}</td>
-                              <td>{{ serie.repsNum }}</td>
-                              <td>{{ serie.weight }}</td>
+                              <td>{{ set.reps }}</td>
+                              <td>{{ set.weight }}</td>
                             </tr>
                           </tbody>
                         </table>
@@ -115,7 +115,7 @@
               <button
                 type="button"
                 class="btn btn-primary"
-                (click)="editTraining(training)"
+                (click)="editTraining(workout)"
               >
                 Edit
               </button>
@@ -124,7 +124,7 @@
               <button
                 type="button"
                 class="btn btn-primary"
-                (click)="deleteTraining(modalcontent, training)"
+                (click)="deleteTraining(modalcontent, workout)"
               >
                 Delete
               </button>

@@ -3,11 +3,9 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, finalize, map, tap } from 'rxjs/operators';
 import {
   workoutDtoToDomain,
-  workoutToTraining,
   workoutToDto,
 } from './adapters/training.adapter';
 import { Workout } from './models/workout.model';
-import { Training } from './models/training.model';
 import { WorkoutApiService } from './services/workout-api.service';
 import { WorkoutState } from './workout.state';
 import { toObservable } from '@angular/core/rxjs-interop';
@@ -24,9 +22,7 @@ export class WorkoutFacade {
   readonly searchTerm = this.state.searchTerm;
   readonly sortColumn = this.state.sortColumn;
   readonly sortDirection = this.state.sortDirection;
-  readonly workouts$: Observable<Training[]> = toObservable(this.state.pagedWorkouts).pipe(
-    map((workouts: Workout[]) => workouts.map(workoutToTraining))
-  );
+  readonly workouts$: Observable<Workout[]> = toObservable(this.state.pagedWorkouts);
   readonly total$ = toObservable(this.state.total);
 
   setPage(page: number): void {
