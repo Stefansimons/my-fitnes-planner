@@ -147,5 +147,6 @@ Week 3, na grani `modernize/week-3-domain-api`:
 - [x] `WorkoutState` ima unit testove za state transitions i reset.
 - [x] `WorkoutFacade` orkestrira API, adapter i state.
 - [x] `WorkoutFacade` ima create/update/delete/finish business flow.
+- [x] `WorkoutFacade` ima unit testove za API/state orkestraciju i error flow.
 - Production build prolazi; Karma test runner jos nema pouzdan zavrsen rezultat.
 - Promena je izolovana u mali proverljiv commit.
