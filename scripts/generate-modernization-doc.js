@@ -47,7 +47,7 @@ function gitDiagram() {
     <rect width="1100" height="420" fill="#f8fafc"/>
     <text x="550" y="34" text-anchor="middle" font-family="Arial" font-size="24" font-weight="bold" fill="#0f172a">Git tok modernizacije</text>
     ${box(35, 85, 190, 62, 'legacy-version', '#e2e8f0')}
-    ${box(280, 85, 220, 62, 'Angular 13 -> 18', '#dbeafe')}
+    ${box(280, 85, 220, 62, 'Angular 13 -> 19', '#dbeafe')}
     ${box(555, 85, 230, 62, 'Angular 19 + standalone', '#dcfce7')}
     ${box(840, 85, 225, 62, 'Week 3 domain-api', '#fef3c7')}
     ${arrow(225, 116, 280, 116)}${arrow(500, 116, 555, 116)}${arrow(785, 116, 840, 116)}
@@ -56,7 +56,7 @@ function gitDiagram() {
     ${box(425, 270, 250, 62, 'week-2-standalone-routing', '#dcfce7')}
     ${box(780, 270, 250, 62, 'feature-angular-modernization', '#ede9fe')}
     ${arrow(320, 301, 425, 301)}${arrow(675, 301, 780, 301)}
-    <text x="550" y="385" text-anchor="middle" font-family="Arial" font-size="16" fill="#475569">Latest checkpoint: e2d79fe folder reorganization, merged at 027e29b</text>
+    <text x="550" y="385" text-anchor="middle" font-family="Arial" font-size="16" fill="#475569">Current: Week 3 API, State, Facade and UI integration</text>
   </svg>`;
 }
 
@@ -91,7 +91,7 @@ function statusTable() {
     ['Folder reorganizacija', 'Zavrseno', 'core / shared / features'],
     ['Feature standalone migracija', 'U toku', 'HomeComponent je migriran; ostali feature-i su prelazni'],
     ['Domain/API/Adapter', 'Zavrseno', 'DTO, adapter testovi, API servis i error handling postoje'],
-    ['State/Signals/Facade', 'U toku', 'WorkoutState, query state i WorkoutFacade business flow postoje'],
+    ['State/Signals/Facade', 'U toku', 'WorkoutState, query state, Facade i UI integracija postoje'],
     ['Karma/ChromeHeadless testovi', 'Otvoreno', 'Nema pouzdanog zavrsenog rezultata'],
   ];
 
@@ -148,6 +148,7 @@ const document = new Document({
         bullet('TrainingList prikaz i akcije prebaceni na WorkoutFacade/WorkoutState'),
         bullet('TrainingForm create/update tok prebacen na WorkoutFacade'),
         bullet('TrainingForm koristi Workout domain model bez Training bridge-a'),
+        bullet('TrainingList i TrainingForm integracija sa Facade/State slojem'),
         new Paragraph({ heading: HeadingLevel.HEADING_1, text: 'Sledece' }),
         bullet('Domain modeli, DTO, adapter, API servis, State i Facade', true),
         bullet('TrainingList prikaz, query state i akcije kroz WorkoutFacade/WorkoutState', true),

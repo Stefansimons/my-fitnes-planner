@@ -6,8 +6,8 @@ Ovaj dokument prikazuje do sada zavrsenu modernizaciju projekta, git checkpoint-
 
 - Aktivna grana: `modernize/week-3-domain-api`
 - Bazna grana za Week 2: `modernize/week-2-standalone-routing`
-- Poslednji Week 2 commit: `e2d79fe refactor: organize application folders`
-- Merge checkpoint: `027e29b Merge pull request #6 from Stefansimons/modernize/week-2-standalone-routing`
+- Poslednji Week 2 checkpoint: Angular 19, standalone bootstrap/routing i folder reorganizacija
+- Aktivna faza: Week 3 domain/API/State/Facade integracija
 - Radno stablo: cisto osim lokalnog, necommitovanog PDF plana
 - PDF plan: `src/My_Fitness_Planner_Angular_Modernization_Plan.pdf`
 
@@ -18,7 +18,7 @@ gitGraph
    commit id: "legacy baseline"
    branch chore/legacy-version
    checkout feature-angular-modernization
-   commit id: "Angular 13 foundation"
+    commit id: "Angular 13-18 foundation"
    commit id: "Angular Material alignment"
    branch modernize/week-2-angular-foundation
    commit id: "Angular 14 foundation"
@@ -33,8 +33,8 @@ gitGraph
    commit id: "Angular 19 upgrade"
    commit id: "HomeComponent standalone"
    commit id: "folder reorganization"
-   checkout feature-angular-modernization
-   merge modernize/week-2-standalone-routing tag: "027e29b"
+    commit id: "Workout API + State + Facade"
+    commit id: "TrainingList + TrainingForm integration"
    branch modernize/week-3-domain-api
 ```
 
@@ -108,6 +108,17 @@ features/workouts/
 - `TrainingFormComponent` koristi `WorkoutFacade` za create/update tok.
 - Legacy `Training` model se koristi samo na granici postojeće forme; `Workout` je interni domain model.
 
+### Week 3 - Domain/API/State/Facade integracija
+
+- Definisani `Workout`, `WorkoutExercise`, `WorkoutSet` i CrossFit osnovni tipovi.
+- Odvojeni Firestore DTO modeli i DTO <-> domain adapter.
+- Napravljen `WorkoutApiService` i tipizovan `WorkoutApiError`.
+- Napravljen `WorkoutState` sa Signals query state-om, filterom, sortom i pagination-om.
+- Napravljen `WorkoutFacade` sa load/save/create/update/delete/finish flow-ovima.
+- `TrainingListComponent` koristi Workout domain model i Facade/State za prikaz i akcije.
+- `TrainingFormComponent` create/update koristi Facade i Workout model.
+- Preostali legacy bridge postoji samo zbog postojećih form-control naziva.
+
 ## Arhitektonska tranzicija
 
 ```mermaid
@@ -116,9 +127,9 @@ flowchart LR
     foundation[Angular 19\nDependency alignment\nProduction build]
     standalone[Standalone root\nbootstrapApplication\nprovideRouter]
     folders[Feature-based folders\ncore / shared / features]
-    week3[Week 3\nDomain + DTO + Adapter + API]
+    week3[Week 3\nDomain + API + State + Facade]
     state[Week 4\nWorkoutState + Signals]
-    facade[Week 5\nWorkoutFacade business flow]
+    facade[Current\nUI integration]
 
     legacy --> foundation --> standalone --> folders --> week3 --> state --> facade
 ```
