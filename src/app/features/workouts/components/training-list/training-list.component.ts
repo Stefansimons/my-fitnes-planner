@@ -14,6 +14,8 @@ import { map, tap } from 'rxjs/operators';
 
 import { Training, Exercise } from './../../models/training.model';
 import { TrainingService } from '../../services/training.service';
+import { WorkoutFacade } from '../../workout.facade';
+import { workoutToTraining } from '../../adapters/training.adapter';
 import {
   AfterViewInit,
   Component,
@@ -74,6 +76,7 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
   }
   constructor(
     public dts: TrainingService, //NOTE: Public because assigning ngModel valu direct to service setters ?!?
+    private workoutFacade: WorkoutFacade,
     private us: UserService,
     private ss: SpinnerService,
     private modals: NgbModal,
@@ -96,11 +99,14 @@ export class TrainingListComponent implements OnInit, AfterViewInit {
     // Local storage user data
     const userObs = this.us.getLoggedUser$.subscribe((user) => {
       this.userID = user.id;
-      this.dts.setTrainings$(user.trainings);
-
-      this.onSort({ column: 'trainingDate', direction: 'desc' });
-
-      this.ss.hide();
+      this.workoutFacade.loadWorkouts(user.id).subscribe({
+        next: (workouts) => {
+          this.dts.setTrainings$(workouts.map(workoutToTraining));
+          this.onSort({ column: 'trainingDate', direction: 'desc' });
+          this.ss.hide();
+        },
+        error: () => this.ss.hide(),
+      });
     });
 
     // Emited new training

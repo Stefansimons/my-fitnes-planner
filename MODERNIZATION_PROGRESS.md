@@ -126,7 +126,8 @@ Week 3, na grani `modernize/week-3-domain-api`:
 5. [x] Dodati osnovni error handling kroz `WorkoutApiError`.
 6. [x] Povezati API service sa `WorkoutState` i `WorkoutFacade`.
 7. [x] Implementirati create/update/delete/finish workout flow u facade-u.
-8. [ ] Proveriti da UI i feature kod ne zavise direktno od backend field naming-a.
+8. [x] Povezati pocetno ucitavanje `TrainingListComponent` sa `WorkoutFacade` bridge-om.
+9. [ ] Proveriti da UI i feature kod ne zavise direktno od backend field naming-a.
 
 ## Otvorene stavke
 
@@ -148,5 +149,6 @@ Week 3, na grani `modernize/week-3-domain-api`:
 - [x] `WorkoutFacade` orkestrira API, adapter i state.
 - [x] `WorkoutFacade` ima create/update/delete/finish business flow.
 - [x] `WorkoutFacade` ima unit testove za API/state orkestraciju i error flow.
-- Production build prolazi; Karma test runner jos nema pouzdan zavrsen rezultat.
+ - [x] Prvi postojeci UI read tok koristi Facade bez menjanja legacy tabele.
+ - Production build prolazi; Karma test runner jos nema pouzdan zavrsen rezultat.
 - Promena je izolovana u mali proverljiv commit.
