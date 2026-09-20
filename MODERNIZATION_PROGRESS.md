@@ -96,7 +96,7 @@ flowchart LR
     foundation[Angular 19\nDependency alignment\nProduction build]
     standalone[Standalone root\nbootstrapApplication\nprovideRouter]
     folders[Feature-based folders\ncore / shared / features]
-    week3[Week 3\nDomain + DTO + Adapter]
+    week3[Week 3\nDomain + DTO + Adapter + API]
     state[Week 4\nWorkoutState + Signals]
     facade[Week 5\nWorkoutFacade]
 
@@ -107,12 +107,13 @@ flowchart LR
 
 Week 3, na grani `modernize/week-3-domain-api`:
 
-1. Stabilizovati `Workout`, `WorkoutExercise` i `WorkoutSet` domain modele.
-2. Definisati Firestore DTO modele odvojene od domain modela.
-3. Zavrsiti adapter DTO <-> domain.
-4. Izdvojiti API/Firestore service granicu.
-5. Dodati osnovni error handling.
-6. Proveriti da UI i feature kod ne zavise direktno od backend field naming-a.
+1. [x] Stabilizovati `Workout`, `WorkoutExercise` i `WorkoutSet` domain modele.
+2. [x] Definisati Firestore DTO modele odvojene od domain modela.
+3. [x] Zavrsiti adapter DTO <-> domain.
+4. [x] Izdvojiti API/Firestore service granicu kroz `WorkoutApiService`.
+5. [x] Dodati osnovni error handling kroz `WorkoutApiError`.
+6. [x] Povezati API service sa `WorkoutState` i `WorkoutFacade`.
+7. [ ] Proveriti da UI i feature kod ne zavise direktno od backend field naming-a.
 
 ## Otvorene stavke
 
@@ -124,8 +125,12 @@ Week 3, na grani `modernize/week-3-domain-api`:
 
 ## Definition of Done za sledeci checkpoint
 
-- Domain modeli imaju jasna imena i odgovornosti.
-- DTO modeli ne cure direktno u UI.
-- Adapter ima testove za mapiranje u oba smera.
+- [x] Domain modeli imaju jasna imena i odgovornosti.
+- [x] DTO modeli ne cure direktno u UI.
+- [x] Adapter ima testove za mapiranje u oba smera.
+- [x] API granica ima zaseban `WorkoutApiService`.
+- [x] API greške imaju tipizovan `WorkoutApiError`.
+- [x] `WorkoutState` ima Signals source of truth i `computed()` derived state.
+- [x] `WorkoutFacade` orkestrira API, adapter i state.
 - Production build i relevantni testovi prolaze.
 - Promena je izolovana u mali proverljiv commit.
