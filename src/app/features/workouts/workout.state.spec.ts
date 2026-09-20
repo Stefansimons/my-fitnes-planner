@@ -48,4 +48,30 @@ describe('WorkoutState', () => {
     expect(state.error()).toBeNull();
     expect(state.currentWorkout()).toBeNull();
   });
+
+  it('filters and paginates workouts through computed state', () => {
+    const secondWorkout = {
+      ...workout,
+      id: 2,
+      type: 'Legs',
+      exercises: [{ name: 'Squat', sets: [] }],
+    };
+    const thirdWorkout = { ...workout, id: 3, type: 'Pull' };
+
+    state.setWorkouts([workout, secondWorkout, thirdWorkout]);
+    state.setPageSize(1);
+    state.setSearchTerm('squat');
+
+    expect(state.total()).toBe(1);
+    expect(state.pagedWorkouts()).toEqual([secondWorkout]);
+  });
+
+  it('sorts workouts by a selected column and direction', () => {
+    const secondWorkout = { ...workout, id: 2, type: 'Legs' };
+
+    state.setWorkouts([secondWorkout, workout]);
+    state.setSort('id', 'asc');
+
+    expect(state.pagedWorkouts().map((item) => item.id)).toEqual([1, 2]);
+  });
 });

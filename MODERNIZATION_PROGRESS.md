@@ -127,7 +127,8 @@ Week 3, na grani `modernize/week-3-domain-api`:
 6. [x] Povezati API service sa `WorkoutState` i `WorkoutFacade`.
 7. [x] Implementirati create/update/delete/finish workout flow u facade-u.
 8. [x] Povezati pocetno ucitavanje `TrainingListComponent` sa `WorkoutFacade` bridge-om.
-9. [ ] Proveriti da UI i feature kod ne zavise direktno od backend field naming-a.
+9. [x] Dodati WorkoutState Signals query state za search, sort i pagination.
+10. [ ] Proveriti da UI i feature kod ne zavise direktno od backend field naming-a.
 
 ## Otvorene stavke
 
@@ -146,6 +147,7 @@ Week 3, na grani `modernize/week-3-domain-api`:
 - [x] API greške imaju tipizovan `WorkoutApiError`.
 - [x] `WorkoutState` ima Signals source of truth i `computed()` derived state.
 - [x] `WorkoutState` ima unit testove za state transitions i reset.
+- [x] `WorkoutState` ima testove za filter, sort i pagination derived state.
 - [x] `WorkoutFacade` orkestrira API, adapter i state.
 - [x] `WorkoutFacade` ima create/update/delete/finish business flow.
 - [x] `WorkoutFacade` ima unit testove za API/state orkestraciju i error flow.
