@@ -19,12 +19,15 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/my-fitnes-planner-app",
+            "outputPath": {
+              "base": "dist/my-fitnes-planner-app"
+            },
             "index": "src/index.html",
-            "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
+            "polyfills": [
+              "src/polyfills.ts"
+            ],
             "tsConfig": "tsconfig.app.json",
             "assets": ["src/favicon.ico", "src/assets"],
             "styles": [
@@ -32,7 +35,10 @@
               "./node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/styles.scss"
             ],
-            "scripts": ["./node_modules/bootstrap/dist/js/bootstrap.js"]
+            "scripts": [
+              "./node_modules/bootstrap/dist/js/bootstrap.js"
+            ],
+            "browser": "src/main.ts"
           },
           "configurations": {
             "production": {
@@ -57,9 +63,7 @@
               "outputHashing": "all"
             },
             "development": {
-              "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -71,10 +75,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "my-fitnes-planner-app:build:production"
+              "buildTarget": "my-fitnes-planner-app:build:production"
             },
             "development": {
-              "browserTarget": "my-fitnes-planner-app:build:development"
+              "buildTarget": "my-fitnes-planner-app:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -82,7 +86,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "my-fitnes-planner-app:build"
+            "buildTarget": "my-fitnes-planner-app:build"
           }
         },
         "test": {
@@ -112,6 +116,5 @@
         }
       }
     }
-  },
-  "defaultProject": "my-fitnes-planner-app"
+  }
 }

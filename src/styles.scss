@@ -302,8 +302,6 @@ th[appNgbSortableTable].desc:after {
   background-color: burlywood;
   min-height: 15rem;
 }
-.training-form-wrapper {
-}
 /************************ Header *****************************************/
 .header-wrapper {
   display: flex;
@@ -322,7 +320,7 @@ th[appNgbSortableTable].desc:after {
     color: white;
     align-items: center;
     margin-right: 10px;
-    justify-content: end;
+    justify-content: flex-end;
     margin-top: 1rem;
     .name {
       margin-right: 1rem;
@@ -413,8 +411,6 @@ th[appNgbSortableTable].desc:after {
 }
 .col_white_amrc {
   color: #fff;
-}
-.footer {
 }
 .pt2 {
   padding-top: 40px;

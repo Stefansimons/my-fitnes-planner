@@ -1,16 +1,15 @@
-import { RoleGuard } from './modules/core/auth/role.guard';
-import { AuthGuard } from './modules/core/auth/auth.guard';
-import { LoginComponent } from './modules/shared/components/login/login.component';
-import { RegisterComponent } from './modules/shared/components/register/register.component';
-import { HomeComponent } from './modules/core/components/home/home.component';
-import { NgModule } from '@angular/core';
-import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { RoleGuard } from './core/auth/role.guard';
+import { AuthGuard } from './core/auth/auth.guard';
+import { LoginComponent } from './shared/components/login/login.component';
+import { RegisterComponent } from './shared/components/register/register.component';
+import { HomeComponent } from './core/components/home/home.component';
+import { Routes } from '@angular/router';
 
-const routes: Routes = [
+export const routes: Routes = [
   {
     path: 'training',
     loadChildren: () =>
-      import('./modules/training/training.module').then(
+      import('./features/workouts/training.module').then(
         (m) => m.TrainingModule
       ),
     canActivate: [AuthGuard],
@@ -18,7 +17,7 @@ const routes: Routes = [
   {
     path: 'nutrition',
     loadChildren: () =>
-      import('./modules/nutrition/nutrition.module').then(
+      import('./features/nutrition/nutrition.module').then(
         (m) => m.NutritionModule
       ),
     canActivate: [RoleGuard],
@@ -32,9 +31,3 @@ const routes: Routes = [
     pathMatch: 'full',
   },
 ];
-
-@NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule],
-})
-export class AppRoutingModule {}
