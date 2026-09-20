@@ -26,8 +26,9 @@ import { SharedModule } from './modules/shared/shared.module';
 // import { TrainingModule } from './modules/training/training.module';
 
 @NgModule({
-    declarations: [AppComponent],
+    declarations: [],
     imports: [
+        AppComponent,
         BrowserModule,
         AngularFireModule.initializeApp(environment.firebase),
         BrowserAnimationsModule,

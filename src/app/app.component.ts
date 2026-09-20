@@ -8,9 +8,12 @@ import { AuthenticationService } from './modules/core/auth/authentication.servic
 import { SpinnerService } from './modules/shared/services/spinner.service';
 import { UserService } from './modules/shared/services/user.service';
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { Observable } from 'rxjs';
 import { IProvaderData } from './modules/shared/models/firebaseUser.model';
 import { SubSink } from 'subsink';
+import { SharedModule } from './modules/shared/shared.module';
 
 interface Item {
   name: string;
@@ -18,6 +21,8 @@ interface Item {
 
 @Component({
   selector: 'app-root',
+  standalone: true,
+  imports: [CommonModule, RouterModule, SharedModule],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
