@@ -7,12 +7,12 @@ import { IToken, ROLE, User } from './../../shared/models/user.model';
 import { UserService } from './../../shared/services/user.service';
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import firebase from 'firebase/compat/app';
 
 // Firebase user authentification
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  UserCredential,
 } from 'firebase/auth';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
@@ -95,7 +95,7 @@ export class AuthenticationService {
   register(
     email: string,
     password: string
-  ): Observable<firebase.auth.UserCredential> {
+  ): Observable<UserCredential> {
     return from(this.fss.register(email, password));
   }
   /**
