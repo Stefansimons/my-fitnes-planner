@@ -1,12 +1,12 @@
-import { ToastService } from './../../../shared/services/toast.service';
-import { SpinnerService } from './../../../shared/services/spinner.service';
+import { ToastService } from './../../../../shared/services/toast.service';
+import { SpinnerService } from './../../../../shared/services/spinner.service';
 import { Exercise, Series } from './../../models/training.model';
 import {
   userTempData,
   UserService,
-} from './../../../shared/services/user.service';
-import { User } from './../../../shared/models/user.model';
-import { FirestoreService } from './../../../shared/services/firestore.service';
+} from './../../../../shared/services/user.service';
+import { User } from './../../../../shared/models/user.model';
+import { FirestoreService } from './../../../../shared/services/firestore.service';
 import { TrainingService } from '../../services/training.service';
 import {
   AngularFirestore,
@@ -31,7 +31,6 @@ import {
 import { Validators } from '@angular/forms';
 import { Training } from '../../models/index';
 import { map, skip, tap } from 'rxjs/operators';
-import {} from './../../../shared/';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { NgbDateStruct, NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
 import { SubSink } from 'subsink';

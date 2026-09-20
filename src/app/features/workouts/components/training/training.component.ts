@@ -1,4 +1,4 @@
-import { SpinnerService } from './../../../shared/services/spinner.service';
+import { SpinnerService } from './../../../../shared/services/spinner.service';
 import { map } from 'rxjs/operators';
 import { TrainingService } from './../../services/training.service';
 import { Training } from './../../models/training.model';

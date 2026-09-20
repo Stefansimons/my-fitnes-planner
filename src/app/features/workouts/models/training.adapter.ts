@@ -1,5 +1,11 @@
 import { Exercise, Series, Training } from './training.model';
 import {
+  WorkoutDto,
+  WorkoutExerciseDto,
+  WorkoutSetDto,
+} from './workout.dto';
+
+import {
   Workout,
   WorkoutExercise,
   WorkoutSet,
@@ -21,6 +27,28 @@ export function workoutToTraining(workout: Workout): Training {
     id: workout.id,
     trainingDate: workout.date,
     exercises: workout.exercises.map(workoutExerciseToExercise),
+    typeOfTraining: workout.type,
+    isActive: workout.isActive,
+    updatedAt: workout.updatedAt,
+  };
+}
+
+export function workoutDtoToDomain(dto: WorkoutDto): Workout {
+  return {
+    id: dto.id,
+    date: dto.trainingDate,
+    exercises: dto.exercises.map(dtoToWorkoutExercise),
+    type: dto.typeOfTraining,
+    isActive: dto.isActive,
+    updatedAt: dto.updatedAt,
+  };
+}
+
+export function workoutToDto(workout: Workout): WorkoutDto {
+  return {
+    id: workout.id,
+    trainingDate: workout.date,
+    exercises: workout.exercises.map(workoutExerciseToDto),
     typeOfTraining: workout.type,
     isActive: workout.isActive,
     updatedAt: workout.updatedAt,
@@ -52,6 +80,38 @@ function seriesToWorkoutSet(series: Series): WorkoutSet {
 }
 
 function workoutSetToSeries(set: WorkoutSet): Series {
+  return {
+    id: set.id,
+    repsNum: set.reps,
+    weight: set.weight,
+  };
+}
+
+function dtoToWorkoutExercise(exercise: WorkoutExerciseDto): WorkoutExercise {
+  return {
+    id: exercise.id,
+    name: exercise.exerciseName,
+    sets: (exercise.series ?? []).map(dtoToWorkoutSet),
+  };
+}
+
+function workoutExerciseToDto(exercise: WorkoutExercise): WorkoutExerciseDto {
+  return {
+    id: exercise.id,
+    exerciseName: exercise.name,
+    series: exercise.sets.map(workoutSetToDto),
+  };
+}
+
+function dtoToWorkoutSet(set: WorkoutSetDto): WorkoutSet {
+  return {
+    id: set.id,
+    reps: set.repsNum,
+    weight: set.weight,
+  };
+}
+
+function workoutSetToDto(set: WorkoutSet): WorkoutSetDto {
   return {
     id: set.id,
     repsNum: set.reps,

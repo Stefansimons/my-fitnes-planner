@@ -1,14 +1,14 @@
 import { environment } from 'src/environments/environment.prod';
-import { ToastService } from './../../../shared/services/toast.service';
+import { ToastService } from './../../../../shared/services/toast.service';
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import {
   NgbSortableTableDirective,
   SortEvent,
 } from './../../directives/ngb-sortable-table.directive';
-import { User } from './../../../shared/models/user.model';
-import { trainings } from './../../../shared/services/firestore.service';
-import { SpinnerService } from './../../../shared/services/spinner.service';
-import { UserService } from './../../../shared/services/user.service';
+import { User } from './../../../../shared/models/user.model';
+import { trainings } from './../../../../shared/services/firestore.service';
+import { SpinnerService } from './../../../../shared/services/spinner.service';
+import { UserService } from './../../../../shared/services/user.service';
 import { Observable, Subscription } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 
