@@ -100,6 +100,14 @@ features/workouts/
 
 - Production build je prolazio nakon migracionih koraka.
 
+### Dodatne migracije i stabilizacija
+
+- Login/auth tok je prebačen na modularni Firebase Auth/Firestore provider setup.
+- `server.js` sada servira Angular browser output iz `dist/my-fitnes-planner-app/browser`.
+- `TrainingListComponent` koristi `WorkoutFacade` za učitavanje, query state i delete/finish tok.
+- `TrainingFormComponent` koristi `WorkoutFacade` za create/update tok.
+- Legacy `Training` model se koristi samo na granici postojeće forme; `Workout` je interni domain model.
+
 ## Arhitektonska tranzicija
 
 ```mermaid
@@ -115,7 +123,7 @@ flowchart LR
     legacy --> foundation --> standalone --> folders --> week3 --> state --> facade
 ```
 
-## Sta je sledece
+## Week 3 - Domain, API, Adapter, State i Facade
 
 Week 3, na grani `modernize/week-3-domain-api`:
 
@@ -126,9 +134,11 @@ Week 3, na grani `modernize/week-3-domain-api`:
 5. [x] Dodati osnovni error handling kroz `WorkoutApiError`.
 6. [x] Povezati API service sa `WorkoutState` i `WorkoutFacade`.
 7. [x] Implementirati create/update/delete/finish workout flow u facade-u.
-8. [x] Povezati pocetno ucitavanje `TrainingListComponent` sa `WorkoutFacade` bridge-om.
-9. [x] Dodati WorkoutState Signals query state za search, sort i pagination.
-10. [ ] Proveriti da UI i feature kod ne zavise direktno od backend field naming-a.
+8. [x] Povezati `TrainingListComponent` sa `WorkoutFacade`.
+9. [x] Prebaciti search, sort i pagination u Signals query state.
+10. [x] Prebaciti `TrainingListComponent` prikaz na `Workout` domain polja.
+11. [x] Prebaciti `TrainingFormComponent` create/update tok na Facade.
+12. [ ] Ukloniti poslednji legacy bridge za edit formu.
 
 ## Otvorene stavke
 
@@ -157,5 +167,7 @@ Week 3, na grani `modernize/week-3-domain-api`:
 - [x] `TrainingListComponent` prikaz, query state i pagination koriste WorkoutFacade/WorkoutState.
 - [x] `TrainingListComponent` vise nema zavisnost od legacy `TrainingService`.
 - [x] `TrainingFormComponent` create/update tok koristi `WorkoutFacade`.
+- [x] `TrainingListComponent` prikazuje `Workout` domain polja.
+- [x] `TrainingListComponent` više nema zavisnost od legacy `TrainingService`.
  - Production build prolazi; Karma test runner jos nema pouzdan zavrsen rezultat.
 - Promena je izolovana u mali proverljiv commit.
